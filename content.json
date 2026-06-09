@@ -6,8 +6,8 @@
     "statsUpdated": "June 8, 2026 (YTD: Jan 1 – Jun 8, 2026, both accounts combined)"
   },
   "hero": {
-    "headline": "We turn supplements into TikTok Shop bestsellers.",
-    "subheadline": "Hammad Media is a TikTok Shop affiliate network specialized in supplements & wellness — $2.79M+ in attributed GMV and 105 million product views in 2026 alone. Your product, in front of shoppers who buy."
+    "headline": "We turn supplements into bestsellers.",
+    "subheadline": "Hammad Media is a TikTok Shop affiliate team specializing in supplements & wellness — $2.79M+ in attributed GMV in 2026 alone. Your product, in front of 105 million shoppers who buy."
   },
   "stats": [
     { "value": "$2.79M+", "label": "GMV — 2026 YTD" },
@@ -20,39 +20,47 @@
       "handle": "Drew.Review1",
       "url": "https://www.tiktok.com/@drew.review1",
       "niche": "Supplement reviews",
+      "avatar": "assets/products/avatar-drew-review1.jpg",
       "blurb": "$1.89M GMV · 75,860 units · 68.5M product views in 2026 YTD. High-volume review content engineered for TikTok Shop conversion."
     },
     {
       "handle": "Drew.Review",
       "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
+      "avatar": "assets/products/avatar-drew-review.jpg",
       "blurb": "$901K GMV · 37,198 units · 37.3M product views in 2026 YTD. Authentic review formats that consistently move units."
     }
   ],
   "caseStudies": [
     {
       "title": "Astaxanthin 12mg — Micro Ingredients",
-      "result": "$82,606 gross revenue · 2,659 units — in a single month"
+      "result": "$82,606 gross revenue · 2,659 units — in a single month",
+      "image": "assets/products/astaxanthin.jpg"
     },
     {
       "title": "Collagen Peptides Powder 20oz — NeoCell",
-      "result": "$73,334 gross revenue · 2,891 units — in a single month"
+      "result": "$73,334 gross revenue · 2,891 units — in a single month",
+      "image": "assets/products/collagen.jpg"
     },
     {
       "title": "NMN Complex 1,000mg — Micro Ingredients",
-      "result": "$64,975 gross revenue · 2,010 units in one month — plus $46,950 more the prior month on our second account"
+      "result": "$64,975 gross revenue · 2,010 units in one month — plus $46,950 more the prior month on our second account",
+      "image": "assets/products/nmn.jpg"
     },
     {
-      "title": "Moringa Capsules 3-Pack — Rosabella",
-      "result": "$19,855 gross revenue · 728 units — in a single month"
+      "title": "NAC Capsules — Nutricost",
+      "result": "$13,737 gross revenue · 1,195 units — in a single month",
+      "image": "assets/products/nac.jpg"
     },
     {
       "title": "Magnesium Complex 8-in-1 — Toplux",
-      "result": "$17,104 gross revenue · 1,300 units — in a single month"
+      "result": "$17,104 gross revenue · 1,300 units — in a single month",
+      "image": "assets/products/magnesium.jpg"
     },
     {
       "title": "Gut Health Bundle — Snap Supplements",
-      "result": "$10,130 gross revenue · 308 units — in a single month"
+      "result": "$10,130 gross revenue · 308 units — in a single month",
+      "image": "assets/products/gut-health.jpg"
     }
   ],
   "services": {
@@ -68,14 +76,14 @@
       },
       {
         "title": "3. You watch GMV climb",
-        "text": "Content goes live across our network. You track every attributed sale in your own TikTok Shop dashboard — full transparency."
+        "text": "Content goes live across our network, and every attributed sale is verified in your own TikTok Shop Seller Center — not our slides. Full transparency."
       }
     ],
-    "note": "We work on commission. No retainers, no upfront fees — we only win when your product sells."
+    "note": "We work on commission. No retainers, no upfront fees — we only win when your product sells. We onboard a limited number of products each month, so category fit matters."
   },
   "contact": {
     "heading": "Work with us",
-    "subheading": "Tell us about your product. We reply to every serious brand within 24 hours.",
+    "subheading": "Tell us about your product. We reply to every brand inquiry within 24 hours.",
     "email": "contact@hammadmedia.com",
     "formspreeId": ""
   }

@@ -63,6 +63,29 @@ test("stacked brand wordmark present in nav and footer with accessible labels", 
   assert.ok(!html.includes("logo-web.png\" alt"), "old image logo still in page");
 });
 
+test("product images + avatars render with alts and exist in dist", () => {
+  for (const c of content.caseStudies) {
+    if (!c.image) continue;
+    assert.ok(html.includes(`src="${c.image}"`), `case study image missing: ${c.image}`);
+    assert.ok(fs.existsSync(path.join(ROOT, "dist", c.image)), `dist missing ${c.image}`);
+  }
+  for (const a of content.accounts) {
+    if (!a.avatar) continue;
+    assert.ok(html.includes(`src="${a.avatar}"`), `avatar missing: ${a.avatar}`);
+    assert.ok(html.includes(`alt="@${a.handle} TikTok profile picture"`), `avatar alt missing for ${a.handle}`);
+    assert.ok(fs.existsSync(path.join(ROOT, "dist", a.avatar)), `dist missing ${a.avatar}`);
+  }
+  // every non-decorative img must have non-empty alt
+  const badImgs = (html.match(/<img(?![^>]*aria-hidden)[^>]*>/g) || []).filter(
+    (t) => !/alt="[^"]+"/.test(t) && !t.includes('alt=""'),
+  );
+  assert.strictEqual(badImgs.length, 0, `imgs without alt: ${badImgs.join(" | ")}`);
+});
+
+test("recalled product (Rosabella Moringa) is not showcased", () => {
+  assert.ok(!/moringa/i.test(html), "Moringa still on page — FDA-recalled product must not be showcased");
+});
+
 test("internal anchors resolve to real element ids", () => {
   const anchors = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
   for (const a of anchors) {

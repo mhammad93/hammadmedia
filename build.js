@@ -20,13 +20,17 @@ const statsCards = content.stats
   .join("\n");
 
 const accountCards = content.accounts
-  .map(
-    (a) => `      <div class="card">
+  .map((a) => {
+    const avatar = a.avatar
+      ? `<img class="avatar" src="${esc(a.avatar)}" alt="@${esc(a.handle)} TikTok profile picture" width="320" height="320" loading="lazy">`
+      : "";
+    return `      <div class="card account-card">
+        ${avatar}
         <div class="meta">${esc(a.niche)}</div>
         <h3><a class="handle" href="${esc(a.url)}" target="_blank" rel="noopener">@${esc(a.handle)}</a></h3>
         <p>${esc(a.blurb)}</p>
-      </div>`,
-  )
+      </div>`;
+  })
   .join("\n");
 
 const caseStudiesSection = content.caseStudies.length
@@ -40,8 +44,11 @@ ${content.caseStudies
     const link = c.videoUrl
       ? `\n        <p style="margin-top:10px;"><a class="handle" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">Watch the video &rarr;</a></p>`
       : "";
+    const img = c.image
+      ? `<div class="product-shot"><img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>\n        `
+      : "";
     return `      <div class="card">
-        <h3>${esc(c.title || "Campaign")}</h3>
+        ${img}<h3>${esc(c.title || "Campaign")}</h3>
         <p>${esc(c.result)}</p>${link}
       </div>`;
   })
