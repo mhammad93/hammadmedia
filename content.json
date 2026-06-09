@@ -1,19 +1,31 @@
 {
   "site": {
-    "title": "Hammad Media — TikTok Shop Affiliate Marketing for Supplement Brands",
-    "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $2.79M+ GMV and 105M+ product views in 2026 YTD. Send us your product — we turn it into sales.",
+    "title": "Hammad Media \u2014 TikTok Shop Affiliate Marketing for Supplement Brands",
+    "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $2.79M+ GMV and 105M+ product views in 2026 YTD. Send us your product \u2014 we turn it into sales.",
     "brandName": "HAMMAD MEDIA",
-    "statsUpdated": "June 8, 2026 (YTD: Jan 1 – Jun 8, 2026, both accounts combined)"
+    "statsUpdated": "June 8, 2026 (YTD: Jan 1 \u2013 Jun 8, 2026, both accounts combined)"
   },
   "hero": {
     "headline": "We turn supplements into bestsellers.",
-    "subheadline": "Hammad Media is a TikTok Shop affiliate team specializing in supplements & wellness — $2.79M+ in attributed GMV in 2026 alone. Your product, in front of 105 million shoppers who buy."
+    "subheadline": "Hammad Media is a TikTok Shop affiliate team specializing in supplements & wellness \u2014 $2.79M+ in attributed GMV in 2026 alone. Your product, in front of 105 million shoppers who buy."
   },
   "stats": [
-    { "value": "$2.79M+", "label": "GMV — 2026 YTD" },
-    { "value": "113K+", "label": "UNITS SOLD — 2026 YTD" },
-    { "value": "105M+", "label": "PRODUCT VIEWS — 2026 YTD" },
-    { "value": "2.8M+", "label": "PRODUCT CLICKS — 2026 YTD" }
+    {
+      "value": "$2.79M+",
+      "label": "GMV \u2014 2026 YTD"
+    },
+    {
+      "value": "113K+",
+      "label": "UNITS SOLD \u2014 2026 YTD"
+    },
+    {
+      "value": "105M+",
+      "label": "PRODUCT VIEWS \u2014 2026 YTD"
+    },
+    {
+      "value": "2.8M+",
+      "label": "PRODUCT CLICKS \u2014 2026 YTD"
+    }
   ],
   "accounts": [
     {
@@ -21,45 +33,45 @@
       "url": "https://www.tiktok.com/@drew.review1",
       "niche": "Supplement reviews",
       "avatar": "assets/products/avatar-drew-review1.jpg",
-      "blurb": "$1.89M GMV · 75,860 units · 68.5M product views in 2026 YTD. High-volume review content engineered for TikTok Shop conversion."
+      "blurb": "$1.89M GMV \u00b7 75,860 units \u00b7 68.5M product views in 2026 YTD. High-volume review content engineered for TikTok Shop conversion."
     },
     {
       "handle": "Drew.Review",
       "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
       "avatar": "assets/products/avatar-drew-review.jpg",
-      "blurb": "$901K GMV · 37,198 units · 37.3M product views in 2026 YTD. Authentic review formats that consistently move units."
+      "blurb": "$901K GMV \u00b7 37,198 units \u00b7 37.3M product views in 2026 YTD. Authentic review formats that consistently move units."
     }
   ],
   "caseStudies": [
     {
-      "title": "Astaxanthin 12mg — Micro Ingredients",
-      "result": "$82,606 gross revenue · 2,659 units — in a single month",
+      "title": "Astaxanthin 12mg \u2014 Micro Ingredients",
+      "result": "$82,606 gross revenue \u00b7 2,659 units \u2014 in a single month",
       "image": "assets/products/astaxanthin.jpg"
     },
     {
-      "title": "Collagen Peptides Powder 20oz — NeoCell",
-      "result": "$73,334 gross revenue · 2,891 units — in a single month",
+      "title": "Collagen Bio-Peptides Protein 20oz \u2014 NeoCell",
+      "result": "$73,334 gross revenue \u00b7 2,891 units \u2014 in a single month",
       "image": "assets/products/collagen.jpg"
     },
     {
-      "title": "NMN Complex 1,000mg — Micro Ingredients",
-      "result": "$64,975 gross revenue · 2,010 units in one month — plus $46,950 more the prior month on our second account",
+      "title": "NMN Complex 1,000mg \u2014 Micro Ingredients",
+      "result": "$64,975 gross revenue \u00b7 2,010 units in one month \u2014 plus $46,950 more the prior month on our second account",
       "image": "assets/products/nmn.jpg"
     },
     {
-      "title": "NAC Capsules — Nutricost",
-      "result": "$13,737 gross revenue · 1,195 units — in a single month",
+      "title": "NAC Capsules \u2014 Nutricost",
+      "result": "$13,737 gross revenue \u00b7 1,195 units \u2014 in a single month",
       "image": "assets/products/nac.jpg"
     },
     {
-      "title": "Magnesium Complex 8-in-1 — Toplux",
-      "result": "$17,104 gross revenue · 1,300 units — in a single month",
+      "title": "Magnesium Complex 8-in-1 \u2014 Toplux",
+      "result": "$17,104 gross revenue \u00b7 1,300 units \u2014 in a single month",
       "image": "assets/products/magnesium.jpg"
     },
     {
-      "title": "Gut Health Bundle — Snap Supplements",
-      "result": "$10,130 gross revenue · 308 units — in a single month",
+      "title": "Gut Health Bundle \u2014 Snap Supplements",
+      "result": "$10,130 gross revenue \u00b7 308 units \u2014 in a single month",
       "image": "assets/products/gut-health.jpg"
     }
   ],
@@ -68,37 +80,37 @@
     "steps": [
       {
         "title": "1. Send us your product",
-        "text": "Ship a sample and set an affiliate commission on TikTok Shop. Supplements and wellness products are our specialty — it's where our audience already buys."
+        "text": "Ship a sample and set an affiliate commission on TikTok Shop. Supplements and wellness products are our specialty \u2014 it's where our audience already buys."
       },
       {
         "title": "2. We create review content",
-        "text": "Our creators produce review videos built around what actually converts on TikTok Shop — hooks, demos, and honest takes."
+        "text": "Our creators produce review videos built around what actually converts on TikTok Shop \u2014 hooks, demos, and honest takes."
       },
       {
         "title": "3. You watch GMV climb",
-        "text": "Content goes live across our network, and every attributed sale is verified in your own TikTok Shop Seller Center — not our slides. Full transparency."
+        "text": "Content goes live across our network, and every attributed sale is verified in your own TikTok Shop Seller Center \u2014 not our slides. Full transparency."
       }
     ],
-    "note": "Every engagement is performance-aligned — we earn the most when your product sells. We onboard a limited number of products each month, so category fit matters."
+    "note": "Every engagement is performance-aligned \u2014 we earn the most when your product sells. We onboard a limited number of products each month, so category fit matters."
   },
   "partnership": {
     "heading": "Ways to partner",
-    "sub": "Three engagement models. Every one of them keeps us invested in your sales — pick the level of priority your launch deserves.",
+    "sub": "Three engagement models. Every one of them keeps us invested in your sales \u2014 pick the level of priority your launch deserves.",
     "tiers": [
       {
         "name": "Performance",
         "tag": "Boosted commission",
-        "text": "Set an elevated, network-exclusive commission rate and your product enters our content rotation. You pay on attributed sales — the higher the rate, the higher your priority."
+        "text": "Set an elevated, network-exclusive commission rate and your product enters our content rotation. You pay on attributed sales \u2014 the higher the rate, the higher your priority."
       },
       {
         "name": "Retainer + Performance",
         "tag": "Most popular",
-        "text": "A monthly retainer guarantees review videos and posting cadence across our accounts — plus commission on every sale. Predictable content output, fully aligned incentives."
+        "text": "A monthly retainer guarantees review videos and posting cadence across our accounts \u2014 plus commission on every sale. Predictable content output, fully aligned incentives."
       },
       {
         "name": "Exclusive",
         "tag": "Category exclusivity",
-        "text": "One brand per category. We never promote your competitors — your products own the niche across our entire network. Retainer + commission + performance bonuses."
+        "text": "One brand per category. We never promote your competitors \u2014 your products own the niche across our entire network. Retainer + commission + performance bonuses."
       }
     ]
   },
