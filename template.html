@@ -5,94 +5,222 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{site.title}}</title>
 <meta name="description" content="{{site.description}}">
+<link rel="icon" type="image/png" href="assets/logo-web.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #111111;
-    --muted: #6b6b6b;
-    --line: #e8e8e8;
-    --bg: #ffffff;
-    --bg-soft: #fafafa;
+    --bg-dark: #0b130e;
+    --bg-dark-2: #101b14;
+    --paper: #f6f4ee;
+    --ink: #141814;
+    --ink-soft: #4a524b;
+    --cream: #ece9e0;
+    --cream-dim: #a8b0a6;
+    --green: #3ddc84;
+    --green-deep: #0e7a4a;
+    --line-dark: rgba(61, 220, 132, 0.14);
+    --line-light: #ddd9cd;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--ink);
-    background: var(--bg);
+    font-family: "Manrope", sans-serif;
+    background: var(--bg-dark);
+    color: var(--cream);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  ::selection { background: var(--green); color: var(--bg-dark); }
+
+  /* grain texture overlay */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ── Nav ── */
   nav {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 28px 0;
+    padding: 26px 0; position: relative; z-index: 3;
   }
-  .brand { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 800; letter-spacing: 3px; }
-  .brand img.logo { height: 44px; width: auto; display: block; }
+  .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .brand img.logo {
+    height: 64px; width: auto; display: block;
+    filter: invert(1) hue-rotate(180deg) brightness(1.6);
+  }
+  .brand span {
+    font-family: "Fraunces", serif; font-weight: 700; font-size: 19px;
+    letter-spacing: 0.14em; color: var(--cream);
+  }
   nav a.cta {
-    background: var(--ink); color: #fff; text-decoration: none;
-    padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600;
+    background: var(--green); color: var(--bg-dark); text-decoration: none;
+    padding: 12px 26px; border-radius: 100px; font-size: 14px; font-weight: 800;
+    letter-spacing: 0.02em; transition: transform .18s ease, box-shadow .18s ease;
   }
-  header.hero { padding: 72px 0 56px; }
+  nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(61,220,132,.35); }
+
+  /* ── Hero ── */
+  header.hero { position: relative; padding: 84px 0 110px; overflow: hidden; }
+  header.hero::after {
+    content: ""; position: absolute; right: -240px; top: -180px; width: 720px; height: 720px;
+    background: radial-gradient(circle, rgba(61,220,132,.16) 0%, transparent 62%);
+    pointer-events: none;
+  }
+  .hero .kicker {
+    display: inline-block; border: 1px solid var(--line-dark); border-radius: 100px;
+    padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 34px;
+    animation: rise .7s ease both;
+  }
   .hero h1 {
-    font-size: clamp(34px, 6vw, 58px);
-    font-weight: 800; line-height: 1.12; letter-spacing: -0.02em;
-    max-width: 17ch;
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: clamp(44px, 7.2vw, 88px); line-height: 1.02; letter-spacing: -0.015em;
+    max-width: 15ch; color: var(--paper);
+    animation: rise .7s .08s ease both;
   }
+  .hero h1 em { font-style: italic; color: var(--green); }
   .hero p.sub {
-    margin-top: 20px; font-size: clamp(16px, 2.2vw, 20px);
-    color: var(--muted); max-width: 52ch;
+    margin-top: 28px; font-size: clamp(16px, 2vw, 20px);
+    color: var(--cream-dim); max-width: 54ch; animation: rise .7s .16s ease both;
   }
-  .hero .actions { margin-top: 32px; }
-  .hero .actions a {
-    display: inline-block; background: var(--ink); color: #fff; text-decoration: none;
-    padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;
+  .hero .actions { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; animation: rise .7s .24s ease both; }
+  .hero .actions a.primary {
+    background: var(--green); color: var(--bg-dark); text-decoration: none;
+    padding: 17px 38px; border-radius: 100px; font-size: 16px; font-weight: 800;
+    transition: transform .18s ease, box-shadow .18s ease;
   }
-  section.stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-soft); }
+  .hero .actions a.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(61,220,132,.4); }
+  .hero .actions a.ghost {
+    color: var(--cream); text-decoration: none; padding: 17px 30px;
+    border: 1px solid rgba(236,233,224,.25); border-radius: 100px; font-size: 16px; font-weight: 700;
+    transition: border-color .18s ease;
+  }
+  .hero .actions a.ghost:hover { border-color: var(--green); color: var(--green); }
+
+  /* ── Marquee ── */
+  .marquee {
+    border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark);
+    overflow: hidden; padding: 18px 0; background: var(--bg-dark-2); position: relative; z-index: 1;
+  }
+  .marquee .track {
+    display: flex; gap: 56px; width: max-content; animation: marquee 36s linear infinite;
+    font-family: "Fraunces", serif; font-style: italic; font-size: 17px; color: var(--cream-dim);
+    white-space: nowrap;
+  }
+  .marquee .track span b { color: var(--green); font-style: normal; font-family: "Manrope", sans-serif; font-weight: 800; }
+
+  /* ── Stats ── */
+  section.stats { padding: 96px 0 84px; position: relative; }
   .stats .grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0; padding: 44px 0;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 36px 28px;
   }
-  .stat { padding: 8px 24px; border-left: 1px solid var(--line); }
-  .stat:first-child { border-left: none; }
-  .stat .num { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
-  .stat .lbl { font-size: 11px; letter-spacing: 1.6px; color: var(--muted); margin-top: 4px; }
-  .stats .updated { font-size: 12px; color: var(--muted); padding-bottom: 18px; }
-  section { padding: 72px 0; }
-  h2.section-title { font-size: clamp(26px, 3.6vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
-  p.section-sub { color: var(--muted); max-width: 56ch; margin-bottom: 40px; }
-  .cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+  .stat .num {
+    font-family: "Fraunces", serif; font-weight: 700;
+    font-size: clamp(52px, 6.5vw, 84px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--green);
   }
-  .card {
-    border: 1px solid var(--line); border-radius: 10px; padding: 28px;
-    background: #fff;
+  .stat .lbl {
+    margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--cream-dim);
   }
-  .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-  .card .meta { font-size: 12px; letter-spacing: 1.2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-  .card p { font-size: 15px; color: #3c3c3c; }
-  .card a.handle { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--ink); }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-  .note { margin-top: 32px; padding: 20px 24px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; font-size: 15px; }
-  section.contact { background: var(--ink); color: #fff; }
-  .contact h2 { color: #fff; }
-  .contact p.section-sub { color: #b5b5b5; }
-  form { max-width: 560px; display: grid; gap: 14px; }
-  label { font-size: 13px; font-weight: 600; letter-spacing: 0.4px; }
+  .stats .updated { margin-top: 44px; font-size: 13px; color: var(--cream-dim); opacity: .8; }
+
+  /* ── Light sections ── */
+  .light { background: var(--paper); color: var(--ink); position: relative; z-index: 1; }
+  section { padding: 96px 0; }
+  h2.section-title {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: clamp(34px, 4.4vw, 54px); letter-spacing: -0.015em; line-height: 1.08;
+    margin-bottom: 16px;
+  }
+  .light h2.section-title { color: var(--ink); }
+  p.section-sub { max-width: 58ch; margin-bottom: 52px; font-size: 17px; }
+  .light p.section-sub { color: var(--ink-soft); }
+
+  /* account + result + service cards (markup from build.js) */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; counter-reset: resultnum; }
+  .light .card {
+    background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
+    padding: 34px 30px; position: relative; overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .light .card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
+  .light .card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--green), var(--green-deep));
+  }
+  .card .meta {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 800; color: var(--green-deep); margin-bottom: 14px;
+  }
+  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 23px; margin-bottom: 10px; letter-spacing: -0.01em; }
+  .light .card p { font-size: 15.5px; color: var(--ink-soft); }
+  .card a.handle { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--green); }
+  .card a.handle:hover { color: var(--green-deep); }
+
+  /* results get rank numerals */
+  #results .cards .card { counter-increment: resultnum; padding-top: 56px; }
+  #results .cards .card::after {
+    content: "0" counter(resultnum); position: absolute; top: 18px; right: 22px;
+    font-family: "Fraunces", serif; font-style: italic; font-size: 30px;
+    color: var(--green-deep); opacity: .35;
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+  .note {
+    margin-top: 40px; padding: 26px 30px; border-radius: 14px;
+    background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(20,148,91,.07));
+    border: 1px solid rgba(20,148,91,.25); font-size: 16px; font-weight: 600;
+  }
+  .light .note { color: var(--ink); }
+
+  /* ── Contact ── */
+  section.contact { background: var(--bg-dark); color: var(--cream); position: relative; overflow: hidden; }
+  section.contact::after {
+    content: ""; position: absolute; left: -200px; bottom: -260px; width: 640px; height: 640px;
+    background: radial-gradient(circle, rgba(61,220,132,.14) 0%, transparent 60%); pointer-events: none;
+  }
+  .contact h2.section-title { color: var(--paper); }
+  .contact p.section-sub { color: var(--cream-dim); }
+  form { max-width: 580px; display: grid; gap: 16px; position: relative; z-index: 1; }
+  label { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; }
   input, select, textarea {
-    width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid #444;
-    background: #1c1c1c; color: #fff; font-size: 15px; font-family: inherit;
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid rgba(236,233,224,.18); background: var(--bg-dark-2);
+    color: var(--cream); font-size: 15px; font-family: inherit;
   }
-  textarea { min-height: 120px; resize: vertical; }
+  input:focus, textarea:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+  textarea { min-height: 130px; resize: vertical; }
   button[type=submit], .mail-cta {
-    background: #fff; color: var(--ink); border: none; padding: 14px 32px;
-    border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer;
+    background: var(--green); color: var(--bg-dark); border: none; padding: 17px 40px;
+    border-radius: 100px; font-size: 17px; font-weight: 800; cursor: pointer;
     display: inline-block; text-decoration: none; text-align: center;
+    transition: transform .18s ease, box-shadow .18s ease; position: relative; z-index: 1;
   }
-  footer { padding: 36px 0; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+  button[type=submit]:hover, .mail-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(61,220,132,.4); }
+
+  footer {
+    padding: 44px 0; font-size: 14px; color: var(--cream-dim);
+    border-top: 1px solid var(--line-dark); background: var(--bg-dark);
+  }
+  footer a { color: var(--cream-dim); }
+  footer .frow { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  footer img.logo { height: 40px; width: auto; filter: invert(1) hue-rotate(180deg) brightness(1.6); opacity: .85; }
+
   @media (max-width: 640px) {
-    .stat { border-left: none; border-top: 1px solid var(--line); padding: 16px 8px; }
-    .stat:first-child { border-top: none; }
+    .brand img.logo { height: 48px; }
+    .hero { padding-top: 48px; }
+    section { padding: 72px 0; }
   }
 </style>
 </head>
@@ -100,15 +228,26 @@
 
 <div class="wrap">
   <nav>
-    <div class="brand"><img class="logo" src="assets/logo-web.png" alt="Hammad Media logo">{{site.brandName}}</div>
+    <a class="brand" href="#top"><img class="logo" src="assets/logo-web.png" alt="Hammad Media logo"><span>{{site.brandName}}</span></a>
     <a class="cta" href="#contact">Work With Us</a>
   </nav>
 
-  <header class="hero">
-    <h1>{{hero.headline}}</h1>
+  <header class="hero" id="top">
+    <span class="kicker">TikTok Shop Affiliate Network — Supplements &amp; Wellness</span>
+    <h1>We turn supplements into <em>bestsellers</em>.</h1>
     <p class="sub">{{hero.subheadline}}</p>
-    <div class="actions"><a href="#contact">Work With Us &rarr;</a></div>
+    <div class="actions">
+      <a class="primary" href="#contact">Work With Us &rarr;</a>
+      <a class="ghost" href="#results">See the receipts</a>
+    </div>
   </header>
+</div>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Commission-only &middot; zero retainers</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Commission-only &middot; zero retainers</span>
+  </div>
 </div>
 
 <section class="stats">
@@ -116,14 +255,14 @@
     <div class="grid">
 {{statsCards}}
     </div>
-    <div class="updated">Figures from our TikTok Shop affiliate dashboard &middot; last updated {{site.statsUpdated}}</div>
+    <div class="updated">Figures from our TikTok Shop affiliate dashboards &middot; last updated {{site.statsUpdated}}</div>
   </div>
 </section>
 
-<section id="accounts">
+<section id="accounts" class="light">
   <div class="wrap">
     <h2 class="section-title">Our creator network</h2>
-    <p class="section-sub">Review-focused TikTok accounts purpose-built for TikTok Shop conversion.</p>
+    <p class="section-sub">Review-focused TikTok accounts purpose-built for TikTok Shop conversion — every number verifiable on-platform.</p>
     <div class="cards">
 {{accountCards}}
     </div>
@@ -132,7 +271,7 @@
 
 {{caseStudiesSection}}
 
-<section id="services" style="background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+<section id="services" class="light" style="border-top: 1px solid var(--line-light);">
   <div class="wrap">
     <h2 class="section-title">{{services.heading}}</h2>
     <div class="steps">
@@ -151,8 +290,9 @@
 </section>
 
 <footer>
-  <div class="wrap">
-    &copy; {{year}} Hammad Media LLC &middot; <a href="mailto:{{contact.email}}" style="color: var(--muted);">{{contact.email}}</a>
+  <div class="wrap frow">
+    <img class="logo" src="assets/logo-web.png" alt="Hammad Media logo">
+    <div>&copy; {{year}} Hammad Media LLC &middot; <a href="mailto:{{contact.email}}">{{contact.email}}</a></div>
   </div>
 </footer>
 

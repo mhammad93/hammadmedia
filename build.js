@@ -30,10 +30,10 @@ const accountCards = content.accounts
   .join("\n");
 
 const caseStudiesSection = content.caseStudies.length
-  ? `<section id="results">
+  ? `<section id="results" class="light" style="border-top: 1px solid var(--line-light);">
   <div class="wrap">
-    <h2 class="section-title">Results</h2>
-    <p class="section-sub">Real campaigns, real numbers.</p>
+    <h2 class="section-title">The receipts</h2>
+    <p class="section-sub">Real products, real single-month results — straight from our TikTok Shop dashboards.</p>
     <div class="cards">
 ${content.caseStudies
   .map((c) => {
