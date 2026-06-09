@@ -102,4 +102,10 @@ if (leftover) {
 
 fs.mkdirSync(path.join(ROOT, "dist"), { recursive: true });
 fs.writeFileSync(path.join(ROOT, "dist", "index.html"), html);
+
+// Copy static assets (logo etc.) into dist
+const assetsSrc = path.join(ROOT, "assets");
+if (fs.existsSync(assetsSrc)) {
+  fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), { recursive: true });
+}
 console.log(`Built dist/index.html (${html.length} bytes)`);

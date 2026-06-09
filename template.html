@@ -27,7 +27,8 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 28px 0;
   }
-  .brand { font-size: 14px; font-weight: 800; letter-spacing: 3px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 800; letter-spacing: 3px; }
+  .brand img.logo { height: 44px; width: auto; display: block; }
   nav a.cta {
     background: var(--ink); color: #fff; text-decoration: none;
     padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600;
@@ -99,7 +100,7 @@
 
 <div class="wrap">
   <nav>
-    <div class="brand">{{site.brandName}}</div>
+    <div class="brand"><img class="logo" src="assets/logo-web.png" alt="Hammad Media logo">{{site.brandName}}</div>
     <a class="cta" href="#contact">Work With Us</a>
   </nav>
 

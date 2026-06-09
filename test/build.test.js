@@ -55,6 +55,13 @@ test("contact: form when formspreeId set, mailto fallback otherwise", () => {
   }
 });
 
+test("logo image present with meaningful alt text and asset file exists in dist", () => {
+  assert.ok(html.includes('src="assets/logo-web.png"'), "logo img missing");
+  const altMatch = html.match(/<img[^>]*logo-web\.png[^>]*alt="([^"]+)"/);
+  assert.ok(altMatch && altMatch[1].length > 3, "logo alt text missing or trivial");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-web.png")), "logo asset not copied to dist");
+});
+
 test("internal anchors resolve to real element ids", () => {
   const anchors = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
   for (const a of anchors) {
