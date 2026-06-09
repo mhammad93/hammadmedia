@@ -1,0 +1,82 @@
+{
+  "site": {
+    "title": "Hammad Media — TikTok Shop Affiliate Marketing for Supplement Brands",
+    "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $315K+ revenue across our top 10 products. Send us your product — we turn it into sales.",
+    "brandName": "HAMMAD MEDIA",
+    "statsUpdated": "June 9, 2026"
+  },
+  "hero": {
+    "headline": "We turn supplements into TikTok Shop bestsellers.",
+    "subheadline": "Hammad Media is a TikTok Shop affiliate network specialized in supplements & wellness. We put your products in front of six figures of shoppers every day — and turn views into checkout."
+  },
+  "stats": [
+    { "value": "$315K+", "label": "REVENUE — TOP 10 PRODUCTS" },
+    { "value": "12,650+", "label": "UNITS — TOP 10 PRODUCTS" },
+    { "value": "152K+", "label": "DAILY PRODUCT VIEWS" },
+    { "value": "$4.2K+", "label": "DAILY GMV" }
+  ],
+  "accounts": [
+    {
+      "handle": "andi_review0",
+      "url": "https://www.tiktok.com/@andi_review0",
+      "niche": "Supplement reviews",
+      "blurb": "High-volume review content engineered for TikTok Shop conversion."
+    },
+    {
+      "handle": "drew_review",
+      "url": "https://www.tiktok.com/@drew_review",
+      "niche": "Supplement reviews",
+      "blurb": "Authentic review formats that consistently move units."
+    }
+  ],
+  "caseStudies": [
+    {
+      "title": "Astaxanthin 12mg — Micro Ingredients",
+      "result": "$82,606 gross revenue · 2,659 units sold"
+    },
+    {
+      "title": "Collagen Peptides Powder 20oz — NeoCell",
+      "result": "$73,334 gross revenue · 2,891 units sold"
+    },
+    {
+      "title": "NMN Complex 1,000mg — Micro Ingredients",
+      "result": "$46,950 gross revenue · 1,434 units sold"
+    },
+    {
+      "title": "Moringa Capsules 3-Pack — Rosabella",
+      "result": "$19,855 gross revenue · 728 units sold"
+    },
+    {
+      "title": "NAC Supplement Capsules — Nutricost",
+      "result": "$13,737 gross revenue · 1,195 units sold"
+    },
+    {
+      "title": "Magnesium Complex 8-in-1 — Toplux",
+      "result": "$13,310 gross revenue · 1,071 units sold"
+    }
+  ],
+  "services": {
+    "heading": "How it works",
+    "steps": [
+      {
+        "title": "1. Send us your product",
+        "text": "Ship a sample and set an affiliate commission on TikTok Shop. Supplements and wellness products are our specialty — it's where our audience already buys."
+      },
+      {
+        "title": "2. We create review content",
+        "text": "Our creators produce review videos built around what actually converts on TikTok Shop — hooks, demos, and honest takes."
+      },
+      {
+        "title": "3. You watch GMV climb",
+        "text": "Content goes live across our network. You track every attributed sale in your own TikTok Shop dashboard — full transparency."
+      }
+    ],
+    "note": "We work on commission. No retainers, no upfront fees — we only win when your product sells."
+  },
+  "contact": {
+    "heading": "Work with us",
+    "subheading": "Tell us about your product. We reply to every serious brand within 24 hours.",
+    "email": "contact@hammadmedia.com",
+    "formspreeId": ""
+  }
+}

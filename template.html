@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{site.title}}</title>
+<meta name="description" content="{{site.description}}">
+<style>
+  :root {
+    --ink: #111111;
+    --muted: #6b6b6b;
+    --line: #e8e8e8;
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0;
+  }
+  .brand { font-size: 14px; font-weight: 800; letter-spacing: 3px; }
+  nav a.cta {
+    background: var(--ink); color: #fff; text-decoration: none;
+    padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600;
+  }
+  header.hero { padding: 72px 0 56px; }
+  .hero h1 {
+    font-size: clamp(34px, 6vw, 58px);
+    font-weight: 800; line-height: 1.12; letter-spacing: -0.02em;
+    max-width: 17ch;
+  }
+  .hero p.sub {
+    margin-top: 20px; font-size: clamp(16px, 2.2vw, 20px);
+    color: var(--muted); max-width: 52ch;
+  }
+  .hero .actions { margin-top: 32px; }
+  .hero .actions a {
+    display: inline-block; background: var(--ink); color: #fff; text-decoration: none;
+    padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;
+  }
+  section.stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-soft); }
+  .stats .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0; padding: 44px 0;
+  }
+  .stat { padding: 8px 24px; border-left: 1px solid var(--line); }
+  .stat:first-child { border-left: none; }
+  .stat .num { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
+  .stat .lbl { font-size: 11px; letter-spacing: 1.6px; color: var(--muted); margin-top: 4px; }
+  .stats .updated { font-size: 12px; color: var(--muted); padding-bottom: 18px; }
+  section { padding: 72px 0; }
+  h2.section-title { font-size: clamp(26px, 3.6vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+  p.section-sub { color: var(--muted); max-width: 56ch; margin-bottom: 40px; }
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+  }
+  .card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 28px;
+    background: #fff;
+  }
+  .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card .meta { font-size: 12px; letter-spacing: 1.2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .card p { font-size: 15px; color: #3c3c3c; }
+  .card a.handle { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--ink); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .note { margin-top: 32px; padding: 20px 24px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; font-size: 15px; }
+  section.contact { background: var(--ink); color: #fff; }
+  .contact h2 { color: #fff; }
+  .contact p.section-sub { color: #b5b5b5; }
+  form { max-width: 560px; display: grid; gap: 14px; }
+  label { font-size: 13px; font-weight: 600; letter-spacing: 0.4px; }
+  input, select, textarea {
+    width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid #444;
+    background: #1c1c1c; color: #fff; font-size: 15px; font-family: inherit;
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  button[type=submit], .mail-cta {
+    background: #fff; color: var(--ink); border: none; padding: 14px 32px;
+    border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer;
+    display: inline-block; text-decoration: none; text-align: center;
+  }
+  footer { padding: 36px 0; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+  @media (max-width: 640px) {
+    .stat { border-left: none; border-top: 1px solid var(--line); padding: 16px 8px; }
+    .stat:first-child { border-top: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="brand">{{site.brandName}}</div>
+    <a class="cta" href="#contact">Work With Us</a>
+  </nav>
+
+  <header class="hero">
+    <h1>{{hero.headline}}</h1>
+    <p class="sub">{{hero.subheadline}}</p>
+    <div class="actions"><a href="#contact">Work With Us &rarr;</a></div>
+  </header>
+</div>
+
+<section class="stats">
+  <div class="wrap">
+    <div class="grid">
+{{statsCards}}
+    </div>
+    <div class="updated">Figures from our TikTok Shop affiliate dashboard &middot; last updated {{site.statsUpdated}}</div>
+  </div>
+</section>
+
+<section id="accounts">
+  <div class="wrap">
+    <h2 class="section-title">Our creator network</h2>
+    <p class="section-sub">Review-focused TikTok accounts purpose-built for TikTok Shop conversion.</p>
+    <div class="cards">
+{{accountCards}}
+    </div>
+  </div>
+</section>
+
+{{caseStudiesSection}}
+
+<section id="services" style="background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+  <div class="wrap">
+    <h2 class="section-title">{{services.heading}}</h2>
+    <div class="steps">
+{{serviceSteps}}
+    </div>
+    <div class="note">{{services.note}}</div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <h2 class="section-title">{{contact.heading}}</h2>
+    <p class="section-sub">{{contact.subheading}}</p>
+{{contactBlock}}
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    &copy; {{year}} Hammad Media LLC &middot; <a href="mailto:{{contact.email}}" style="color: var(--muted);">{{contact.email}}</a>
+  </div>
+</footer>
+
+</body>
+</html>
