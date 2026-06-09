@@ -86,10 +86,11 @@
   }
   .hero h1 {
     font-family: "Fraunces", serif; font-weight: 600;
-    font-size: clamp(44px, 7.2vw, 88px); line-height: 1.02; letter-spacing: -0.015em;
-    max-width: 15ch; color: var(--paper);
+    font-size: clamp(42px, 5.6vw, 72px); line-height: 1.04; letter-spacing: -0.015em;
+    max-width: 16ch; color: var(--paper);
     animation: rise .7s .08s ease both;
   }
+  @media (max-width: 1100px) { .hero h1 { font-size: clamp(42px, 7vw, 84px); } }
   .hero h1 em { font-style: italic; color: var(--green); }
   .hero p.sub {
     margin-top: 28px; font-size: clamp(16px, 2vw, 20px);
@@ -152,20 +153,26 @@
   p.section-sub { max-width: 58ch; margin-bottom: 52px; font-size: 17px; }
   .light p.section-sub { color: var(--ink-soft); }
 
-  /* hero product collage */
+  /* hero layout: text column + product collage column (no overlap possible) */
+  .hero-inner {
+    display: grid; grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 64px; align-items: center;
+  }
   .hero-collage {
-    position: absolute; right: 0; top: 90px; width: 420px; pointer-events: none;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; z-index: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; pointer-events: none;
   }
   .hero-collage img {
-    width: 100%; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    width: 100%; height: auto; border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.45);
     border: 1px solid rgba(61,220,132,.18);
   }
-  .hero-collage img:nth-child(1) { transform: rotate(-4deg) translateY(18px); animation: rise .9s .3s ease both; }
-  .hero-collage img:nth-child(2) { transform: rotate(3deg); animation: rise .9s .42s ease both; }
-  .hero-collage img:nth-child(3) { transform: rotate(2deg) translateX(46px) translateY(-6px); animation: rise .9s .54s ease both; }
-  header.hero > *:not(.hero-collage) { position: relative; z-index: 1; }
-  @media (max-width: 1100px) { .hero-collage { display: none; } }
+  .hero-collage img:nth-child(1) { transform: rotate(-3deg); animation: rise .9s .3s ease both; }
+  .hero-collage img:nth-child(2) { transform: rotate(2.5deg) translateY(16px); animation: rise .9s .42s ease both; }
+  .hero-collage img:nth-child(3) { grid-column: 1 / -1; width: 72%; margin: 2px auto 0; transform: rotate(-1.5deg); animation: rise .9s .54s ease both; }
+  @media (max-width: 1100px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-collage { display: none; }
+  }
 
   /* account avatars + product shots */
   .account-card img.avatar {
@@ -272,17 +279,21 @@
   </nav>
 
   <header class="hero" id="top">
-    <div class="hero-collage" aria-hidden="true">
-      <img src="assets/products/astaxanthin.jpg" alt="" width="800" height="800">
-      <img src="assets/products/nmn.jpg" alt="" width="800" height="800">
-      <img src="assets/products/collagen.jpg" alt="" width="800" height="800">
-    </div>
-    <span class="kicker">TikTok Shop Affiliate Team — Supplements &amp; Wellness</span>
-    <h1>We turn supplements into <em>bestsellers</em>.</h1>
-    <p class="sub">{{hero.subheadline}}</p>
-    <div class="actions">
-      <a class="primary" href="#contact">Work With Us &rarr;</a>
-      <a class="ghost" href="#results">See the receipts</a>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="kicker">TikTok Shop Affiliate Team — Supplements &amp; Wellness</span>
+        <h1>We turn supplements into <em>bestsellers</em>.</h1>
+        <p class="sub">{{hero.subheadline}}</p>
+        <div class="actions">
+          <a class="primary" href="#contact">Work With Us &rarr;</a>
+          <a class="ghost" href="#results">See the receipts</a>
+        </div>
+      </div>
+      <div class="hero-collage" aria-hidden="true">
+        <img src="assets/products/astaxanthin.jpg" alt="" width="800" height="800">
+        <img src="assets/products/nmn.jpg" alt="" width="800" height="800">
+        <img src="assets/products/collagen.jpg" alt="" width="800" height="800">
+      </div>
     </div>
   </header>
 </div>
