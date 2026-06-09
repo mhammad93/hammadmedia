@@ -79,7 +79,28 @@
         "text": "Content goes live across our network, and every attributed sale is verified in your own TikTok Shop Seller Center — not our slides. Full transparency."
       }
     ],
-    "note": "We work on commission. No retainers, no upfront fees — we only win when your product sells. We onboard a limited number of products each month, so category fit matters."
+    "note": "Every engagement is performance-aligned — we earn the most when your product sells. We onboard a limited number of products each month, so category fit matters."
+  },
+  "partnership": {
+    "heading": "Ways to partner",
+    "sub": "Three engagement models. Every one of them keeps us invested in your sales — pick the level of priority your launch deserves.",
+    "tiers": [
+      {
+        "name": "Performance",
+        "tag": "Boosted commission",
+        "text": "Set an elevated, network-exclusive commission rate and your product enters our content rotation. You pay on attributed sales — the higher the rate, the higher your priority."
+      },
+      {
+        "name": "Retainer + Performance",
+        "tag": "Most popular",
+        "text": "A monthly retainer guarantees review videos and posting cadence across our accounts — plus commission on every sale. Predictable content output, fully aligned incentives."
+      },
+      {
+        "name": "Exclusive",
+        "tag": "Category exclusivity",
+        "text": "One brand per category. We never promote your competitors — your products own the niche across our entire network. Retainer + commission + performance bonuses."
+      }
+    ]
   },
   "contact": {
     "heading": "Work with us",

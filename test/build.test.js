@@ -86,6 +86,15 @@ test("recalled product (Rosabella Moringa) is not showcased", () => {
   assert.ok(!/moringa/i.test(html), "Moringa still on page — FDA-recalled product must not be showcased");
 });
 
+test("partnership tiers render; commission-only positioning is gone", () => {
+  for (const t of content.partnership.tiers) {
+    assert.ok(html.includes(t.name), `tier missing: ${t.name}`);
+  }
+  assert.ok(!/commission-only/i.test(html), "old commission-only copy still present");
+  assert.ok(!/no retainers/i.test(html), "old no-retainers copy still present");
+  assert.ok(/retainer/i.test(html), "retainer offering not mentioned");
+});
+
 test("internal anchors resolve to real element ids", () => {
   const anchors = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
   for (const a of anchors) {

@@ -64,6 +64,26 @@ const serviceSteps = content.services.steps
   )
   .join("\n");
 
+const partnershipSection = content.partnership
+  ? `<section id="partner" class="light" style="border-top: 1px solid var(--line-light);">
+  <div class="wrap">
+    <h2 class="section-title">${esc(content.partnership.heading)}</h2>
+    <p class="section-sub">${esc(content.partnership.sub)}</p>
+    <div class="cards tiers">
+${content.partnership.tiers
+  .map(
+    (t) => `      <div class="card tier">
+        <div class="meta">${esc(t.tag)}</div>
+        <h3>${esc(t.name)}</h3>
+        <p>${esc(t.text)}</p>
+      </div>`,
+  )
+  .join("\n")}
+    </div>
+  </div>
+</section>`
+  : "";
+
 const contactBlock = content.contact.formspreeId
   ? `    <form action="https://formspree.io/f/${esc(content.contact.formspreeId)}" method="POST">
       <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required></div>
@@ -94,6 +114,7 @@ const tokens = {
   accountCards,
   caseStudiesSection,
   serviceSteps,
+  partnershipSection,
   contactBlock,
 };
 

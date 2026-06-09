@@ -158,20 +158,50 @@
     display: grid; grid-template-columns: minmax(0, 1fr) 350px;
     gap: 64px; align-items: center;
   }
-  .hero-collage {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; pointer-events: none;
+  .hero-viz { pointer-events: none; animation: rise .9s .3s ease both; }
+  .viz-card {
+    background: linear-gradient(160deg, rgba(16,27,20,.92), rgba(11,19,14,.96));
+    border: 1px solid rgba(61,220,132,.22); border-radius: 20px;
+    padding: 24px 22px 20px; box-shadow: 0 30px 70px rgba(0,0,0,.5);
+    backdrop-filter: blur(4px);
   }
-  .hero-collage img {
-    width: 100%; height: auto; border-radius: 16px;
-    box-shadow: 0 24px 60px rgba(0,0,0,.45);
-    border: 1px solid rgba(61,220,132,.18);
+  .viz-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; }
+  .viz-head .viz-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--cream-dim);
   }
-  .hero-collage img:nth-child(1) { transform: rotate(-3deg); animation: rise .9s .3s ease both; }
-  .hero-collage img:nth-child(2) { transform: rotate(2.5deg) translateY(16px); animation: rise .9s .42s ease both; }
-  .hero-collage img:nth-child(3) { grid-column: 1 / -1; width: 72%; margin: 2px auto 0; transform: rotate(-1.5deg); animation: rise .9s .54s ease both; }
+  .viz-badge {
+    background: var(--green); color: var(--bg-dark); font-size: 11px; font-weight: 800;
+    letter-spacing: .06em; padding: 6px 12px; border-radius: 100px; white-space: nowrap;
+    animation: rise .6s 1.9s ease both;
+  }
+  .viz-card svg { width: 100%; height: auto; display: block; }
+  .viz-line {
+    fill: none; stroke: var(--green); stroke-width: 3.5; stroke-linecap: round;
+    stroke-dasharray: 520; stroke-dashoffset: 520;
+    animation: draw 1.6s .6s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .viz-dot { fill: var(--green); animation: rise .4s 2s ease both; }
+  .viz-dot-pulse { fill: none; stroke: var(--green); stroke-width: 2; opacity: 0; animation: pulse 2.4s 2.2s ease-out infinite; transform-origin: 332px 26px; }
+  @keyframes pulse { 0% { opacity: .7; transform: scale(.4); } 70% { opacity: 0; transform: scale(2.2); } 100% { opacity: 0; } }
+  .viz-grid-line { stroke: rgba(236,233,224,.07); stroke-width: 1; }
+  .viz-area { fill: url(#vizgrad); opacity: 0; animation: fadein 1s 1.6s ease forwards; }
+  @keyframes fadein { to { opacity: 1; } }
+  .viz-axis { font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; fill: var(--cream-dim); }
+  .viz-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .viz-chips span {
+    background: rgba(61,220,132,.1); border: 1px solid rgba(61,220,132,.28);
+    color: var(--cream); font-size: 12.5px; font-weight: 700;
+    padding: 7px 13px; border-radius: 100px; white-space: nowrap;
+  }
+  .viz-chips span b { color: var(--green); }
+  .viz-chips span:nth-child(1) { animation: rise .5s 2.1s ease both; }
+  .viz-chips span:nth-child(2) { animation: rise .5s 2.25s ease both; }
+  .viz-chips span:nth-child(3) { animation: rise .5s 2.4s ease both; }
   @media (max-width: 1100px) {
     .hero-inner { grid-template-columns: 1fr; }
-    .hero-collage { display: none; }
+    .hero-viz { display: none; }
   }
 
   /* account avatars + product shots */
@@ -220,6 +250,12 @@
   }
 
   .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+  .tiers .tier:nth-child(2) {
+    border: 2px solid var(--green-deep);
+    box-shadow: 0 14px 40px rgba(14,122,74,.14);
+    transform: translateY(-6px);
+  }
+  .tiers .tier:nth-child(2):hover { transform: translateY(-10px); }
   .note {
     margin-top: 40px; padding: 26px 30px; border-radius: 14px;
     background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(20,148,91,.07));
@@ -289,10 +325,37 @@
           <a class="ghost" href="#results">See the receipts</a>
         </div>
       </div>
-      <div class="hero-collage" aria-hidden="true">
-        <img src="assets/products/astaxanthin.jpg" alt="" width="800" height="800">
-        <img src="assets/products/nmn.jpg" alt="" width="800" height="800">
-        <img src="assets/products/collagen.jpg" alt="" width="800" height="800">
+      <div class="hero-viz" aria-hidden="true">
+        <div class="viz-card">
+          <div class="viz-head">
+            <span class="viz-label">One product &middot; one month</span>
+            <span class="viz-badge">#1 Bestseller</span>
+          </div>
+          <svg viewBox="0 0 360 200" role="presentation">
+            <defs>
+              <linearGradient id="vizgrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3ddc84" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#3ddc84" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <line class="viz-grid-line" x1="10" y1="50" x2="350" y2="50"/>
+            <line class="viz-grid-line" x1="10" y1="95" x2="350" y2="95"/>
+            <line class="viz-grid-line" x1="10" y1="140" x2="350" y2="140"/>
+            <line class="viz-grid-line" x1="10" y1="185" x2="350" y2="185"/>
+            <path class="viz-area" d="M14,182 C80,178 130,168 180,140 C230,112 280,70 332,26 L332,185 L14,185 Z"/>
+            <path class="viz-line" d="M14,182 C80,178 130,168 180,140 C230,112 280,70 332,26"/>
+            <circle class="viz-dot" cx="332" cy="26" r="6"/>
+            <circle class="viz-dot-pulse" cx="332" cy="26" r="6"/>
+            <text class="viz-axis" x="14" y="198">DAY 1</text>
+            <text class="viz-axis" x="296" y="198">DAY 30</text>
+            <text class="viz-axis" x="14" y="42">$82,606 GMV</text>
+          </svg>
+          <div class="viz-chips">
+            <span><b>2,659</b> units sold</span>
+            <span><b>68.5M</b> views</span>
+            <span><b>$0</b> ad spend</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -300,8 +363,8 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Commission-only &middot; zero retainers</span>
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Commission-only &middot; zero retainers</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
   </div>
 </div>
 
@@ -335,6 +398,8 @@
     <div class="note">{{services.note}}</div>
   </div>
 </section>
+
+{{partnershipSection}}
 
 <section class="contact" id="contact">
   <div class="wrap">
