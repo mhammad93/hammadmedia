@@ -45,14 +45,17 @@ test("case studies render when present", () => {
   }
 });
 
-test("contact: form when formspreeId set, mailto fallback otherwise", () => {
-  if (content.contact.formspreeId) {
-    assert.ok(html.includes(`https://formspree.io/f/${content.contact.formspreeId}`));
-    assert.ok(html.includes('name="brand"'));
-    assert.ok(html.includes('name="message"'));
-  } else {
-    assert.ok(html.includes(`mailto:${content.contact.email}`));
+test("contact: FormSubmit form with qualification fields, honeypot, and secondary email", () => {
+  assert.ok(
+    html.includes(`action="https://formsubmit.co/${content.contact.formSubmitEmail}"`),
+    "FormSubmit action missing",
+  );
+  for (const field of ['name="brand"', 'name="email"', 'name="category"', 'name="engagement"', 'name="message"']) {
+    assert.ok(html.includes(field), `form field missing: ${field}`);
   }
+  assert.ok(html.includes('name="_honey"'), "honeypot missing");
+  assert.ok(html.includes('name="_subject"'), "_subject missing");
+  assert.ok(html.includes(`mailto:${content.contact.email}`), "secondary email option missing");
 });
 
 test("stacked brand wordmark present in nav and footer with accessible labels", () => {

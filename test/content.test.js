@@ -51,7 +51,7 @@ test("services has 3 steps with title and text", () => {
   }
 });
 
-test("contact has valid email; formspreeId is a string", () => {
+test("contact has valid primary email and FormSubmit destination", () => {
   assert.ok(content.contact.email.includes("@"));
-  assert.ok(typeof content.contact.formspreeId === "string");
+  assert.ok(content.contact.formSubmitEmail.includes("@"));
 });

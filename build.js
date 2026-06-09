@@ -34,7 +34,7 @@ const accountCards = content.accounts
   .join("\n");
 
 const caseStudiesSection = content.caseStudies.length
-  ? `<section id="results" class="light" style="border-top: 1px solid var(--line-light);">
+  ? `<section id="results" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">The receipts</h2>
     <p class="section-sub">Real products, real single-month results — straight from my TikTok Shop dashboards.</p>
@@ -65,7 +65,7 @@ const serviceSteps = content.services.steps
   .join("\n");
 
 const partnershipSection = content.partnership
-  ? `<section id="partner" class="light" style="border-top: 1px solid var(--line-light);">
+  ? `<section id="partner" class="light">
   <div class="wrap">
     <h2 class="section-title">${esc(content.partnership.heading)}</h2>
     <p class="section-sub">${esc(content.partnership.sub)}</p>
@@ -80,20 +80,47 @@ ${content.partnership.tiers
   )
   .join("\n")}
     </div>
+    <div class="note">${esc(content.partnership.note)}</div>
   </div>
 </section>`
   : "";
 
-const contactBlock = content.contact.formspreeId
-  ? `    <form action="https://formspree.io/f/${esc(content.contact.formspreeId)}" method="POST">
-      <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required></div>
-      <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required></div>
-      <div><label for="f-category">Product category</label><input id="f-category" name="category" required></div>
-      <div><label for="f-shop">TikTok Shop link (optional)</label><input id="f-shop" name="shop_link"></div>
-      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required></textarea></div>
-      <button type="submit">Send &rarr;</button>
-    </form>`
-  : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email us: ${esc(content.contact.email)}</a>`;
+const contactBlock = content.contact.formSubmitEmail
+  ? `    <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
+      <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="form-row">
+        <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required placeholder="Acme Wellness Co."></div>
+        <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required placeholder="you@brand.com"></div>
+      </div>
+      <div class="form-row">
+        <div><label for="f-category">Product category</label>
+          <select id="f-category" name="category" required>
+            <option value="" disabled selected>Choose one&hellip;</option>
+            <option>Supplements</option>
+            <option>Wellness</option>
+            <option>Beauty &amp; personal care</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div><label for="f-tier">Engagement interest</label>
+          <select id="f-tier" name="engagement" required>
+            <option value="" disabled selected>Choose one&hellip;</option>
+            <option>Performance (boosted commission)</option>
+            <option>Retainer + Performance</option>
+            <option>Exclusive (category exclusivity)</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+      </div>
+      <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" placeholder="https://shop.tiktok.com/&hellip;"></div>
+      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What is it, what makes it sell, and what does success look like for you?"></textarea></div>
+      <button type="submit">Send inquiry &rarr;</button>
+    </form>
+    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a></p>`
+  : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
 // ── Token replacement ────────────────────────────────────────
 

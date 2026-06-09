@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" href="assets/logo-web.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-dark: #0b130e;
@@ -82,7 +82,7 @@
   .hero .kicker {
     display: inline-block; border: 1px solid var(--line-dark); border-radius: 100px;
     padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
-    text-transform: uppercase; color: var(--green); margin-bottom: 34px;
+    text-transform: uppercase; color: var(--green); margin-bottom: 32px;
     animation: rise .7s ease both;
   }
   .hero h1 {
@@ -94,7 +94,7 @@
   .hero h1 em { font-style: italic; color: var(--green); }
   .hero p.sub {
     margin-top: 28px; font-size: clamp(16px, 2vw, 20px);
-    color: var(--cream-dim); max-width: 54ch; animation: rise .7s .16s ease both;
+    color: var(--cream-dim); max-width: 50ch; animation: rise .7s .16s ease both;
   }
   .hero .actions { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; animation: rise .7s .24s ease both; }
   .hero .actions a.primary {
@@ -116,10 +116,11 @@
     overflow: hidden; padding: 18px 0; background: var(--bg-dark-2); position: relative; z-index: 1;
   }
   .marquee .track {
-    display: flex; gap: 56px; width: max-content; animation: marquee 36s linear infinite;
+    display: flex; width: max-content; animation: marquee 36s linear infinite;
     font-family: "Fraunces", serif; font-style: italic; font-size: 17px; color: var(--cream-dim);
     white-space: nowrap;
   }
+  .marquee .track span { margin-right: 56px; }
   .marquee .track span b { color: var(--green); font-style: normal; font-family: "Manrope", sans-serif; font-weight: 800; }
 
   /* ── Stats ── */
@@ -150,7 +151,7 @@
     margin-bottom: 16px;
   }
   .light h2.section-title { color: var(--ink); }
-  p.section-sub { max-width: 58ch; margin-bottom: 52px; font-size: 17px; }
+  p.section-sub { max-width: 58ch; margin-bottom: 52px; font-size: 18px; }
   .light p.section-sub { color: var(--ink-soft); }
 
   /* hero: centered text-led composition */
@@ -176,14 +177,16 @@
   }
 
   /* account + result + service cards (markup from build.js) */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; counter-reset: resultnum; }
+  .light.light-alt, #services.light { background: var(--cream); }
+  .light + .light { border-top: 1px solid var(--line-light); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 22px; counter-reset: resultnum; }
   .light .card {
     background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
     padding: 34px 30px; position: relative; overflow: hidden;
     transition: transform .2s ease, box-shadow .2s ease;
   }
   .light .card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
-  .light .card::before {
+  #accounts .card::before, #results .card::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
     background: linear-gradient(var(--green), var(--green-deep));
   }
@@ -191,8 +194,8 @@
     font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
     font-weight: 800; color: var(--green-deep); margin-bottom: 14px;
   }
-  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 23px; margin-bottom: 10px; letter-spacing: -0.01em; }
-  .light .card p { font-size: 15.5px; color: var(--ink-soft); }
+  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 23px; margin-bottom: 10px; letter-spacing: -0.01em; line-height: 1.25; }
+  .light .card p { font-size: 16px; color: var(--ink-soft); }
   .card a.handle { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--green); }
   .card a.handle:hover { color: var(--green-deep); }
 
@@ -204,13 +207,26 @@
     color: var(--green-deep); opacity: .35;
   }
 
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 22px; counter-reset: stepnum; }
+  .steps .card { counter-increment: stepnum; }
+  .steps .card::after {
+    content: "0" counter(stepnum); position: absolute; top: 18px; right: 22px;
+    font-family: "Fraunces", serif; font-style: italic; font-size: 30px;
+    color: var(--green-deep); opacity: .3;
+  }
   .tiers .tier:nth-child(2) {
     border: 2px solid var(--green-deep);
     box-shadow: 0 14px 40px rgba(14,122,74,.14);
     transform: translateY(-6px);
   }
   .tiers .tier:nth-child(2):hover { transform: translateY(-10px); }
+  .tiers .tier:nth-child(2) .meta {
+    display: inline-block; background: var(--green-deep); color: #fffdf8;
+    padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em;
+  }
+  @supports (animation-timeline: view()) {
+    .light .card, .stat { animation: rise both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+  }
   .note {
     margin-top: 40px; padding: 26px 30px; border-radius: 14px;
     background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(20,148,91,.07));
@@ -226,13 +242,24 @@
   }
   .contact h2.section-title { color: var(--paper); }
   .contact p.section-sub { color: var(--cream-dim); }
-  form { max-width: 580px; display: grid; gap: 16px; position: relative; z-index: 1; }
-  label { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; }
+  form { max-width: 640px; display: grid; gap: 18px; position: relative; z-index: 1; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+  label { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; display: block; margin-bottom: 8px; }
+  label .optional { color: var(--cream-dim); font-weight: 600; }
   input, select, textarea {
     width: 100%; padding: 14px 16px; border-radius: 12px;
     border: 1px solid rgba(236,233,224,.18); background: var(--bg-dark-2);
     color: var(--cream); font-size: 15px; font-family: inherit;
+    transition: border-color .15s ease;
   }
+  input:hover, select:hover, textarea:hover { border-color: rgba(61,220,132,.4); }
+  ::placeholder { color: rgba(168,176,166,.55); }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233ddc84' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
+  select:invalid { color: rgba(168,176,166,.55); }
+  .alt-contact { margin-top: 22px; font-size: 14.5px; color: var(--cream-dim); position: relative; z-index: 1; }
+  .alt-contact a { color: var(--green); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(61,220,132,.4); }
+  .alt-contact a:hover { border-bottom-color: var(--green); }
   input:focus, textarea:focus { outline: 2px solid var(--green); outline-offset: 1px; }
   textarea { min-height: 130px; resize: vertical; }
   button[type=submit], .mail-cta {
@@ -256,6 +283,8 @@
     .brand .brand-top { font-size: 21px; }
     .brand .brand-sub { font-size: 10.5px; }
     .stats .grid { gap: 36px 40px; }
+    .hero { padding: 48px 0 72px; }
+    .tiers .tier:nth-child(2) { transform: none; }
     .hero { padding-top: 48px; }
     section { padding: 72px 0; }
   }
@@ -266,7 +295,7 @@
 <div class="wrap">
   <nav>
     <a class="brand" href="#top" aria-label="Hammad Media — home"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
-    <a class="cta" href="#contact">Work With Us</a>
+    <a class="cta" href="#contact">Work With Me</a>
   </nav>
 
   <header class="hero" id="top">
@@ -275,7 +304,7 @@
       <h1>I turn supplements into <em>bestsellers</em>.</h1>
       <p class="sub">{{hero.subheadline}}</p>
       <div class="actions">
-        <a class="primary" href="#contact">Work With Us &rarr;</a>
+        <a class="primary" href="#contact">Work With Me &rarr;</a>
         <a class="ghost" href="#results">See the receipts</a>
       </div>
     </div>
@@ -310,13 +339,13 @@
 
 {{caseStudiesSection}}
 
-<section id="services" class="light" style="border-top: 1px solid var(--line-light);">
+<section id="services" class="light">
   <div class="wrap">
     <h2 class="section-title">{{services.heading}}</h2>
+    <p class="section-sub">Three steps from sample to Seller-Center-verified sales.</p>
     <div class="steps">
 {{serviceSteps}}
     </div>
-    <div class="note">{{services.note}}</div>
   </div>
 </section>
 
@@ -333,7 +362,7 @@
 <footer>
   <div class="wrap frow">
     <a class="brand" href="#top" aria-label="Hammad Media — back to top"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
-    <div>&copy; {{year}} Hammad Media LLC &middot; <a href="mailto:{{contact.email}}">{{contact.email}}</a></div>
+    <div>&copy; {{year}} Hammad Media LLC &middot; TikTok Shop affiliate for supplement &amp; wellness brands &middot; <a href="#contact">Work with me</a></div>
   </div>
 </footer>
 
