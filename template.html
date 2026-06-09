@@ -152,14 +152,19 @@
   .stats .updated { margin-top: 44px; font-size: 13px; color: var(--cream-dim); opacity: .8; }
   .brandwall {
     margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line-dark);
-    display: flex; flex-wrap: wrap; gap: 18px 44px; align-items: center;
+    display: flex; flex-wrap: nowrap; justify-content: space-between;
+    gap: 0 28px; align-items: center;
   }
   .brandwall img {
-    height: 34px; width: auto; display: block; opacity: .65;
+    height: 28px; width: auto; display: block; opacity: .65; flex-shrink: 0;
     transition: opacity .2s ease;
   }
   .brandwall img:hover { opacity: 1; }
-  @media (max-width: 640px) { .brandwall img { height: 26px; } .brandwall { gap: 16px 28px; } }
+  @media (max-width: 860px) {
+    .brandwall { overflow-x: auto; justify-content: flex-start; gap: 0 36px; padding-bottom: 10px; scrollbar-width: none; }
+    .brandwall::-webkit-scrollbar { display: none; }
+    .brandwall img { height: 24px; }
+  }
   .faq-list { max-width: 760px; }
   .faq-list details {
     border-bottom: 1px solid var(--line-light); padding: 4px 0;
