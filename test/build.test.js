@@ -55,11 +55,12 @@ test("contact: form when formspreeId set, mailto fallback otherwise", () => {
   }
 });
 
-test("logo image present with meaningful alt text and asset file exists in dist", () => {
-  assert.ok(html.includes('src="assets/logo-web.png"'), "logo img missing");
-  const altMatch = html.match(/<img[^>]*logo-web\.png[^>]*alt="([^"]+)"/);
-  assert.ok(altMatch && altMatch[1].length > 3, "logo alt text missing or trivial");
-  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-web.png")), "logo asset not copied to dist");
+test("stacked brand wordmark present in nav and footer with accessible labels", () => {
+  const brandLinks = html.match(/class="brand"[^>]*aria-label="[^"]{5,}"/g) || [];
+  assert.ok(brandLinks.length >= 2, "expected brand wordmark links in nav and footer");
+  assert.ok(html.includes('class="brand-top">HAMMAD<'), "HAMMAD top line missing");
+  assert.ok(html.includes('class="brand-sub">MEDIA<'), "MEDIA sub line missing");
+  assert.ok(!html.includes("logo-web.png\" alt"), "old image logo still in page");
 });
 
 test("internal anchors resolve to real element ids", () => {

@@ -53,11 +53,17 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 26px 0; position: relative; z-index: 3;
   }
-  .brand { display: flex; align-items: center; text-decoration: none; }
-  .brand img.logo {
-    height: 58px; width: auto; display: block;
-    filter: invert(1) hue-rotate(180deg) brightness(1.6);
+  .brand { display: flex; flex-direction: column; text-decoration: none; line-height: 1; }
+  .brand .brand-top {
+    font-family: "Manrope", sans-serif; font-weight: 800; font-size: 26px;
+    letter-spacing: 0.18em; color: var(--paper);
   }
+  .brand .brand-sub {
+    font-family: "Manrope", sans-serif; font-weight: 700; font-size: 12px;
+    letter-spacing: 0.74em; color: var(--green); margin-top: 7px;
+    text-indent: 0.06em; /* optically balances the trailing tracking space */
+  }
+  .brand:hover .brand-sub { color: var(--paper); transition: color .2s ease; }
   nav a.cta {
     background: var(--green); color: var(--bg-dark); text-decoration: none;
     padding: 12px 26px; border-radius: 100px; font-size: 14px; font-weight: 800;
@@ -212,10 +218,12 @@
   }
   footer a { color: var(--cream-dim); }
   footer .frow { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  footer img.logo { height: 46px; width: auto; filter: invert(1) hue-rotate(180deg) brightness(1.6); opacity: .85; }
+  footer .brand .brand-top { font-size: 19px; }
+  footer .brand .brand-sub { font-size: 10px; margin-top: 5px; }
 
   @media (max-width: 640px) {
-    .brand img.logo { height: 44px; }
+    .brand .brand-top { font-size: 21px; }
+    .brand .brand-sub { font-size: 10.5px; }
     .stats .grid { gap: 36px 40px; }
     .hero { padding-top: 48px; }
     section { padding: 72px 0; }
@@ -226,7 +234,7 @@
 
 <div class="wrap">
   <nav>
-    <a class="brand" href="#top"><img class="logo" src="assets/logo-web.png" alt="Hammad Media — home"></a>
+    <a class="brand" href="#top" aria-label="Hammad Media — home"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
     <a class="cta" href="#contact">Work With Us</a>
   </nav>
 
@@ -289,7 +297,7 @@
 
 <footer>
   <div class="wrap frow">
-    <img class="logo" src="assets/logo-web.png" alt="Hammad Media logo">
+    <a class="brand" href="#top" aria-label="Hammad Media — back to top"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
     <div>&copy; {{year}} Hammad Media LLC &middot; <a href="mailto:{{contact.email}}">{{contact.email}}</a></div>
   </div>
 </footer>
