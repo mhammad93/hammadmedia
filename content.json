@@ -1,58 +1,58 @@
 {
   "site": {
     "title": "Hammad Media — TikTok Shop Affiliate Marketing for Supplement Brands",
-    "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $315K+ revenue across our top 10 products. Send us your product — we turn it into sales.",
+    "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $2.79M+ GMV and 105M+ product views in 2026 YTD. Send us your product — we turn it into sales.",
     "brandName": "HAMMAD MEDIA",
-    "statsUpdated": "June 9, 2026"
+    "statsUpdated": "June 8, 2026 (YTD: Jan 1 – Jun 8, 2026, both accounts combined)"
   },
   "hero": {
     "headline": "We turn supplements into TikTok Shop bestsellers.",
-    "subheadline": "Hammad Media is a TikTok Shop affiliate network specialized in supplements & wellness. We put your products in front of six figures of shoppers every day — and turn views into checkout."
+    "subheadline": "Hammad Media is a TikTok Shop affiliate network specialized in supplements & wellness — $2.79M+ in attributed GMV and 105 million product views in 2026 alone. Your product, in front of shoppers who buy."
   },
   "stats": [
-    { "value": "$315K+", "label": "REVENUE — TOP 10 PRODUCTS" },
-    { "value": "12,650+", "label": "UNITS — TOP 10 PRODUCTS" },
-    { "value": "152K+", "label": "DAILY PRODUCT VIEWS" },
-    { "value": "$4.2K+", "label": "DAILY GMV" }
+    { "value": "$2.79M+", "label": "GMV — 2026 YTD" },
+    { "value": "113K+", "label": "UNITS SOLD — 2026 YTD" },
+    { "value": "105M+", "label": "PRODUCT VIEWS — 2026 YTD" },
+    { "value": "2.8M+", "label": "PRODUCT CLICKS — 2026 YTD" }
   ],
   "accounts": [
     {
-      "handle": "andi_review0",
-      "url": "https://www.tiktok.com/@andi_review0",
+      "handle": "Drew.Review1",
+      "url": "https://www.tiktok.com/@drew.review1",
       "niche": "Supplement reviews",
-      "blurb": "High-volume review content engineered for TikTok Shop conversion."
+      "blurb": "$1.89M GMV · 75,860 units · 68.5M product views in 2026 YTD. High-volume review content engineered for TikTok Shop conversion."
     },
     {
-      "handle": "drew_review",
-      "url": "https://www.tiktok.com/@drew_review",
+      "handle": "Drew.Review",
+      "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
-      "blurb": "Authentic review formats that consistently move units."
+      "blurb": "$901K GMV · 37,198 units · 37.3M product views in 2026 YTD. Authentic review formats that consistently move units."
     }
   ],
   "caseStudies": [
     {
       "title": "Astaxanthin 12mg — Micro Ingredients",
-      "result": "$82,606 gross revenue · 2,659 units sold"
+      "result": "$82,606 gross revenue · 2,659 units — in a single month"
     },
     {
       "title": "Collagen Peptides Powder 20oz — NeoCell",
-      "result": "$73,334 gross revenue · 2,891 units sold"
+      "result": "$73,334 gross revenue · 2,891 units — in a single month"
     },
     {
       "title": "NMN Complex 1,000mg — Micro Ingredients",
-      "result": "$46,950 gross revenue · 1,434 units sold"
+      "result": "$64,975 gross revenue · 2,010 units in one month — plus $46,950 more the prior month on our second account"
     },
     {
       "title": "Moringa Capsules 3-Pack — Rosabella",
-      "result": "$19,855 gross revenue · 728 units sold"
-    },
-    {
-      "title": "NAC Supplement Capsules — Nutricost",
-      "result": "$13,737 gross revenue · 1,195 units sold"
+      "result": "$19,855 gross revenue · 728 units — in a single month"
     },
     {
       "title": "Magnesium Complex 8-in-1 — Toplux",
-      "result": "$13,310 gross revenue · 1,071 units sold"
+      "result": "$17,104 gross revenue · 1,300 units — in a single month"
+    },
+    {
+      "title": "Gut Health Bundle — Snap Supplements",
+      "result": "$10,130 gross revenue · 308 units — in a single month"
     }
   ],
   "services": {

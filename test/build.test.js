@@ -65,6 +65,8 @@ test("internal anchors resolve to real element ids", () => {
 test("commission figures are never published", () => {
   // Spec: Est. commission stays private. Guard against accidental inclusion.
   assert.ok(!/commission base/i.test(html));
-  assert.ok(!html.includes("$898"));
-  assert.ok(!html.includes("$13,888"));
+  assert.ok(!/est\.? commission/i.test(html));
+  for (const figure of ["$898", "$13,888", "$357,262", "$147,412", "$19,622", "$716.55"]) {
+    assert.ok(!html.includes(figure), `private commission figure ${figure} leaked`);
+  }
 });
