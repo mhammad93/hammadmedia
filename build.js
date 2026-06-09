@@ -37,7 +37,7 @@ const caseStudiesSection = content.caseStudies.length
   ? `<section id="results" class="light" style="border-top: 1px solid var(--line-light);">
   <div class="wrap">
     <h2 class="section-title">The receipts</h2>
-    <p class="section-sub">Real products, real single-month results — straight from our TikTok Shop dashboards.</p>
+    <p class="section-sub">Real products, real single-month results — straight from my TikTok Shop dashboards.</p>
     <div class="cards">
 ${content.caseStudies
   .map((c) => {
@@ -90,7 +90,7 @@ const contactBlock = content.contact.formspreeId
       <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required></div>
       <div><label for="f-category">Product category</label><input id="f-category" name="category" required></div>
       <div><label for="f-shop">TikTok Shop link (optional)</label><input id="f-shop" name="shop_link"></div>
-      <div><label for="f-msg">Tell us about your product</label><textarea id="f-msg" name="message" required></textarea></div>
+      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required></textarea></div>
       <button type="submit">Send &rarr;</button>
     </form>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email us: ${esc(content.contact.email)}</a>`;

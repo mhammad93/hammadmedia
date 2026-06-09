@@ -72,10 +72,11 @@
   nav a.cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(61,220,132,.35); }
 
   /* ── Hero ── */
-  header.hero { position: relative; padding: 84px 0 110px; overflow: hidden; }
+  header.hero { position: relative; padding: 96px 0 116px; overflow: hidden; }
   header.hero::after {
-    content: ""; position: absolute; right: -240px; top: -180px; width: 720px; height: 720px;
-    background: radial-gradient(circle, rgba(61,220,132,.16) 0%, transparent 62%);
+    content: ""; position: absolute; left: 50%; top: -320px; transform: translateX(-50%);
+    width: 900px; height: 760px;
+    background: radial-gradient(ellipse, rgba(61,220,132,.15) 0%, transparent 62%);
     pointer-events: none;
   }
   .hero .kicker {
@@ -86,11 +87,10 @@
   }
   .hero h1 {
     font-family: "Fraunces", serif; font-weight: 600;
-    font-size: clamp(42px, 5.6vw, 72px); line-height: 1.04; letter-spacing: -0.015em;
-    max-width: 16ch; color: var(--paper);
+    font-size: clamp(44px, 7.2vw, 92px); line-height: 1.04; letter-spacing: -0.015em;
+    max-width: 14ch; color: var(--paper);
     animation: rise .7s .08s ease both;
   }
-  @media (max-width: 1100px) { .hero h1 { font-size: clamp(42px, 7vw, 84px); } }
   .hero h1 em { font-style: italic; color: var(--green); }
   .hero p.sub {
     margin-top: 28px; font-size: clamp(16px, 2vw, 20px);
@@ -153,55 +153,10 @@
   p.section-sub { max-width: 58ch; margin-bottom: 52px; font-size: 17px; }
   .light p.section-sub { color: var(--ink-soft); }
 
-  /* hero layout: text column + product collage column (no overlap possible) */
-  .hero-inner {
-    display: grid; grid-template-columns: minmax(0, 1fr) 350px;
-    gap: 64px; align-items: center;
-  }
-  .hero-viz { pointer-events: none; animation: rise .9s .3s ease both; }
-  .viz-card {
-    background: linear-gradient(160deg, rgba(16,27,20,.92), rgba(11,19,14,.96));
-    border: 1px solid rgba(61,220,132,.22); border-radius: 20px;
-    padding: 24px 22px 20px; box-shadow: 0 30px 70px rgba(0,0,0,.5);
-    backdrop-filter: blur(4px);
-  }
-  .viz-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; }
-  .viz-head .viz-label {
-    font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
-    color: var(--cream-dim);
-  }
-  .viz-badge {
-    background: var(--green); color: var(--bg-dark); font-size: 11px; font-weight: 800;
-    letter-spacing: .06em; padding: 6px 12px; border-radius: 100px; white-space: nowrap;
-    animation: rise .6s 1.9s ease both;
-  }
-  .viz-card svg { width: 100%; height: auto; display: block; }
-  .viz-line {
-    fill: none; stroke: var(--green); stroke-width: 3.5; stroke-linecap: round;
-    stroke-dasharray: 520; stroke-dashoffset: 520;
-    animation: draw 1.6s .6s cubic-bezier(.4,0,.2,1) forwards;
-  }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-  .viz-dot { fill: var(--green); animation: rise .4s 2s ease both; }
-  .viz-dot-pulse { fill: none; stroke: var(--green); stroke-width: 2; opacity: 0; animation: pulse 2.4s 2.2s ease-out infinite; transform-origin: 332px 26px; }
-  @keyframes pulse { 0% { opacity: .7; transform: scale(.4); } 70% { opacity: 0; transform: scale(2.2); } 100% { opacity: 0; } }
-  .viz-grid-line { stroke: rgba(236,233,224,.07); stroke-width: 1; }
-  .viz-area { fill: url(#vizgrad); opacity: 0; animation: fadein 1s 1.6s ease forwards; }
-  @keyframes fadein { to { opacity: 1; } }
-  .viz-axis { font-family: "Manrope", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; fill: var(--cream-dim); }
-  .viz-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-  .viz-chips span {
-    background: rgba(61,220,132,.1); border: 1px solid rgba(61,220,132,.28);
-    color: var(--cream); font-size: 12.5px; font-weight: 700;
-    padding: 7px 13px; border-radius: 100px; white-space: nowrap;
-  }
-  .viz-chips span b { color: var(--green); }
-  .viz-chips span:nth-child(1) { animation: rise .5s 2.1s ease both; }
-  .viz-chips span:nth-child(2) { animation: rise .5s 2.25s ease both; }
-  .viz-chips span:nth-child(3) { animation: rise .5s 2.4s ease both; }
-  @media (max-width: 1100px) {
-    .hero-inner { grid-template-columns: 1fr; }
-    .hero-viz { display: none; }
+  /* hero: centered text-led composition */
+  .hero-text {
+    max-width: 880px; margin: 0 auto; text-align: center;
+    display: flex; flex-direction: column; align-items: center;
   }
 
   /* account avatars + product shots */
@@ -315,47 +270,13 @@
   </nav>
 
   <header class="hero" id="top">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <span class="kicker">TikTok Shop Affiliate Team — Supplements &amp; Wellness</span>
-        <h1>We turn supplements into <em>bestsellers</em>.</h1>
-        <p class="sub">{{hero.subheadline}}</p>
-        <div class="actions">
-          <a class="primary" href="#contact">Work With Us &rarr;</a>
-          <a class="ghost" href="#results">See the receipts</a>
-        </div>
-      </div>
-      <div class="hero-viz" aria-hidden="true">
-        <div class="viz-card">
-          <div class="viz-head">
-            <span class="viz-label">One product &middot; one month</span>
-            <span class="viz-badge">#1 Bestseller</span>
-          </div>
-          <svg viewBox="0 0 360 200" role="presentation">
-            <defs>
-              <linearGradient id="vizgrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#3ddc84" stop-opacity="0.28"/>
-                <stop offset="100%" stop-color="#3ddc84" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <line class="viz-grid-line" x1="10" y1="50" x2="350" y2="50"/>
-            <line class="viz-grid-line" x1="10" y1="95" x2="350" y2="95"/>
-            <line class="viz-grid-line" x1="10" y1="140" x2="350" y2="140"/>
-            <line class="viz-grid-line" x1="10" y1="185" x2="350" y2="185"/>
-            <path class="viz-area" d="M14,182 C80,178 130,168 180,140 C230,112 280,70 332,26 L332,185 L14,185 Z"/>
-            <path class="viz-line" d="M14,182 C80,178 130,168 180,140 C230,112 280,70 332,26"/>
-            <circle class="viz-dot" cx="332" cy="26" r="6"/>
-            <circle class="viz-dot-pulse" cx="332" cy="26" r="6"/>
-            <text class="viz-axis" x="14" y="198">DAY 1</text>
-            <text class="viz-axis" x="296" y="198">DAY 30</text>
-            <text class="viz-axis" x="14" y="42">$82,606 GMV</text>
-          </svg>
-          <div class="viz-chips">
-            <span><b>2,659</b> units sold</span>
-            <span><b>68.5M</b> views</span>
-            <span><b>$0</b> ad spend</span>
-          </div>
-        </div>
+    <div class="hero-text">
+      <span class="kicker">TikTok Shop Affiliate — Supplements &amp; Wellness</span>
+      <h1>I turn supplements into <em>bestsellers</em>.</h1>
+      <p class="sub">{{hero.subheadline}}</p>
+      <div class="actions">
+        <a class="primary" href="#contact">Work With Us &rarr;</a>
+        <a class="ghost" href="#results">See the receipts</a>
       </div>
     </div>
   </header>
@@ -363,8 +284,8 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> creator accounts</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> accounts &middot; <b>1</b> operator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Gut Health</span><span><b>2</b> accounts &middot; <b>1</b> operator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
   </div>
 </div>
 
@@ -373,14 +294,14 @@
     <div class="grid">
 {{statsCards}}
     </div>
-    <div class="updated">Figures from our TikTok Shop affiliate dashboards &middot; last updated {{site.statsUpdated}}</div>
+    <div class="updated">Figures from my TikTok Shop affiliate dashboards &middot; last updated {{site.statsUpdated}}</div>
   </div>
 </section>
 
 <section id="accounts" class="light">
   <div class="wrap">
-    <h2 class="section-title">Our creator network</h2>
-    <p class="section-sub">Review-focused TikTok accounts purpose-built for TikTok Shop conversion — every number verifiable on-platform.</p>
+    <h2 class="section-title">Two accounts. One operator.</h2>
+    <p class="section-sub">Both run end-to-end by me — concept, filming, editing, posting. No account managers, no telephone game. Every number verifiable on-platform.</p>
     <div class="cards">
 {{accountCards}}
     </div>
