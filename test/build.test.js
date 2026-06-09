@@ -99,7 +99,10 @@ test("partnership tiers render; commission-only positioning is gone", () => {
 });
 
 test("brand wall, FAQ, and legal lines render", () => {
-  for (const b of content.brands) assert.ok(html.includes(b), `brand missing: ${b}`);
+  for (const b of content.brands) {
+    assert.ok(html.includes(`alt="${b.name} logo"`), `brand logo missing: ${b.name}`);
+    assert.ok(fs.existsSync(path.join(ROOT, "dist", b.logo)), `dist missing ${b.logo}`);
+  }
   assert.strictEqual((html.match(/<details>/g) || []).length, content.faq.items.length, "FAQ count mismatch");
   for (const f of content.faq.items) assert.ok(html.includes(f.q), `FAQ missing: ${f.q}`);
   assert.ok(html.includes("do not imply sponsorship or endorsement"), "trademark disclaimer missing");

@@ -123,12 +123,30 @@
     "formSubmitEmail": "mohamed.hammad.reply@gmail.com"
   },
   "brands": [
-    "Micro Ingredients",
-    "NeoCell",
-    "Nutricost",
-    "Toplux",
-    "Snap Supplements",
-    "Nature's Sunshine"
+    {
+      "name": "Micro Ingredients",
+      "logo": "assets/brands/micro-ingredients.png"
+    },
+    {
+      "name": "NeoCell",
+      "logo": "assets/brands/neocell.png"
+    },
+    {
+      "name": "Nutricost",
+      "logo": "assets/brands/nutricost.png"
+    },
+    {
+      "name": "Toplux",
+      "logo": "assets/brands/toplux.png"
+    },
+    {
+      "name": "Snap Supplements",
+      "logo": "assets/brands/snap-supplements.png"
+    },
+    {
+      "name": "Nature's Sunshine",
+      "logo": "assets/brands/natures-sunshine.png"
+    }
   ],
   "faq": {
     "heading": "Questions brands ask",
@@ -143,7 +161,7 @@
       },
       {
         "q": "What commission range works?",
-        "a": "It depends on price point and margin. Most products I take on run 15\u201330% on TikTok Shop \u2014 and elevated, exclusive rates get priority in my content rotation."
+        "a": "It depends on price point and margin. Most products I take on run 20\u201335% on TikTok Shop \u2014 and elevated, exclusive rates get priority in my content rotation."
       },
       {
         "q": "Do you follow brand briefs?",

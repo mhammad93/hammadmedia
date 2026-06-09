@@ -86,8 +86,12 @@ ${content.partnership.tiers
   : "";
 
 const brandWall = (content.brands || []).length
-  ? `<div class="brandwall" aria-label="Brands whose products we have sold">
-${content.brands.map((b) => `      <span>${esc(b)}</span>`).join("\n")}
+  ? `<div class="brandwall" aria-label="Brands whose products I have sold">
+${content.brands
+  .map(
+    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" height="34" loading="lazy">`,
+  )
+  .join("\n")}
     </div>`
   : "";
 

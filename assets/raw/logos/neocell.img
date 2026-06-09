@@ -1,0 +1,20 @@
+<svg viewBox="0 0 176.54 31.744" height="31.744" width="176.54" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="clip-path">
+      <rect fill="none" height="31.744" width="176.54" data-name="Rectangle 1035" id="Rectangle_1035"></rect>
+    </clipPath>
+  </defs>
+  <g transform="translate(0 0)" id="neocell-logo-black">
+    <g clip-path="url(#clip-path)" transform="translate(0 0)" data-name="Group 2590" id="Group_2590">
+      <path fill="#1b1718" transform="translate(-33.726 -5.576)" d="M209.091,36.731a1.178,1.178,0,1,1,1.176-1.178,1.171,1.171,0,0,1-1.176,1.178m0-2.048a.871.871,0,1,0,.856.87.858.858,0,0,0-.856-.87m.575,1.433H209.3l-.173-.348h-.161v.348h-.322V34.924h.576a.394.394,0,0,1,.428.428.36.36,0,0,1-.214.349Zm-.455-.629c.081,0,.12-.054.12-.134s-.039-.134-.12-.134h-.227v.268Z" data-name="Path 17127" id="Path_17127"></path>
+      <path fill="#1b1718" transform="translate(-15.646 -2.147)" d="M111.178,28.08l-.642.428a6.545,6.545,0,0,1-3.892,1.339,6.306,6.306,0,0,1-6.325-6.439,6.315,6.315,0,0,1,6.325-6.44,5.938,5.938,0,0,1,3.878,1.352l.642.468,2.313-2.892-.615-.522a9.763,9.763,0,0,0-6.231-2.142,10.175,10.175,0,1,0,0,20.351,9.622,9.622,0,0,0,6.191-2.062l.655-.509Z" data-name="Path 17128" id="Path_17128"></path>
+      <path fill="#1b1718" transform="translate(-21.267 -2.214)" d="M131.108,33.315V13.647h11.554v2.129h-9.2V22.3H142.3v2.129h-8.839v6.761h9.2v2.129Z" data-name="Path 17129" id="Path_17129"></path>
+      <path fill="#1b1718" transform="translate(-26.234 -2.214)" d="M161.722,33.315V13.647h2.353V31.186h9.2v2.129Z" data-name="Path 17130" id="Path_17130"></path>
+      <path fill="#1b1718" transform="translate(-30.948 -2.214)" d="M190.788,33.315V13.647h2.354V31.186h9.2v2.129Z" data-name="Path 17131" id="Path_17131"></path>
+      <path fill="#1b1718" transform="translate(-19.406 0)" d="M126.559,3.468A3.463,3.463,0,1,1,123.1,0a3.466,3.466,0,0,1,3.463,3.468" data-name="Path 17132" id="Path_17132"></path>
+      <path fill="#1b1718" transform="translate(0 -2.09)" d="M2.354,18.812V33.191H0V12.881L13.68,27.9V13.523h2.354v20.31Z" data-name="Path 17133" id="Path_17133"></path>
+      <path fill="#1b1718" transform="translate(-5.494 -2.214)" d="M33.871,33.315V13.647H45.425v2.129h-9.2V22.3h8.853v2.129H36.224v6.761h9.2v2.129Z" data-name="Path 17134" id="Path_17134"></path>
+      <path fill="#1b1718" transform="translate(-9.847 -2.167)" d="M70.758,33.5A10.068,10.068,0,1,1,80.814,23.429,10.033,10.033,0,0,1,70.758,33.5m0-17.887A7.666,7.666,0,0,0,63.1,23.429a7.664,7.664,0,1,0,15.325,0,7.666,7.666,0,0,0-7.662-7.819" data-name="Path 17135" id="Path_17135"></path>
+    </g>
+  </g>
+</svg>
