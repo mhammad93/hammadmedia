@@ -53,14 +53,10 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 26px 0; position: relative; z-index: 3;
   }
-  .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .brand { display: flex; align-items: center; text-decoration: none; }
   .brand img.logo {
-    height: 64px; width: auto; display: block;
+    height: 58px; width: auto; display: block;
     filter: invert(1) hue-rotate(180deg) brightness(1.6);
-  }
-  .brand span {
-    font-family: "Fraunces", serif; font-weight: 700; font-size: 19px;
-    letter-spacing: 0.14em; color: var(--cream);
   }
   nav a.cta {
     background: var(--green); color: var(--bg-dark); text-decoration: none;
@@ -122,12 +118,13 @@
   /* ── Stats ── */
   section.stats { padding: 96px 0 84px; position: relative; }
   .stats .grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 36px 28px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 48px 64px;
   }
+  .stat { min-width: 0; }
   .stat .num {
     font-family: "Fraunces", serif; font-weight: 700;
-    font-size: clamp(52px, 6.5vw, 84px); line-height: 1; letter-spacing: -0.02em;
-    color: var(--green);
+    font-size: clamp(42px, 4.6vw, 68px); line-height: 1; letter-spacing: -0.02em;
+    color: var(--green); white-space: nowrap;
   }
   .stat .lbl {
     margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
@@ -215,10 +212,11 @@
   }
   footer a { color: var(--cream-dim); }
   footer .frow { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  footer img.logo { height: 40px; width: auto; filter: invert(1) hue-rotate(180deg) brightness(1.6); opacity: .85; }
+  footer img.logo { height: 46px; width: auto; filter: invert(1) hue-rotate(180deg) brightness(1.6); opacity: .85; }
 
   @media (max-width: 640px) {
-    .brand img.logo { height: 48px; }
+    .brand img.logo { height: 44px; }
+    .stats .grid { gap: 36px 40px; }
     .hero { padding-top: 48px; }
     section { padding: 72px 0; }
   }
@@ -228,7 +226,7 @@
 
 <div class="wrap">
   <nav>
-    <a class="brand" href="#top"><img class="logo" src="assets/logo-web.png" alt="Hammad Media logo"><span>{{site.brandName}}</span></a>
+    <a class="brand" href="#top"><img class="logo" src="assets/logo-web.png" alt="Hammad Media — home"></a>
     <a class="cta" href="#contact">Work With Us</a>
   </nav>
 
