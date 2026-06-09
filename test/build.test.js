@@ -98,6 +98,26 @@ test("partnership tiers render; commission-only positioning is gone", () => {
   assert.ok(/retainer/i.test(html), "retainer offering not mentioned");
 });
 
+test("brand wall, FAQ, and legal lines render", () => {
+  for (const b of content.brands) assert.ok(html.includes(b), `brand missing: ${b}`);
+  assert.strictEqual((html.match(/<details>/g) || []).length, content.faq.items.length, "FAQ count mismatch");
+  for (const f of content.faq.items) assert.ok(html.includes(f.q), `FAQ missing: ${f.q}`);
+  assert.ok(html.includes("do not imply sponsorship or endorsement"), "trademark disclaimer missing");
+  assert.ok(html.includes('id="privacy"'), "privacy note missing");
+});
+
+test("og/social meta present with absolute image URL", () => {
+  assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'));
+  assert.ok(html.includes('property="og:title"'));
+  assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
+  assert.ok(html.includes('rel="canonical" href="https://hammadmedia.com"'));
+});
+
+test("no personal names on the page", () => {
+  assert.ok(!/alison/i.test(html), "Alison name still present");
+  assert.ok(!/mohamed|mohammed/i.test(html.replace(/formsubmit\.co\/[^"]+/g, "")), "Mohammed name present outside form action");
+});
+
 test("internal anchors resolve to real element ids", () => {
   const anchors = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
   for (const a of anchors) {

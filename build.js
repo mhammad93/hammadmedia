@@ -85,6 +85,30 @@ ${content.partnership.tiers
 </section>`
   : "";
 
+const brandWall = (content.brands || []).length
+  ? `<div class="brandwall" aria-label="Brands whose products we have sold">
+${content.brands.map((b) => `      <span>${esc(b)}</span>`).join("\n")}
+    </div>`
+  : "";
+
+const faqSection = content.faq
+  ? `<section id="faq" class="light light-alt">
+  <div class="wrap">
+    <h2 class="section-title">${esc(content.faq.heading)}</h2>
+    <div class="faq-list">
+${content.faq.items
+  .map(
+    (f) => `      <details>
+        <summary>${esc(f.q)}</summary>
+        <p>${esc(f.a)}</p>
+      </details>`,
+  )
+  .join("\n")}
+    </div>
+  </div>
+</section>`
+  : "";
+
 const contactBlock = content.contact.formSubmitEmail
   ? `    <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
       <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
@@ -143,6 +167,12 @@ const tokens = {
   serviceSteps,
   partnershipSection,
   contactBlock,
+  brandWall,
+  faqSection,
+  "legal.disclaimer": esc(content.legal.disclaimer),
+  "legal.privacy": esc(content.legal.privacy),
+  "site.ogImage": esc(content.site.ogImage),
+  "site.url": esc(content.site.url),
 };
 
 for (const [key, value] of Object.entries(tokens)) {

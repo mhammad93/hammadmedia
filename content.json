@@ -3,7 +3,9 @@
     "title": "Hammad Media \u2014 TikTok Shop Affiliate Marketing for Supplement Brands",
     "description": "TikTok Shop affiliate marketing for supplements & wellness brands. $2.79M+ GMV and 105M+ product views in 2026 YTD \u2014 one operator, two accounts. Send me your product and I turn it into sales.",
     "brandName": "HAMMAD MEDIA",
-    "statsUpdated": "June 8, 2026 (YTD: Jan 1 \u2013 Jun 8, 2026, both accounts combined)"
+    "statsUpdated": "June 8, 2026 (YTD: Jan 1 \u2013 Jun 8, 2026, both accounts combined)",
+    "ogImage": "https://hammadmedia.com/assets/og.jpg",
+    "url": "https://hammadmedia.com"
   },
   "hero": {
     "headline": "I turn supplements into bestsellers.",
@@ -119,5 +121,42 @@
     "subheading": "Tell me about your product \u2014 your TikTok Shop link, category, and the commission you have in mind. I reply to every brand inquiry within 24 hours, and the person who replies is the person who makes your videos.",
     "email": "contact@hammadmedia.com",
     "formSubmitEmail": "mohamed.hammad.reply@gmail.com"
+  },
+  "brands": [
+    "Micro Ingredients",
+    "NeoCell",
+    "Nutricost",
+    "Toplux",
+    "Snap Supplements",
+    "Nature's Sunshine"
+  ],
+  "faq": {
+    "heading": "Questions brands ask",
+    "items": [
+      {
+        "q": "How fast is the first video?",
+        "a": "Once your sample arrives and the commission is set, the first video is typically live within 7\u201310 days. Retainer partners get a guaranteed monthly cadence."
+      },
+      {
+        "q": "Who ships the sample?",
+        "a": "You do \u2014 one unit to my studio address, shared after we connect. No bulk inventory, no warehousing, no purchase orders."
+      },
+      {
+        "q": "What commission range works?",
+        "a": "It depends on price point and margin. Most products I take on run 15\u201330% on TikTok Shop \u2014 and elevated, exclusive rates get priority in my content rotation."
+      },
+      {
+        "q": "Do you follow brand briefs?",
+        "a": "I read your talking points, but the video is mine \u2014 honest, native to my audience, and built to convert. Scripted ads don't sell on TikTok Shop; that's exactly why my numbers look the way they do."
+      },
+      {
+        "q": "What if it doesn't sell?",
+        "a": "On performance deals you've risked one sample. I test hooks and re-cut \u2014 some products take three videos to find the angle. And if a product truly doesn't fit my audience, I'll tell you straight instead of burning your time."
+      }
+    ]
+  },
+  "legal": {
+    "disclaimer": "Brand names and product images appear solely to document affiliate sales history and do not imply sponsorship or endorsement. All trademarks are the property of their respective owners.",
+    "privacy": "Privacy: inquiries submitted through this form are delivered to my inbox and used only to respond to you. This site sets no cookies and runs no trackers. Your information is never sold or added to a marketing list."
   }
 }

@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{site.title}}</title>
 <meta name="description" content="{{site.description}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{site.url}}">
+<meta property="og:title" content="{{site.title}}">
+<meta property="og:description" content="{{site.description}}">
+<meta property="og:image" content="{{site.ogImage}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{site.title}}">
+<meta name="twitter:image" content="{{site.ogImage}}">
+<link rel="canonical" href="{{site.url}}">
 <link rel="icon" type="image/png" href="assets/logo-web.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,6 +150,34 @@
     color: var(--cream-dim);
   }
   .stats .updated { margin-top: 44px; font-size: 13px; color: var(--cream-dim); opacity: .8; }
+  .brandwall {
+    margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line-dark);
+    display: flex; flex-wrap: wrap; gap: 18px 44px; align-items: center;
+  }
+  .brandwall span {
+    font-family: "Manrope", sans-serif; font-weight: 800; font-size: 15px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-dim);
+    opacity: .75; white-space: nowrap;
+  }
+  .faq-list { max-width: 760px; }
+  .faq-list details {
+    border-bottom: 1px solid var(--line-light); padding: 4px 0;
+  }
+  .faq-list summary {
+    cursor: pointer; list-style: none; display: flex; justify-content: space-between;
+    align-items: center; gap: 16px; padding: 20px 0;
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 21px; color: var(--ink);
+  }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::after {
+    content: "+"; font-family: "Manrope", sans-serif; font-weight: 600; font-size: 26px;
+    color: var(--green-deep); flex-shrink: 0; transition: transform .2s ease;
+  }
+  .faq-list details[open] summary::after { transform: rotate(45deg); }
+  .faq-list details p { padding: 0 0 22px; font-size: 16.5px; color: var(--ink-soft); max-width: 64ch; }
+  .faq-list summary:focus-visible { outline: 3px solid var(--green-deep); outline-offset: 3px; border-radius: 4px; }
+  footer .legal { margin-top: 26px; }
+  footer .legal p { font-size: 12px; color: var(--cream-dim); opacity: .7; max-width: 90ch; margin-bottom: 8px; }
 
   /* ── Light sections ── */
   .light { background: var(--paper); color: var(--ink); position: relative; z-index: 1; }
@@ -324,13 +361,14 @@
 {{statsCards}}
     </div>
     <div class="updated">Figures from my TikTok Shop affiliate dashboards &middot; last updated {{site.statsUpdated}}</div>
+    {{brandWall}}
   </div>
 </section>
 
 <section id="accounts" class="light">
   <div class="wrap">
     <h2 class="section-title">Two accounts. One creator.</h2>
-    <p class="section-sub">Both accounts are me — Alison Hammad. Concept, filming, honest reviews, posting. No account managers, no telephone game. Every number verifiable on-platform.</p>
+    <p class="section-sub">Both accounts are me. Concept, filming, honest reviews, posting. No account managers, no telephone game. Every number verifiable on-platform.</p>
     <div class="cards">
 {{accountCards}}
     </div>
@@ -351,6 +389,8 @@
 
 {{partnershipSection}}
 
+{{faqSection}}
+
 <section class="contact" id="contact">
   <div class="wrap">
     <h2 class="section-title">{{contact.heading}}</h2>
@@ -363,6 +403,10 @@
   <div class="wrap frow">
     <a class="brand" href="#top" aria-label="Hammad Media — back to top"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
     <div>&copy; {{year}} Hammad Media LLC &middot; TikTok Shop affiliate for supplement &amp; wellness brands &middot; <a href="#contact">Work with me</a></div>
+  </div>
+  <div class="wrap legal">
+    <p id="privacy">{{legal.privacy}}</p>
+    <p>{{legal.disclaimer}}</p>
   </div>
 </footer>
 
