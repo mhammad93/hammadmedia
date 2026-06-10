@@ -208,6 +208,7 @@ const jsonld = JSON.stringify({
       logo: `${content.site.url}/assets/favicon-512.png`,
       image: content.site.ogImage,
       areaServed: "US",
+      award: "TikTok Shop US #1 Health & Wellness affiliate, 2025",
       sameAs: content.accounts.map((a) => a.url),
     },
     {

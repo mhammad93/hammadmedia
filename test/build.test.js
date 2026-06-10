@@ -78,6 +78,9 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "thanks.html")), "thanks.html missing from dist");
   assert.ok(html.includes("Boosted Commission (pay on sales only)"), "form options must match tier names");
   assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
+  assert.ok(html.includes("$5,000 per month"), "retainer floor missing");
+  assert.ok(html.includes("No fixed number of videos"), "boosted no-guarantee line missing");
+  assert.ok(html.includes("No long-term contract"), "month-to-month line missing");
 });
 
 test("TikTok Shop badge on every product box; play glyph on video links; account order", () => {
@@ -192,7 +195,8 @@ test("SEO: robots.txt, sitemap.xml, and valid JSON-LD structured data", () => {
     assert.ok(org.sameAs.includes(a.url), `sameAs missing ${a.url}`);
   }
   assert.ok(html.includes('property="og:site_name"'), "og:site_name missing");
-  assert.ok(html.includes("TikTok Shop Affiliate for Supplement Brands"), "keyword-first title missing");
+  assert.ok(html.includes("#1 TikTok Shop Health &amp; Wellness Affiliate 2025"), "ranked title missing");
+  assert.ok((html.match(/#1<\/b> Health/g) || []).length >= 2, "marquee #1 ranking missing");
 });
 
 test("og/social meta present with absolute image URL", () => {
