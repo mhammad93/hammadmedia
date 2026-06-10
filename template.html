@@ -276,30 +276,6 @@
   }
   .pod .watch:hover { color: var(--ink); }
 
-  .ledger { margin-top: 36px; }
-  .ledger-row { display: flex; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line-light); }
-  .ledger-row:first-child { border-top: 1px solid var(--line-light); }
-  .lr-rank { font-family: "Fraunces", serif; font-style: italic; font-size: 20px; color: var(--green-deep); opacity: .55; flex-shrink: 0; width: 32px; }
-  .lr-thumb { width: 58px; height: 58px; object-fit: contain; background: #fff; border: 1px solid var(--line-light); border-radius: 10px; flex-shrink: 0; }
-  .lr-name { font-weight: 700; font-size: 16.5px; color: var(--ink); }
-  .lr-fill { flex: 1; border-bottom: 2px dotted rgba(20,24,20,.18); margin: 0 8px; min-width: 24px; transform: translateY(4px); }
-  .lr-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; line-height: 1.2; }
-  .lr-ytd { font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 27px; color: var(--green-deep); white-space: nowrap; }
-  .lr-units { font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--ink-soft); white-space: nowrap; margin-top: 3px; }
-  @media (max-width: 680px) {
-    .ledger-row { flex-wrap: wrap; }
-    .lr-fill { display: none; }
-    .lr-name { flex-basis: calc(100% - 130px); }
-    .lr-right { align-items: flex-start; margin-left: 48px; }
-  }
-
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 22px; counter-reset: stepnum; }
-  .steps .card { counter-increment: stepnum; }
-  .steps .card::after {
-    content: "0" counter(stepnum); position: absolute; top: 18px; right: 22px;
-    font-family: "Fraunces", serif; font-style: italic; font-size: 30px;
-    color: var(--green-deep); opacity: .3;
-  }
   .tiers .tier:nth-child(2) {
     border: 2px solid var(--green-deep);
     box-shadow: 0 14px 40px rgba(14,122,74,.14);
@@ -311,7 +287,7 @@
     padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em;
   }
   @supports (animation-timeline: view()) {
-    .light .card, .stat, .pod, .ledger-row { animation: rise both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+    .light .card, .stat, .pod { animation: rise both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
   }
   .note {
     margin-top: 40px; padding: 26px 30px; border-radius: 14px;
