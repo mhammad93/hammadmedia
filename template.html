@@ -71,6 +71,7 @@
   }
 
   @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  @keyframes rise-move { from { transform: translateY(26px); } to { transform: none; } }
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -121,18 +122,18 @@
     display: inline-block; border: 1px solid var(--line-dark); border-radius: 100px;
     padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--green); margin-bottom: 32px;
-    animation: rise .7s ease both;
+    animation: rise-move .7s ease both;
   }
   .hero h1 {
     font-family: "Fraunces", serif; font-weight: 600;
     font-size: clamp(44px, 7.2vw, 92px); line-height: 1.04; letter-spacing: -0.015em;
     max-width: 14ch; color: var(--paper);
-    animation: rise .7s .08s ease both;
+    animation: rise-move .7s .08s ease both;
   }
   .hero h1 em { font-style: italic; color: var(--green); }
   .hero p.sub {
     margin-top: 28px; font-size: clamp(16px, 2vw, 20px);
-    color: var(--cream-dim); max-width: 50ch; animation: rise .7s .16s ease both;
+    color: var(--cream-dim); max-width: 50ch; animation: rise-move .7s .16s ease both;
   }
   .hero .actions { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; animation: rise .7s .24s ease both; }
   .hero .actions a.primary {

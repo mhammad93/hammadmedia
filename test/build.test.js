@@ -295,3 +295,9 @@ test("fonts are self-hosted with preload", () => {
   const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
   assert.ok(!thanks.includes("fonts.googleapis.com"), "thanks.html still uses Google Fonts");
 });
+
+test("hero text animations are transform-only (LCP not opacity-gated)", () => {
+  assert.ok(html.includes("@keyframes rise-move"), "rise-move keyframes missing");
+  assert.strictEqual((html.match(/rise-move \.7s/g) || []).length, 3, "kicker, h1 and sub should use rise-move");
+  assert.ok(html.includes("animation: rise .7s .24s ease both"), "actions should keep the fade entrance");
+});
