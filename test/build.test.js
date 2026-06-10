@@ -270,3 +270,12 @@ test("commission figures are never published", () => {
     assert.ok(!html.includes(figure), `private commission figure ${figure} leaked`);
   }
 });
+
+test("Google tag present exactly once on every page", () => {
+  // Google: one gtag per page, immediately after <head>. Never zero, never two.
+  const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
+  for (const [name, page] of [["index", html], ["thanks", thanks]]) {
+    assert.strictEqual((page.match(/googletagmanager\.com\/gtag\/js\?id=G-NEX74824JL/g) || []).length, 1, `${name}: gtag loader count wrong`);
+    assert.strictEqual((page.match(/gtag\('config', 'G-NEX74824JL'\)/g) || []).length, 1, `${name}: gtag config count wrong`);
+  }
+});
