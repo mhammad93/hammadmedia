@@ -34,7 +34,7 @@
       "handle": "Drew.Review",
       "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
-      "avatar": "assets/products/avatar-drew-review.jpg",
+      "avatar": "assets/products/avatar-drew-review.webp",
       "followers": "182.9K followers",
       "gmv": "$901K",
       "units": "37,198",
@@ -44,7 +44,7 @@
       "handle": "Drew.Review1",
       "url": "https://www.tiktok.com/@drew.review1",
       "niche": "Supplement reviews",
-      "avatar": "assets/products/avatar-drew-review1.jpg",
+      "avatar": "assets/products/avatar-drew-review1.webp",
       "followers": "155K followers",
       "gmv": "$1.89M",
       "units": "75,860",
@@ -103,27 +103,33 @@
   "brands": [
     {
       "name": "Micro Ingredients",
-      "logo": "assets/brands/micro-ingredients.png"
+      "logo": "assets/brands/micro-ingredients.png",
+      "width": 138
     },
     {
       "name": "NeoCell",
-      "logo": "assets/brands/neocell.png"
+      "logo": "assets/brands/neocell.png",
+      "width": 156
     },
     {
       "name": "Nutricost",
-      "logo": "assets/brands/nutricost.png"
+      "logo": "assets/brands/nutricost.png",
+      "width": 99
     },
     {
       "name": "Toplux",
-      "logo": "assets/brands/toplux.png"
+      "logo": "assets/brands/toplux.png",
+      "width": 105
     },
     {
       "name": "Snap Supplements",
-      "logo": "assets/brands/snap-supplements.png"
+      "logo": "assets/brands/snap-supplements.png",
+      "width": 157
     },
     {
       "name": "Nature's Sunshine",
-      "logo": "assets/brands/natures-sunshine.png"
+      "logo": "assets/brands/natures-sunshine.png",
+      "width": 98
     }
   ],
   "faq": {

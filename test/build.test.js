@@ -123,8 +123,8 @@ test("funnel strip renders verified metrics with provenance caption", () => {
 });
 
 test("summit award proof card renders with image and caption", () => {
-  assert.ok(html.includes('src="assets/award-summit.jpg"'), "award photo missing");
-  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "award-summit.jpg")), "award photo missing from dist");
+  assert.ok(html.includes('src="assets/award-summit.webp"'), "award photo missing");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "award-summit.webp")), "award photo missing from dist");
   assert.ok(html.includes("Health Creators of the Year, 2025"), "award caption missing");
 });
 
@@ -172,11 +172,11 @@ test("logo image present in nav and footer with accessible labels", () => {
   const brandLinks = html.match(/class="brand"[^>]*aria-label="[^"]{5,}"/g) || [];
   assert.ok(brandLinks.length >= 2, "expected brand links in nav and footer");
   assert.strictEqual(
-    (html.match(/class="logo-img" src="assets\/logo-v2\.png" alt="Hammad Media"/g) || []).length,
+    (html.match(/class="logo-img" src="assets\/logo-v2\.webp" alt="Hammad Media"/g) || []).length,
     2,
     "logo image must appear in nav and footer",
   );
-  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-v2.png")), "logo file missing from dist");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-v2.webp")), "logo file missing from dist");
 });
 
 test("product images + avatars render with alts and exist in dist", () => {
@@ -300,4 +300,17 @@ test("hero text animations are transform-only (LCP not opacity-gated)", () => {
   assert.ok(html.includes("@keyframes rise-move"), "rise-move keyframes missing");
   assert.strictEqual((html.match(/rise-move \.7s/g) || []).length, 3, "kicker, h1 and sub should use rise-move");
   assert.ok(html.includes("animation: rise .7s .24s ease both"), "actions should keep the fade entrance");
+});
+
+test("optimized image formats with intrinsic dimensions", () => {
+  assert.strictEqual((html.match(/assets\/logo-v2\.webp/g) || []).length, 2, "nav + footer logo should be webp");
+  assert.ok(html.includes('src="assets/award-summit.webp"'), "award photo should be webp");
+  assert.strictEqual((html.match(/avatar-drew-review1?\.webp/g) || []).length, 2, "both avatars should be webp");
+  assert.ok(!/assets\/(award-summit\.jpg|logo-v2\.png|products\/avatar-[^"]+\.jpg)/.test(html), "old heavy formats still referenced");
+  const brandImgs = [...html.matchAll(/<img src="assets\/brands\/[^>]+>/g)];
+  assert.strictEqual(brandImgs.length, 6, "6 brand logos expected");
+  for (const m of brandImgs) {
+    assert.ok(/width="\d+"/.test(m[0]) && /height="28"/.test(m[0]), `brand logo missing width: ${m[0]}`);
+  }
+  assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'), "og:image must stay JPG for social crawlers");
 });

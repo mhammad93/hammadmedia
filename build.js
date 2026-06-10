@@ -152,7 +152,7 @@ const brandWall = (content.brands || []).length
   ? `<div class="brandwall" role="group" aria-label="Brands whose products I have sold">
 ${content.brands
   .map(
-    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" height="28" loading="lazy">`,
+    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" width="${b.width}" height="28" loading="lazy">`,
   )
   .join("\n")}
     </div>`
