@@ -322,3 +322,11 @@ test("production build is indexable (no robots meta on index)", () => {
 test("raw masters never ship to dist", () => {
   assert.ok(!fs.existsSync(path.join(ROOT, "dist", "assets", "raw")), "assets/raw must not be copied into dist");
 });
+
+test("ProfessionalService declares service area and price range", () => {
+  const m = html.match(/<script type="application\/ld\+json">(.+?)<\/script>/s);
+  const graph = JSON.parse(m[1])["@graph"];
+  const ps = graph.find((n) => n["@type"] === "ProfessionalService");
+  assert.strictEqual(ps.areaServed, "United States");
+  assert.strictEqual(ps.priceRange, "$1,000 - $50,000+");
+});
