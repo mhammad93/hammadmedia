@@ -79,7 +79,8 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("Boosted Commission (pay on sales only)"), "form options must match tier names");
   assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
   assert.ok(html.includes("$1,000 per video"), "per-video retainer floor missing");
-  assert.ok(html.includes("$25,000"), "30-day package price missing");
+  assert.ok(html.includes("$25,000"), "30-video package price missing");
+  assert.ok(html.includes("$13,500"), "15-video package price missing");
   assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
   assert.ok(html.includes("performance bonuses move you to the top"), "bonus-priority line missing");
   assert.ok(html.includes("No fixed number of videos"), "boosted no-guarantee line missing");
