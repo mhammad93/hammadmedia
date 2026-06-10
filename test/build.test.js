@@ -189,6 +189,7 @@ test("product images + avatars render with alts and exist in dist", () => {
     assert.ok(html.includes(`alt="@${a.handle} TikTok profile picture"`), `avatar alt missing for ${a.handle}`);
     assert.ok(fs.existsSync(path.join(ROOT, "dist", a.avatar)), `dist missing ${a.avatar}`);
   }
+  assert.strictEqual((html.match(/width="216" height="216"/g) || []).length, 2, "both avatars should declare 216×216 intrinsic dims");
   // every non-decorative img must have non-empty alt
   const badImgs = (html.match(/<img(?![^>]*aria-hidden)[^>]*>/g) || []).filter(
     (t) => !/alt="[^"]+"/.test(t) && !t.includes('alt=""'),
@@ -290,15 +291,24 @@ test("fonts are self-hosted with preload", () => {
   assert.strictEqual((html.match(/rel="preload" href="assets\/fonts\/[a-z-]+\.woff2" as="font" type="font\/woff2" crossorigin/g) || []).length, 3, "3 font preloads expected");
   assert.strictEqual((html.match(/@font-face/g) || []).length, 3, "3 @font-face blocks expected");
   for (const f of ["fraunces-roman", "fraunces-italic", "manrope"]) {
-    assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "fonts", `${f}.woff2`)), `${f}.woff2 missing from dist`);
+    const fp = path.join(ROOT, "dist", "assets", "fonts", `${f}.woff2`);
+    assert.ok(fs.existsSync(fp), `${f}.woff2 missing from dist`);
+    const buf = fs.readFileSync(fp);
+    assert.strictEqual(buf.subarray(0, 4).toString("latin1"), "wOF2", `${f}.woff2 is not a real woff2 file`);
+    assert.ok(buf.length > 10000, `${f}.woff2 suspiciously small (${buf.length} bytes)`);
   }
   const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
   assert.ok(!thanks.includes("fonts.googleapis.com"), "thanks.html still uses Google Fonts");
+  assert.strictEqual((thanks.match(/@font-face/g) || []).length, 3, "thanks.html should declare 3 font faces");
+  assert.strictEqual((thanks.match(/rel="preload" href="assets\/fonts\/[a-z-]+\.woff2"/g) || []).length, 3, "thanks.html should preload 3 fonts");
 });
 
 test("hero text animations are transform-only (LCP not opacity-gated)", () => {
   assert.ok(html.includes("@keyframes rise-move"), "rise-move keyframes missing");
-  assert.strictEqual((html.match(/rise-move \.7s/g) || []).length, 3, "kicker, h1 and sub should use rise-move");
+  for (const d of ["", " .08s", " .16s"]) {
+    assert.ok(html.includes(`animation: rise-move .7s${d} ease both`), `rise-move${d} declaration missing`);
+    assert.ok(!html.includes(`animation: rise .7s${d} ease both`), `opacity-gated rise${d} still present on hero text`);
+  }
   assert.ok(html.includes("animation: rise .7s .24s ease both"), "actions should keep the fade entrance");
 });
 
@@ -325,8 +335,18 @@ test("raw masters never ship to dist", () => {
 
 test("ProfessionalService declares service area and price range", () => {
   const m = html.match(/<script type="application\/ld\+json">(.+?)<\/script>/s);
+  assert.ok(m, "ld+json script missing");
   const graph = JSON.parse(m[1])["@graph"];
   const ps = graph.find((n) => n["@type"] === "ProfessionalService");
   assert.strictEqual(ps.areaServed, "United States");
   assert.strictEqual(ps.priceRange, "$1,000 - $50,000+");
+});
+
+test("vercel.json keeps the redirect and security headers", () => {
+  const v = JSON.parse(fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8"));
+  assert.ok(v.redirects.some((r) => r.source === "/index.html" && r.destination === "/" && r.permanent === true), "/index.html redirect missing");
+  const all = v.headers.flatMap((h) => h.headers.map((x) => x.key));
+  for (const k of ["X-Content-Type-Options", "Referrer-Policy", "X-Frame-Options", "Permissions-Policy", "Cache-Control"]) {
+    assert.ok(all.includes(k), `header ${k} missing from vercel.json`);
+  }
 });

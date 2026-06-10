@@ -40,7 +40,7 @@ const statsCards = content.stats
 const accountCards = content.accounts
   .map((a) => {
     const avatar = a.avatar
-      ? `<img class="avatar" src="${esc(a.avatar)}" alt="@${esc(a.handle)} TikTok profile picture" width="320" height="320" loading="lazy">`
+      ? `<img class="avatar" src="${esc(a.avatar)}" alt="@${esc(a.handle)} TikTok profile picture" width="216" height="216" loading="lazy">`
       : "";
     return `      <div class="card account-card">
         <div class="acct-head">
@@ -272,7 +272,7 @@ const jsonld = JSON.stringify({
       })),
     },
   ],
-});
+}).replace(/</g, "\\u003c");
 const jsonldTag = `<script type="application/ld+json">${jsonld}</script>`;
 
 // ── Token replacement ────────────────────────────────────────
@@ -322,6 +322,7 @@ fs.writeFileSync(path.join(ROOT, "dist", "index.html"), html);
 // Copy static assets (logo etc.) into dist — raw/ masters never ship
 const assetsSrc = path.join(ROOT, "assets");
 const rawDir = path.join(assetsSrc, "raw");
+fs.rmSync(path.join(ROOT, "dist", "assets"), { recursive: true, force: true });
 if (fs.existsSync(assetsSrc)) {
   fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), {
     recursive: true,
