@@ -80,6 +80,17 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
 });
 
+test("TikTok logomark on every video link and account handle", () => {
+  const withVideo = content.receipts.items.filter((c) => c.videoUrl).length;
+  const expected = withVideo + content.accounts.length;
+  assert.strictEqual(
+    (html.match(/class="ti"/g) || []).length,
+    expected,
+    `expected ${expected} TikTok icons (videos + handles)`,
+  );
+  assert.ok(html.includes('aria-hidden="true"><path d="M12.525'), "official TikTok path missing");
+});
+
 test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
   assert.ok(html.includes("Slot 07 is open"), "post-receipts slot CTA missing");
   assert.ok(html.includes("Claim a slot"), "post-tiers CTA missing");
