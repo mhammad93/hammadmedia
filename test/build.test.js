@@ -81,7 +81,11 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
 });
 
 test("TikTok Shop badge on every product box; play glyph on video links; account order", () => {
-  assert.strictEqual((html.match(/class="ti"/g) || []).length, 0, "old mono logomark must be gone");
+  assert.strictEqual(
+    (html.match(/class="ti"/g) || []).length,
+    content.accounts.length,
+    "mono logomark belongs on handle cards only",
+  );
   assert.strictEqual(
     (html.match(/class="shop-badge"/g) || []).length,
     content.receipts.items.length,
