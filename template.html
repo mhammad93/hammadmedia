@@ -325,7 +325,7 @@
 
   /* ── The receipts: podium grid + scroll-snap shelf ── */
   .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  @media (max-width: 900px) { .podium { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .podium { grid-template-columns: minmax(0, 1fr); } }
   .shelf { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .tier-price {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
@@ -385,7 +385,7 @@
   .pod-ytd-lbl { font-size: 15px; color: var(--ink-soft); margin-top: 7px; }
   .pod-ytd-lbl b { color: var(--ink); font-weight: 800; }
   .pod-metrics {
-    display: flex; gap: 24px;
+    display: flex; flex-wrap: wrap; gap: 16px 24px;
     margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-light);
   }
   .pod-metrics .m { display: flex; flex-direction: column; min-width: 0; }
@@ -440,6 +440,12 @@
   }
   .contact h2.section-title { color: var(--paper); }
   .contact p.section-sub { color: var(--cream-dim); }
+  /* closing CTA reads as one centered column — wrap narrows to the form width */
+  .contact .wrap { max-width: 696px; }
+  .contact h2.section-title, .contact p.section-sub, .contact .form-hint, .contact .alt-contact { text-align: center; }
+  .contact p.section-sub { margin-inline: auto; }
+  .contact form { margin-inline: auto; }
+  .contact form button[type=submit] { justify-self: center; }
   form { max-width: 640px; display: grid; gap: 18px; position: relative; z-index: 1; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
