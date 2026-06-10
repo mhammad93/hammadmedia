@@ -193,9 +193,47 @@ const contactBlock = content.contact.formSubmitEmail
     <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
+// ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
+
+const jsonld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${content.site.url}/#org`,
+      name: "Hammad Media",
+      url: content.site.url,
+      email: content.contact.email,
+      description: content.site.description,
+      logo: `${content.site.url}/assets/favicon-512.png`,
+      image: content.site.ogImage,
+      areaServed: "US",
+      sameAs: content.accounts.map((a) => a.url),
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${content.site.url}/#website`,
+      name: "Hammad Media",
+      url: content.site.url,
+      publisher: { "@id": `${content.site.url}/#org` },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${content.site.url}/#faqpage`,
+      mainEntity: content.faq.items.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+});
+const jsonldTag = `<script type="application/ld+json">${jsonld}</script>`;
+
 // ── Token replacement ────────────────────────────────────────
 
 const tokens = {
+  jsonld: jsonldTag,
   "site.title": esc(content.site.title),
   "site.description": esc(content.site.description),
   "site.brandName": esc(content.site.brandName),
@@ -241,4 +279,17 @@ if (fs.existsSync(assetsSrc)) {
   fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), { recursive: true });
 }
 fs.copyFileSync(path.join(ROOT, "thanks.html"), path.join(ROOT, "dist", "thanks.html"));
-console.log(`Built dist/index.html (${html.length} bytes)`);
+fs.copyFileSync(path.join(ROOT, "robots.txt"), path.join(ROOT, "dist", "robots.txt"));
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${content.site.url}/</loc>
+    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`;
+fs.writeFileSync(path.join(ROOT, "dist", "sitemap.xml"), sitemap);
+console.log(`Built dist/index.html (${html.length} bytes) + sitemap + robots`);

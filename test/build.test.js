@@ -172,6 +172,29 @@ test("brand wall, FAQ, and legal lines render", () => {
   assert.ok(html.includes('id="privacy"'), "privacy note missing");
 });
 
+test("SEO: robots.txt, sitemap.xml, and valid JSON-LD structured data", () => {
+  const robots = fs.readFileSync(path.join(ROOT, "dist", "robots.txt"), "utf8");
+  assert.ok(robots.includes("Sitemap: https://hammadmedia.com/sitemap.xml"), "robots must point to sitemap");
+  assert.ok(robots.includes("Disallow: /thanks.html"), "thanks page must be disallowed");
+  const sitemap = fs.readFileSync(path.join(ROOT, "dist", "sitemap.xml"), "utf8");
+  assert.ok(sitemap.includes("<loc>https://hammadmedia.com/</loc>"), "sitemap must list homepage");
+  assert.ok(!sitemap.includes("thanks"), "noindex page must not be in sitemap");
+
+  const m = html.match(/<script type="application\/ld\+json">(.+?)<\/script>/s);
+  assert.ok(m, "JSON-LD script missing");
+  const data = JSON.parse(m[1]);
+  const types = data["@graph"].map((n) => n["@type"]);
+  assert.deepStrictEqual(types.sort(), ["FAQPage", "ProfessionalService", "WebSite"]);
+  const faq = data["@graph"].find((n) => n["@type"] === "FAQPage");
+  assert.strictEqual(faq.mainEntity.length, content.faq.items.length, "FAQPage must mirror visible FAQ");
+  const org = data["@graph"].find((n) => n["@type"] === "ProfessionalService");
+  for (const a of content.accounts) {
+    assert.ok(org.sameAs.includes(a.url), `sameAs missing ${a.url}`);
+  }
+  assert.ok(html.includes('property="og:site_name"'), "og:site_name missing");
+  assert.ok(html.includes("TikTok Shop Affiliate for Supplement Brands"), "keyword-first title missing");
+});
+
 test("og/social meta present with absolute image URL", () => {
   assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'));
   assert.ok(html.includes('property="og:title"'));
