@@ -112,6 +112,15 @@ test("TikTok Shop badge on every product box; play glyph on video links; account
   );
 });
 
+test("funnel strip renders verified metrics with provenance caption", () => {
+  for (const m of content.funnel.items) {
+    assert.ok(html.includes(m.value), `funnel value missing: ${m.value}`);
+  }
+  assert.ok(html.includes("The funnel, measured"), "funnel title missing");
+  assert.ok(html.includes("From my TikTok Shop dashboards"), "provenance caption missing");
+  assert.ok(!/completion/i.test(html), "completion % must never appear (unmeasured)");
+});
+
 test("summit award proof card renders with image and caption", () => {
   assert.ok(html.includes('src="assets/award-summit.jpg"'), "award photo missing");
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "award-summit.jpg")), "award photo missing from dist");

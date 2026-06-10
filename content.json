@@ -247,5 +247,23 @@
       }
     ],
     "sub": "Six products. $1.1M in sales since January 1. Every top video is linked \u2014 check the views yourself."
+  },
+  "funnel": {
+    "title": "The funnel, measured",
+    "caption": "From my TikTok Shop dashboards \u2014 Jan 1 to Jun 8, 2026, both accounts combined.",
+    "items": [
+      {
+        "value": "2.73%",
+        "label": "Product click-through rate"
+      },
+      {
+        "value": "3.91%",
+        "label": "Click to order"
+      },
+      {
+        "value": "$26.38",
+        "label": "GMV per 1,000 product views"
+      }
+    ]
   }
 }

@@ -243,6 +243,28 @@
   }
   @media (max-width: 860px) { .award-card { grid-template-columns: 1fr; gap: 14px; } }
 
+  .funnel-card {
+    margin-top: 22px; background: var(--card); border: 1px solid var(--line-light);
+    border-radius: 18px; padding: 26px 30px;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 26px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .funnel-card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--green), var(--green-deep));
+  }
+  .funnel-intro h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 6px; }
+  .funnel-intro p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .fm { display: flex; flex-direction: column; min-width: 0; }
+  .fm-v {
+    font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
+    font-size: 30px; line-height: 1; letter-spacing: -0.01em; color: var(--green-deep);
+  }
+  .fm-l { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 6px; }
+  @media (max-width: 1000px) { .funnel-card { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .funnel-card { grid-template-columns: 1fr; gap: 18px; } }
+
   /* account avatars + product shots */
   .account-card img.avatar {
     width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
@@ -521,6 +543,7 @@
         @drew.review1, first in the Short Video category. Photographed live on stage &mdash; this is the official proof behind the #1 claim.
       </figcaption>
     </figure>
+{{funnelStrip}}
   </div>
 </section>
 

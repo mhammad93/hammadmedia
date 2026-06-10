@@ -103,6 +103,21 @@ ${cardsArr.slice(3).join("\n")}
 </section>`
   : "";
 
+
+const funnelStrip = content.funnel
+  ? `    <div class="funnel-card">
+      <div class="funnel-intro">
+        <h3>${esc(content.funnel.title)}</h3>
+        <p>${esc(content.funnel.caption)}</p>
+      </div>
+${content.funnel.items
+  .map(
+    (m) => `      <div class="fm"><span class="fm-v">${esc(m.value)}</span><span class="fm-l">${esc(m.label)}</span></div>`,
+  )
+  .join("\n")}
+    </div>`
+  : "";
+
 const serviceSteps = content.services.steps
   .map(
     (s) => `      <div class="card"><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></div>`,
@@ -276,6 +291,7 @@ const tokens = {
   year: String(new Date().getFullYear()),
   statsCards,
   accountCards,
+  funnelStrip,
   caseStudiesSection,
   serviceSteps,
   partnershipSection,
