@@ -6,22 +6,24 @@
     {
       "source": "/assets/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
       ]
     }
   ],
   "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
     {
       "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.hammadmedia.com"
-        }
-      ],
+      "has": [ { "type": "host", "value": "www.hammadmedia.com" } ],
       "destination": "https://hammadmedia.com/:path*",
       "permanent": true
     }
