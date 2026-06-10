@@ -126,6 +126,8 @@ test("summit award proof card renders with image and caption", () => {
   assert.ok(html.includes('src="assets/award-summit.webp"'), "award photo missing");
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "award-summit.webp")), "award photo missing from dist");
   assert.ok(html.includes("Health Creators of the Year, 2025"), "award caption missing");
+  assert.ok(html.includes("ranked first in the Short Video category by TikTok Shop itself"), "award attribution line missing");
+  assert.ok(!/official proof/i.test(html), "self-referential proof language must stay gone");
 });
 
 test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
