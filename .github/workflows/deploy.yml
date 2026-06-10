@@ -26,6 +26,8 @@ jobs:
         run: node --test
       - name: Build site
         run: node build.js
+      - name: Noindex backup mirror (canonical host is hammadmedia.com)
+        run: sed -i 's|<meta charset="utf-8">|<meta charset="utf-8"><meta name="robots" content="noindex">|' dist/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

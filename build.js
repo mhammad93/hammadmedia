@@ -318,10 +318,14 @@ if (leftover) {
 fs.mkdirSync(path.join(ROOT, "dist"), { recursive: true });
 fs.writeFileSync(path.join(ROOT, "dist", "index.html"), html);
 
-// Copy static assets (logo etc.) into dist
+// Copy static assets (logo etc.) into dist — raw/ masters never ship
 const assetsSrc = path.join(ROOT, "assets");
+const rawDir = path.join(assetsSrc, "raw");
 if (fs.existsSync(assetsSrc)) {
-  fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), { recursive: true });
+  fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), {
+    recursive: true,
+    filter: (src) => src !== rawDir && !src.startsWith(rawDir + path.sep),
+  });
 }
 fs.copyFileSync(path.join(ROOT, "thanks.html"), path.join(ROOT, "dist", "thanks.html"));
 fs.copyFileSync(path.join(ROOT, "robots.txt"), path.join(ROOT, "dist", "robots.txt"));

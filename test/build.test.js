@@ -314,3 +314,11 @@ test("optimized image formats with intrinsic dimensions", () => {
   }
   assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'), "og:image must stay JPG for social crawlers");
 });
+
+test("production build is indexable (no robots meta on index)", () => {
+  assert.ok(!html.includes('name="robots"'), "dist/index.html must never carry a robots meta — noindex is injected only in the Pages workflow");
+});
+
+test("raw masters never ship to dist", () => {
+  assert.ok(!fs.existsSync(path.join(ROOT, "dist", "assets", "raw")), "assets/raw must not be copied into dist");
+});
