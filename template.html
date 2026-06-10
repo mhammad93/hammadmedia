@@ -209,9 +209,13 @@
 
   /* account avatars + product shots */
   .account-card img.avatar {
-    width: 84px; height: 84px; border-radius: 50%; object-fit: cover;
-    border: 3px solid var(--green); margin-bottom: 18px; display: block;
+    width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--green); display: block; flex-shrink: 0;
   }
+  .acct-head { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; }
+  .acct-head .acct-id h3 { margin-bottom: 4px; }
+  .acct-head .meta { margin-bottom: 0; }
+  .account-card .pod-metrics { margin-top: 18px; }
   .product-shot {
     background: #ffffff; border-radius: 12px; border: 1px solid var(--line-light);
     margin-bottom: 20px; overflow: hidden;

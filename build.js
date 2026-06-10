@@ -40,10 +40,18 @@ const accountCards = content.accounts
       ? `<img class="avatar" src="${esc(a.avatar)}" alt="@${esc(a.handle)} TikTok profile picture" width="320" height="320" loading="lazy">`
       : "";
     return `      <div class="card account-card">
-        ${avatar}
-        <div class="meta">${esc(a.niche)}${a.followers ? ` &middot; ${esc(a.followers)}` : ""}</div>
-        <h3><a class="handle" href="${esc(a.url)}" target="_blank" rel="noopener">${tiktokIcon}@${esc(a.handle)}</a></h3>
-        <p>${esc(a.blurb)}</p>
+        <div class="acct-head">
+          ${avatar}
+          <div class="acct-id">
+            <h3><a class="handle" href="${esc(a.url)}" target="_blank" rel="noopener">${tiktokIcon}@${esc(a.handle)}</a></h3>
+            <div class="meta">${esc(a.niche)}${a.followers ? ` &middot; ${esc(a.followers)}` : ""}</div>
+          </div>
+        </div>
+        <div class="pod-metrics">
+          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; 2026 YTD</span></div>
+          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold</span></div>
+          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views</span></div>
+        </div>
       </div>`;
   })
   .join("\n");
