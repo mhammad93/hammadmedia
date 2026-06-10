@@ -123,7 +123,7 @@ test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav l
     assert.ok(html.includes(price), `tier price line missing: ${price}`);
   }
   assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
-  assert.ok((html.match(/Sales &mdash; 2026 YTD|Sales — 2026 YTD/g) || []).length >= 6, "YTD sales labels");
+  assert.ok((html.match(/Total sales (&mdash;|—) 2026 YTD/g) || []).length >= 6, "YTD sales kickers");
   assert.ok((html.match(/Views &mdash; all time|Views — all time/g) || []).length >= 5, "all-time views labels");
   assert.ok(html.includes('name="commission" required'), "commission select missing");
   assert.ok(html.includes("30% or higher"), "commission options missing");

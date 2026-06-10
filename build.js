@@ -78,8 +78,9 @@ function buildPodCard(c, i) {
         <span class="pod-rank">0${i + 1}</span>
         <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
         <h3>${esc(c.title)}</h3>
+        <div class="pod-kicker">Total sales &mdash; 2026 YTD</div>
         <div class="pod-ytd">${money(c.ytd)}</div>
-        <div class="pod-ytd-lbl">Sales &mdash; 2026 YTD &middot; <b>${c.units.toLocaleString("en-US")}</b> units sold</div>
+        <div class="pod-ytd-lbl"><b>${c.units.toLocaleString("en-US")}</b> units sold</div>
         <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
       </div>`;
 }
