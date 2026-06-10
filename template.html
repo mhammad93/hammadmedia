@@ -73,6 +73,8 @@
     padding: 26px 0; position: relative; z-index: 3;
   }
   .brand { display: flex; flex-direction: column; text-decoration: none; line-height: 1; }
+  .brand .logo-img { height: 46px; width: auto; display: block; }
+  footer .brand .logo-img { height: 36px; }
   .brand .brand-top {
     font-family: "Manrope", sans-serif; font-weight: 800; font-size: 26px;
     letter-spacing: 0.18em; color: var(--paper);
@@ -449,12 +451,9 @@
   }
   footer a { color: var(--cream-dim); }
   footer .frow { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  footer .brand .brand-top { font-size: 19px; }
-  footer .brand .brand-sub { font-size: 10px; margin-top: 5px; }
 
   @media (max-width: 640px) {
-    .brand .brand-top { font-size: 21px; }
-    .brand .brand-sub { font-size: 10.5px; }
+    .brand .logo-img { height: 40px; }
     .stats .grid { gap: 36px 40px; }
     .hero { padding: 48px 0 72px; }
     .tiers .tier:nth-child(2) { transform: none; }
@@ -467,7 +466,7 @@
 
 <div class="wrap">
   <nav>
-    <a class="brand" href="#top" aria-label="Hammad Media — home"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
+    <a class="brand" href="#top" aria-label="Hammad Media — home"><img class="logo-img" src="assets/logo-v2.png" alt="Hammad Media" width="812" height="200"></a>
     <div class="nav-links"><a href="#results">Results</a><a href="#partner">Pricing</a><a href="#faq">FAQ</a></div>
     <a class="cta" href="#contact">Work with me</a>
   </nav>
@@ -548,7 +547,7 @@
 
 <footer>
   <div class="wrap frow">
-    <a class="brand" href="#top" aria-label="Hammad Media — back to top"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
+    <a class="brand" href="#top" aria-label="Hammad Media — back to top"><img class="logo-img" src="assets/logo-v2.png" alt="Hammad Media" width="812" height="200"></a>
     <div>&copy; {{year}} Hammad Media LLC &middot; TikTok Shop affiliate for supplement &amp; wellness brands &middot; <a href="#contact">Work with me</a></div>
   </div>
   <div class="wrap legal">

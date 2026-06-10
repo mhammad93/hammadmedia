@@ -158,12 +158,15 @@ test("design integrity: bg alternation, animation fill mode, 416M stat", () => {
   assert.ok(html.includes("VIDEO VIEWS — ALL TIME"), "all-time label missing");
 });
 
-test("stacked brand wordmark present in nav and footer with accessible labels", () => {
+test("logo image present in nav and footer with accessible labels", () => {
   const brandLinks = html.match(/class="brand"[^>]*aria-label="[^"]{5,}"/g) || [];
-  assert.ok(brandLinks.length >= 2, "expected brand wordmark links in nav and footer");
-  assert.ok(html.includes('class="brand-top">HAMMAD<'), "HAMMAD top line missing");
-  assert.ok(html.includes('class="brand-sub">MEDIA<'), "MEDIA sub line missing");
-  assert.ok(!html.includes("logo-web.png\" alt"), "old image logo still in page");
+  assert.ok(brandLinks.length >= 2, "expected brand links in nav and footer");
+  assert.strictEqual(
+    (html.match(/class="logo-img" src="assets\/logo-v2\.png" alt="Hammad Media"/g) || []).length,
+    2,
+    "logo image must appear in nav and footer",
+  );
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-v2.png")), "logo file missing from dist");
 });
 
 test("product images + avatars render with alts and exist in dist", () => {
