@@ -35,10 +35,13 @@ test("every account handle appears with its tiktok link", () => {
   }
 });
 
-test("receipts: 8 uniform cards with YTD figures, spelled-out units, sane bars", () => {
-  assert.strictEqual(content.receipts.items.length, 8);
-  assert.strictEqual((html.match(/class="pod"/g) || []).length, 8, "card count");
+test("receipts: 3 podium + 3 shelf cards, sexy-numbers sub, metric grid, sane bars", () => {
+  assert.strictEqual(content.receipts.items.length, 6);
+  assert.strictEqual((html.match(/class="pod"/g) || []).length, 6, "card count");
+  assert.ok(html.includes('class="shelf"'), "scroll-snap shelf missing");
   assert.ok(!html.includes("ledger-row"), "ledger style must be gone");
+  assert.ok(html.includes("$1.1M in attributed sales"), "sexy-numbers sub missing");
+  assert.ok(!html.includes("1,110"), "products-tested framing must be gone");
   for (const item of content.receipts.items) {
     const moneyStr = "$" + item.ytd.toLocaleString("en-US");
     assert.ok(html.includes(moneyStr), `YTD figure missing: ${moneyStr}`);
@@ -49,10 +52,10 @@ test("receipts: 8 uniform cards with YTD figures, spelled-out units, sane bars",
     assert.ok(w >= 4 && w <= 100, `bar width out of range: ${w}%`);
   }
   assert.ok(html.includes(`width:100%`), "top product must have full-width bar");
-  assert.strictEqual((html.match(/class="bar"/g) || []).length, 8, "every card carries a scale bar");
-  assert.ok(html.includes("1,110"), "tested-products stat missing");
-  assert.ok(html.includes("best month $82,606"), "best-month line missing");
-  assert.ok((html.match(/units sold/g) || []).length >= 8, "units must be spelled out on every card");
+  assert.strictEqual((html.match(/class="bar"/g) || []).length, 6, "every card carries a scale bar");
+  assert.ok(html.includes(">Best month</span>"), "Best month metric label missing");
+  assert.ok(html.includes(">Top video</span>"), "Top video metric label missing");
+  assert.ok((html.match(/units sold/g) || []).length >= 6, "units must be spelled out on every card");
   assert.ok(!/\d u</.test(html), "cryptic 'u' abbreviation must not appear");
   assert.ok(!/gut health bundle/i.test(html), "dropped Gut Health entry still present");
 });

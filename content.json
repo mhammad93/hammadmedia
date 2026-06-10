@@ -149,8 +149,6 @@
   },
   "receipts": {
     "asOf": "Jan 1 \u2013 Jun 8, 2026",
-    "tested": "1,110",
-    "past10k": "49",
     "items": [
       {
         "title": "Astaxanthin 12mg \u2014 Micro Ingredients",
@@ -200,21 +198,8 @@
         "image": "assets/products/saffron.jpg",
         "ytd": 79862,
         "units": 3723
-      },
-      {
-        "title": "Anti-Aging Bundle (NMN + Astaxanthin) \u2014 Brooke's",
-        "image": "assets/products/brookes-bundle.jpg",
-        "ytd": 74964,
-        "units": 1453
-      },
-      {
-        "title": "Liposomal Glutathione \u2014 Cata-Kor",
-        "image": "assets/products/catakor-glutathione.jpg",
-        "ytd": 73843,
-        "units": 3456,
-        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7630522035046812941",
-        "videoViews": "938K"
       }
-    ]
+    ],
+    "sub": "Six products. $1.1M in attributed sales. Five months. Every number verifiable in your TikTok Shop Seller Center."
   }
 }

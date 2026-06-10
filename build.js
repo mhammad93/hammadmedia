@@ -38,37 +38,37 @@ const receipts = content.receipts;
 const maxYtd = receipts ? Math.max(...receipts.items.map((i) => i.ytd)) : 1;
 const barPct = (ytd) => Math.max(4, Math.round((ytd / maxYtd) * 100));
 
-const podiumCards = receipts
-  ? receipts.items
-      .map((c, i) => {
-        const video = c.videoUrl
-          ? `\n        <a class="watch" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">&#9654; Watch the ${esc(c.videoViews)}-view video &rarr;</a>`
-          : "";
-        const meta = [
-          `<b>${c.units.toLocaleString("en-US")}</b> units sold`,
-          c.bestMonth ? `<span class="best">best month ${money(c.bestMonth)}</span>` : null,
-        ]
-          .filter(Boolean)
-          .join(" &middot; ");
-        return `      <div class="pod">
+function buildPodCard(c, i) {
+  const cells = [];
+  if (c.bestMonth)
+    cells.push(`<div class="m"><span class="mv">${money(c.bestMonth)}</span><span class="ml">Best month</span></div>`);
+  if (c.totalViews)
+    cells.push(`<div class="m"><span class="mv">${esc(c.totalViews)}</span><span class="ml">Total views</span></div>`);
+  if (c.videoUrl && c.videoViews)
+    cells.push(`<div class="m"><a class="mv mv-link" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">${esc(c.videoViews)} &#9654;</a><span class="ml">Top video</span></div>`);
+  const metrics = cells.length ? `\n        <div class="pod-metrics">${cells.join("")}</div>` : "";
+  return `      <div class="pod">
         <span class="pod-rank">0${i + 1}</span>
         <div class="product-shot"><img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
         <h3>${esc(c.title)}</h3>
         <div class="pod-ytd">${money(c.ytd)}</div>
-        <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>
-        <div class="pod-meta">${meta}</div>${video}
+        <div class="pod-ytd-lbl">Total sales &middot; <b>${c.units.toLocaleString("en-US")}</b> units sold</div>
+        <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
       </div>`;
-      })
-      .join("\n")
-  : "";
+}
+
+const cardsArr = receipts ? receipts.items.map((c, i) => buildPodCard(c, i)) : [];
 
 const caseStudiesSection = receipts
   ? `<section id="results" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">The receipts</h2>
-    <p class="section-sub">I put ${esc(receipts.tested)} products through the same test this year. ${esc(receipts.past10k)} cleared $10K. These eight broke out &mdash; combined attributed GMV across both accounts, ${esc(receipts.asOf)}.</p>
+    <p class="section-sub">${esc(receipts.sub)}</p>
     <div class="podium">
-${podiumCards}
+${cardsArr.slice(0, 3).join("\n")}
+    </div>
+    <div class="shelf" aria-label="More winning products — scroll horizontally">
+${cardsArr.slice(3).join("\n")}
     </div>
   </div>
 </section>`

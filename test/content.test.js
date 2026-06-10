@@ -35,9 +35,9 @@ test("accounts: non-empty, each with handle and tiktok url", () => {
   }
 });
 
-test("receipts: 8 items sorted by descending YTD with valid fields", () => {
+test("receipts: 6 items sorted by descending YTD with valid fields", () => {
   const items = content.receipts.items;
-  assert.strictEqual(items.length, 8);
+  assert.strictEqual(items.length, 6);
   for (let i = 0; i < items.length; i++) {
     const c = items[i];
     assert.ok(c.title.length > 0);

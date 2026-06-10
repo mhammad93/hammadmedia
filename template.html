@@ -244,9 +244,22 @@
   .card a.handle { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--green); }
   .card a.handle:hover { color: var(--green-deep); }
 
-  /* ── The receipts: podium + ledger ── */
+  /* ── The receipts: podium grid + scroll-snap shelf ── */
   .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 900px) { .podium { grid-template-columns: 1fr; } }
+  .shelf {
+    margin-top: 22px; display: grid; grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 44px) / 3);
+    gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-bottom: 12px; scrollbar-width: thin; scrollbar-color: var(--green-deep) transparent;
+  }
+  .shelf .pod { scroll-snap-align: start; }
+  .shelf::-webkit-scrollbar { height: 6px; }
+  .shelf::-webkit-scrollbar-thumb { background: rgba(14,122,74,.35); border-radius: 100px; }
+  @media (max-width: 900px) {
+    .shelf { grid-auto-columns: 86%; }
+    .podium + .shelf { margin-top: 22px; }
+  }
   .pod {
     background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
     padding: 26px 26px 28px; position: relative;
@@ -254,11 +267,11 @@
   }
   .pod:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
   .pod-rank {
-    position: absolute; top: 16px; left: 22px; z-index: 1;
+    position: absolute; top: 14px; right: 22px; z-index: 1;
     font-family: "Fraunces", serif; font-style: italic; font-size: 32px;
     color: var(--green-deep); opacity: .45;
   }
-  .pod .product-shot { margin-bottom: 18px; }
+  .pod .product-shot { margin-top: 30px; margin-bottom: 18px; }
   .pod h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 19px; line-height: 1.25; margin-bottom: 14px; letter-spacing: -0.01em; min-height: 2.5em; }
   .pod-ytd {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
@@ -267,14 +280,20 @@
   }
   .bar { height: 7px; background: rgba(14,122,74,.12); border-radius: 100px; margin: 14px 0 12px; overflow: hidden; }
   .bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--green-deep), var(--green)); }
-  .pod-meta { font-size: 14.5px; color: var(--ink-soft); }
-  .pod-meta b { color: var(--ink); font-weight: 800; }
-  .pod-meta .best { white-space: nowrap; }
-  .pod .watch {
-    display: inline-block; margin-top: 14px; font-size: 14px; font-weight: 800;
-    color: var(--green-deep); text-decoration: none; border-bottom: 2px solid var(--green);
+  .pod-ytd-lbl { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; }
+  .pod-ytd-lbl b { color: var(--ink); font-weight: 800; }
+  .pod-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-light);
   }
-  .pod .watch:hover { color: var(--ink); }
+  .pod-metrics .m { display: flex; flex-direction: column; min-width: 0; }
+  .pod-metrics .mv {
+    font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
+    font-size: 18px; color: var(--ink); white-space: nowrap;
+  }
+  .pod-metrics .mv-link { color: var(--green-deep); text-decoration: none; border-bottom: 2px solid var(--green); align-self: flex-start; }
+  .pod-metrics .mv-link:hover { color: var(--ink); }
+  .pod-metrics .ml { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 3px; }
 
   .tiers .tier:nth-child(2) {
     border: 2px solid var(--green-deep);
@@ -375,8 +394,8 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span><b>1,110</b> products tested &middot; Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span><b>1,110</b> products tested &middot; Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
   </div>
 </div>
 
