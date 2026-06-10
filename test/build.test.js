@@ -108,6 +108,12 @@ test("TikTok Shop badge on every product box; play glyph on video links; account
   );
 });
 
+test("summit award proof card renders with image and caption", () => {
+  assert.ok(html.includes('src="assets/award-summit.jpg"'), "award photo missing");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "award-summit.jpg")), "award photo missing from dist");
+  assert.ok(html.includes("Health Creators of the Year, 2025"), "award caption missing");
+});
+
 test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
   assert.ok(html.includes("Slot 07 is open"), "post-receipts slot CTA missing");
   assert.ok(html.includes("Claim a slot"), "post-tiers CTA missing");

@@ -211,6 +211,17 @@
     display: flex; flex-direction: column; align-items: center;
   }
 
+  .award-card {
+    margin-top: 22px; background: #fffdf8; border: 1px solid var(--line-light);
+    border-radius: 18px; padding: 18px;
+    display: grid; grid-template-columns: minmax(280px, 480px) 1fr;
+    gap: 26px; align-items: center;
+  }
+  .award-card img { width: 100%; height: auto; border-radius: 12px; display: block; }
+  .award-card figcaption { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+  .award-card figcaption b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 8px; }
+  @media (max-width: 860px) { .award-card { grid-template-columns: 1fr; gap: 14px; } }
+
   /* account avatars + product shots */
   .account-card img.avatar {
     width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
@@ -471,6 +482,13 @@
     <div class="cards">
 {{accountCards}}
     </div>
+    <figure class="award-card">
+      <img src="assets/award-summit.jpg" alt="TikTok Shop Summit stage slide naming the Health Creators of the Year, with @drew.review1 listed first in the Short Video category" width="1200" height="932" loading="lazy">
+      <figcaption>
+        <b>TikTok Shop Summit &mdash; Health Creators of the Year, 2025.</b>
+        @drew.review1, first in the Short Video category. Photographed live on stage &mdash; this is the official proof behind the #1 claim.
+      </figcaption>
+    </figure>
   </div>
 </section>
 
