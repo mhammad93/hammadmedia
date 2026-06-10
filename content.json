@@ -47,43 +47,6 @@
       "followers": "182.9K followers"
     }
   ],
-  "caseStudies": [
-    {
-      "title": "Astaxanthin 12mg \u2014 Micro Ingredients",
-      "result": "$82,606 attributed GMV \u00b7 2,659 units \u2014 one month",
-      "image": "assets/products/astaxanthin.jpg",
-      "videoUrl": "https://www.tiktok.com/@drew.review/video/7592733868550114574"
-    },
-    {
-      "title": "Collagen Bio-Peptides Protein 20oz \u2014 NeoCell",
-      "result": "$73,334 attributed GMV \u00b7 2,891 units \u2014 one month",
-      "image": "assets/products/collagen.jpg",
-      "videoUrl": "https://www.tiktok.com/@drew.review1/video/7639552113529457934"
-    },
-    {
-      "title": "NMN Complex 1,000mg \u2014 Micro Ingredients",
-      "result": "$64,975 attributed GMV \u00b7 2,010 units in one month \u2014 plus $46,950 the month prior on my second account",
-      "image": "assets/products/nmn.jpg",
-      "videoUrl": "https://www.tiktok.com/@drew.review/video/7639174076992392461"
-    },
-    {
-      "title": "Magnesium Complex 8-in-1 \u2014 Toplux",
-      "result": "$17,104 attributed GMV \u00b7 1,300 units \u2014 one month",
-      "image": "assets/products/magnesium.jpg",
-      "videoUrl": "https://www.tiktok.com/@drew.review/video/7646896933373529357"
-    },
-    {
-      "title": "NAC Capsules \u2014 Nutricost",
-      "result": "$13,737 attributed GMV \u00b7 1,195 units \u2014 one month",
-      "image": "assets/products/nac.jpg",
-      "videoUrl": "https://www.tiktok.com/@drew.review/video/7643272680615005454"
-    },
-    {
-      "title": "Gut Health Bundle \u2014 Snap Supplements",
-      "result": "$10,130 attributed GMV \u00b7 308 units \u2014 one month",
-      "image": "assets/products/gut-health.jpg"
-    }
-  ],
   "services": {
     "heading": "How it works",
     "steps": [
@@ -183,5 +146,75 @@
   "legal": {
     "disclaimer": "Brand names and product images appear solely to document affiliate sales history and do not imply sponsorship or endorsement. All trademarks are the property of their respective owners.",
     "privacy": "Privacy: inquiries submitted through this form are delivered to my inbox and used only to respond to you. This site sets no cookies and runs no trackers. Your information is never sold or added to a marketing list."
+  },
+  "receipts": {
+    "asOf": "Jan 1 \u2013 Jun 8, 2026",
+    "tested": "1,110",
+    "past10k": "49",
+    "items": [
+      {
+        "title": "Astaxanthin 12mg \u2014 Micro Ingredients",
+        "image": "assets/products/astaxanthin.jpg",
+        "ytd": 329666,
+        "units": 10857,
+        "bestMonth": 82606,
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7592733868550114574",
+        "videoViews": "6.1M"
+      },
+      {
+        "title": "NMN Complex 1,000mg \u2014 Micro Ingredients",
+        "image": "assets/products/nmn.jpg",
+        "ytd": 236531,
+        "units": 7409,
+        "bestMonth": 64975,
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7639174076992392461",
+        "videoViews": "97K"
+      },
+      {
+        "title": "Collagen Bio-Peptides 20oz \u2014 NeoCell",
+        "image": "assets/products/collagen.jpg",
+        "ytd": 209810,
+        "units": 8283,
+        "bestMonth": 73334,
+        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7639552113529457934",
+        "videoViews": "82K"
+      },
+      {
+        "title": "Magnesium Complex 8-in-1 \u2014 Toplux",
+        "image": "assets/products/magnesium.jpg",
+        "ytd": 165064,
+        "units": 12846,
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7646896933373529357",
+        "videoViews": "21K"
+      },
+      {
+        "title": "NAC Capsules \u2014 Nutricost",
+        "image": "assets/products/nac.jpg",
+        "ytd": 85308,
+        "units": 7393,
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7643272680615005454",
+        "videoViews": "55K"
+      },
+      {
+        "title": "Saffron Extract \u2014 Nutricost",
+        "image": "assets/products/saffron.jpg",
+        "ytd": 79862,
+        "units": 3723
+      },
+      {
+        "title": "Anti-Aging Bundle (NMN + Astaxanthin) \u2014 Brooke's",
+        "image": "assets/products/brookes-bundle.jpg",
+        "ytd": 74964,
+        "units": 1453
+      },
+      {
+        "title": "Liposomal Glutathione \u2014 Cata-Kor",
+        "image": "assets/products/catakor-glutathione.jpg",
+        "ytd": 73843,
+        "units": 3456,
+        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7630522035046812941",
+        "videoViews": "938K"
+      }
+    ]
   }
 }

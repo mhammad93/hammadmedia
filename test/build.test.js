@@ -35,14 +35,27 @@ test("every account handle appears with its tiktok link", () => {
   }
 });
 
-test("case studies render when present", () => {
-  if (content.caseStudies.length > 0) {
-    for (const c of content.caseStudies) {
-      assert.ok(html.includes(c.result), `case study result missing: ${c.result}`);
-    }
-  } else {
-    assert.ok(!html.includes('id="results"'));
+test("receipts: 3 podium cards + 5 ledger rows with YTD figures and sane bars", () => {
+  assert.strictEqual(content.receipts.items.length, 8);
+  assert.strictEqual((html.match(/class="pod"/g) || []).length, 3, "podium count");
+  assert.strictEqual((html.match(/class="ledger-row"/g) || []).length, 5, "ledger count");
+  for (const item of content.receipts.items) {
+    const moneyStr = "$" + item.ytd.toLocaleString("en-US");
+    assert.ok(html.includes(moneyStr), `YTD figure missing: ${moneyStr}`);
+    assert.ok(fs.existsSync(path.join(ROOT, "dist", item.image)), `dist missing ${item.image}`);
   }
+  for (const m of html.matchAll(/class="bar[^"]*"><span style="width:(\d+)%"/g)) {
+    const w = Number(m[1]);
+    assert.ok(w >= 4 && w <= 100, `bar width out of range: ${w}%`);
+  }
+  assert.ok(html.includes(`width:100%`), "top product must have full-width bar");
+  assert.ok(html.includes("1,110"), "tested-products stat missing");
+  assert.ok(html.includes("best month $82,606"), "best-month line missing on podium");
+  assert.ok(
+    html.includes("7630522035046812941"),
+    "glutathione 938K video link missing",
+  );
+  assert.ok(!/gut health bundle/i.test(html), "dropped Gut Health entry still present");
 });
 
 test("contact: FormSubmit form with qualification fields, honeypot, and secondary email", () => {
@@ -67,10 +80,8 @@ test("stacked brand wordmark present in nav and footer with accessible labels", 
 });
 
 test("product images + avatars render with alts and exist in dist", () => {
-  for (const c of content.caseStudies) {
-    if (!c.image) continue;
-    assert.ok(html.includes(`src="${c.image}"`), `case study image missing: ${c.image}`);
-    assert.ok(fs.existsSync(path.join(ROOT, "dist", c.image)), `dist missing ${c.image}`);
+  for (const c of content.receipts.items) {
+    assert.ok(html.includes(`src="${c.image}"`), `receipt image missing: ${c.image}`);
   }
   for (const a of content.accounts) {
     if (!a.avatar) continue;
@@ -132,7 +143,7 @@ test("commission figures are never published", () => {
   // Spec: Est. commission stays private. Guard against accidental inclusion.
   assert.ok(!/commission base/i.test(html));
   assert.ok(!/est\.? commission/i.test(html));
-  for (const figure of ["$898", "$13,888", "$357,262", "$147,412", "$19,622", "$716.55"]) {
+  for (const figure of ["$898", "$13,888", "$357,262", "$147,412", "$19,622", "$716.55", "$14,433", "$30,492", "$7,782"]) {
     assert.ok(!html.includes(figure), `private commission figure ${figure} leaked`);
   }
 });

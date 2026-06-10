@@ -33,26 +33,65 @@ const accountCards = content.accounts
   })
   .join("\n");
 
-const caseStudiesSection = content.caseStudies.length
+const money = (n) => "$" + n.toLocaleString("en-US");
+const receipts = content.receipts;
+const maxYtd = receipts ? Math.max(...receipts.items.map((i) => i.ytd)) : 1;
+const barPct = (ytd) => Math.max(4, Math.round((ytd / maxYtd) * 100));
+
+const podiumCards = receipts
+  ? receipts.items
+      .slice(0, 3)
+      .map((c, i) => {
+        const video = c.videoUrl
+          ? `\n        <a class="watch" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">&#9654; Watch the ${esc(c.videoViews)}-view video &rarr;</a>`
+          : "";
+        const best = c.bestMonth
+          ? `<span class="best">best month ${money(c.bestMonth)}</span>`
+          : "";
+        return `      <div class="pod">
+        <span class="pod-rank">0${i + 1}</span>
+        <div class="product-shot"><img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
+        <h3>${esc(c.title)}</h3>
+        <div class="pod-ytd">${money(c.ytd)}</div>
+        <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>
+        <div class="pod-meta"><b>${c.units.toLocaleString("en-US")}</b> units &middot; ${best}</div>${video}
+      </div>`;
+      })
+      .join("\n")
+  : "";
+
+const ledgerRows = receipts
+  ? receipts.items
+      .slice(3)
+      .map((c, i) => {
+        const video = c.videoUrl
+          ? ` <a class="watch-sm" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">&#9654; ${esc(c.videoViews)} views</a>`
+          : "";
+        return `      <div class="ledger-row">
+        <div class="lr-top">
+          <span class="lr-rank">0${i + 4}</span>
+          <img class="lr-thumb" src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy">
+          <span class="lr-name">${esc(c.title)}${video}</span>
+          <span class="lr-fill" aria-hidden="true"></span>
+          <span class="lr-ytd">${money(c.ytd)}</span>
+          <span class="lr-units">${c.units.toLocaleString("en-US")} u</span>
+        </div>
+        <div class="bar bar-thin"><span style="width:${barPct(c.ytd)}%"></span></div>
+      </div>`;
+      })
+      .join("\n")
+  : "";
+
+const caseStudiesSection = receipts
   ? `<section id="results" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">The receipts</h2>
-    <p class="section-sub">Real products, real single-month results — straight from my TikTok Shop dashboards.</p>
-    <div class="cards">
-${content.caseStudies
-  .map((c) => {
-    const link = c.videoUrl
-      ? `\n        <p style="margin-top:10px;"><a class="handle" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">Watch the video &rarr;</a></p>`
-      : "";
-    const img = c.image
-      ? `<div class="product-shot"><img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>\n        `
-      : "";
-    return `      <div class="card">
-        ${img}<h3>${esc(c.title || "Campaign")}</h3>
-        <p>${esc(c.result)}</p>${link}
-      </div>`;
-  })
-  .join("\n")}
+    <p class="section-sub">I put ${esc(receipts.tested)} products through the same test this year. ${esc(receipts.past10k)} cleared $10K. These eight broke out &mdash; combined attributed GMV across both accounts, ${esc(receipts.asOf)}.</p>
+    <div class="podium">
+${podiumCards}
+    </div>
+    <div class="ledger">
+${ledgerRows}
     </div>
   </div>
 </section>`

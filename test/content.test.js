@@ -35,13 +35,20 @@ test("accounts: non-empty, each with handle and tiktok url", () => {
   }
 });
 
-test("caseStudies is an array (may be empty); entries need title and result; videoUrl optional", () => {
-  assert.ok(Array.isArray(content.caseStudies));
-  for (const c of content.caseStudies) {
+test("receipts: 8 items sorted by descending YTD with valid fields", () => {
+  const items = content.receipts.items;
+  assert.strictEqual(items.length, 8);
+  for (let i = 0; i < items.length; i++) {
+    const c = items[i];
     assert.ok(c.title.length > 0);
-    assert.ok(c.result.length > 0);
-    if (c.videoUrl) assert.ok(c.videoUrl.startsWith("https://"));
+    assert.ok(Number.isInteger(c.ytd) && c.ytd > 0, `ytd invalid: ${c.title}`);
+    assert.ok(Number.isInteger(c.units) && c.units > 0, `units invalid: ${c.title}`);
+    assert.ok(c.image.startsWith("assets/products/"), `image path invalid: ${c.title}`);
+    if (c.videoUrl) assert.ok(c.videoUrl.startsWith("https://www.tiktok.com/"));
+    if (i > 0) assert.ok(items[i - 1].ytd >= c.ytd, `not sorted descending at index ${i}`);
   }
+  // top 3 (podium) carry the dual-proof best-month line where known
+  assert.ok(items[0].bestMonth && items[1].bestMonth && items[2].bestMonth, "podium items need bestMonth");
 });
 
 test("services has 3 steps with title and text", () => {
