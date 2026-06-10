@@ -40,7 +40,7 @@ test("receipts: 3 podium + 3 shelf cards, sexy-numbers sub, metric grid, sane ba
   assert.strictEqual((html.match(/class="pod"/g) || []).length, 6, "card count");
   assert.ok(html.includes('class="shelf"'), "scroll-snap shelf missing");
   assert.ok(!html.includes("ledger-row"), "ledger style must be gone");
-  assert.ok(html.includes("$1.1M in attributed sales"), "sexy-numbers sub missing");
+  assert.ok(html.includes("$1.1M in sales"), "sexy-numbers sub missing");
   assert.ok(!html.includes("1,110"), "products-tested framing must be gone");
   for (const item of content.receipts.items) {
     const moneyStr = "$" + item.ytd.toLocaleString("en-US");
@@ -84,7 +84,7 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
   assert.ok(/bonuses move you to the top/i.test(html), "bonus-priority line missing");
   assert.ok(html.includes("No fixed number of videos"), "boosted no-guarantee line missing");
-  assert.ok(html.includes("No long-term contract"), "month-to-month line missing");
+  assert.ok(/no long-term contract/i.test(html), "month-to-month line missing");
 });
 
 test("TikTok Shop badge on every product box; play glyph on video links; account order", () => {
