@@ -35,26 +35,25 @@ test("every account handle appears with its tiktok link", () => {
   }
 });
 
-test("receipts: 3 podium cards + 5 ledger rows with YTD figures and sane bars", () => {
+test("receipts: 8 uniform cards with YTD figures, spelled-out units, sane bars", () => {
   assert.strictEqual(content.receipts.items.length, 8);
-  assert.strictEqual((html.match(/class="pod"/g) || []).length, 3, "podium count");
-  assert.strictEqual((html.match(/class="ledger-row"/g) || []).length, 5, "ledger count");
+  assert.strictEqual((html.match(/class="pod"/g) || []).length, 8, "card count");
+  assert.ok(!html.includes("ledger-row"), "ledger style must be gone");
   for (const item of content.receipts.items) {
     const moneyStr = "$" + item.ytd.toLocaleString("en-US");
     assert.ok(html.includes(moneyStr), `YTD figure missing: ${moneyStr}`);
     assert.ok(fs.existsSync(path.join(ROOT, "dist", item.image)), `dist missing ${item.image}`);
   }
-  for (const m of html.matchAll(/class="bar[^"]*"><span style="width:(\d+)%"/g)) {
+  for (const m of html.matchAll(/class="bar"><span style="width:(\d+)%"/g)) {
     const w = Number(m[1]);
     assert.ok(w >= 4 && w <= 100, `bar width out of range: ${w}%`);
   }
   assert.ok(html.includes(`width:100%`), "top product must have full-width bar");
+  assert.strictEqual((html.match(/class="bar"/g) || []).length, 8, "every card carries a scale bar");
   assert.ok(html.includes("1,110"), "tested-products stat missing");
-  assert.ok(html.includes("best month $82,606"), "best-month line missing on podium");
-  assert.ok(
-    html.includes("7630522035046812941"),
-    "glutathione 938K video link missing",
-  );
+  assert.ok(html.includes("best month $82,606"), "best-month line missing");
+  assert.ok((html.match(/units sold/g) || []).length >= 8, "units must be spelled out on every card");
+  assert.ok(!/\d u</.test(html), "cryptic 'u' abbreviation must not appear");
   assert.ok(!/gut health bundle/i.test(html), "dropped Gut Health entry still present");
 });
 

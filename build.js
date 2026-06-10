@@ -40,43 +40,23 @@ const barPct = (ytd) => Math.max(4, Math.round((ytd / maxYtd) * 100));
 
 const podiumCards = receipts
   ? receipts.items
-      .slice(0, 3)
       .map((c, i) => {
         const video = c.videoUrl
           ? `\n        <a class="watch" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">&#9654; Watch the ${esc(c.videoViews)}-view video &rarr;</a>`
           : "";
-        const best = c.bestMonth
-          ? `<span class="best">best month ${money(c.bestMonth)}</span>`
-          : "";
+        const meta = [
+          `<b>${c.units.toLocaleString("en-US")}</b> units sold`,
+          c.bestMonth ? `<span class="best">best month ${money(c.bestMonth)}</span>` : null,
+        ]
+          .filter(Boolean)
+          .join(" &middot; ");
         return `      <div class="pod">
         <span class="pod-rank">0${i + 1}</span>
         <div class="product-shot"><img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
         <h3>${esc(c.title)}</h3>
         <div class="pod-ytd">${money(c.ytd)}</div>
         <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>
-        <div class="pod-meta"><b>${c.units.toLocaleString("en-US")}</b> units &middot; ${best}</div>${video}
-      </div>`;
-      })
-      .join("\n")
-  : "";
-
-const ledgerRows = receipts
-  ? receipts.items
-      .slice(3)
-      .map((c, i) => {
-        const video = c.videoUrl
-          ? ` <a class="watch-sm" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">&#9654; ${esc(c.videoViews)} views</a>`
-          : "";
-        return `      <div class="ledger-row">
-        <div class="lr-top">
-          <span class="lr-rank">0${i + 4}</span>
-          <img class="lr-thumb" src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy">
-          <span class="lr-name">${esc(c.title)}${video}</span>
-          <span class="lr-fill" aria-hidden="true"></span>
-          <span class="lr-ytd">${money(c.ytd)}</span>
-          <span class="lr-units">${c.units.toLocaleString("en-US")} u</span>
-        </div>
-        <div class="bar bar-thin"><span style="width:${barPct(c.ytd)}%"></span></div>
+        <div class="pod-meta">${meta}</div>${video}
       </div>`;
       })
       .join("\n")
@@ -89,9 +69,6 @@ const caseStudiesSection = receipts
     <p class="section-sub">I put ${esc(receipts.tested)} products through the same test this year. ${esc(receipts.past10k)} cleared $10K. These eight broke out &mdash; combined attributed GMV across both accounts, ${esc(receipts.asOf)}.</p>
     <div class="podium">
 ${podiumCards}
-    </div>
-    <div class="ledger">
-${ledgerRows}
     </div>
   </div>
 </section>`
