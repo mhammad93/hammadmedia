@@ -212,7 +212,7 @@ const contactBlock = content.contact.formSubmitEmail
       <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What is the product, what commission do you have in mind, and what monthly sales target do you have?"></textarea></div>
       <button type="submit">Send inquiry &rarr;</button>
     </form>
-    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way. Or message me on <a href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>; WeChat available after first contact.</p>`
+    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way. Or message me on <a href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
 // ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
