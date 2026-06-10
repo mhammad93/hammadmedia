@@ -271,6 +271,10 @@ test("commission figures are never published", () => {
   }
 });
 
+test("Boosted Commission eligibility threshold is stated", () => {
+  assert.ok((html.match(/10,000\+ units/g) || []).length >= 2, "10K-units eligibility missing from tier card or FAQ");
+});
+
 test("Google tag present exactly once on every page", () => {
   // Google: one gtag per page, immediately after <head>. Never zero, never two.
   const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
