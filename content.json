@@ -60,7 +60,7 @@
       },
       {
         "title": "I create the content",
-        "text": "I make every review video myself \u2014 strong openings, real demonstrations, honest opinions. The style that actually sells on TikTok Shop. No editors, no agencies, no middle layers."
+        "text": "I make every review video myself \u2014 strong openings, real demonstrations, honest opinions. The first video is typically live within 48 hours of your sample arriving. No editors, no agencies, no approval rounds."
       },
       {
         "title": "You verify every sale",
@@ -75,26 +75,30 @@
       {
         "name": "Boosted Commission",
         "tag": "Start here",
-        "text": "Raise my commission rate on TikTok Shop and your product joins the testing lineup. Zero upfront cost \u2014 you pay only when products sell. No fixed number of videos: I post what performs, and higher rates get priority."
+        "text": "Raise my commission rate on TikTok Shop and your product joins the testing lineup. You pay only when products sell. No fixed number of videos: I post what performs, and higher rates get priority.",
+        "price": "$0 upfront \u2014 commission only"
       },
       {
         "name": "Retainer + Commission",
         "tag": "Most popular",
-        "text": "A guaranteed number of review videos every month, posted across both accounts \u2014 plus commission on every sale. From $1,000 per video, paid upfront. Month to month, no long-term contract."
+        "text": "A guaranteed number of review videos every month, posted across both accounts \u2014 plus commission on every sale. Paid upfront, month to month, no long-term contract.",
+        "price": "From $1,000 per video \u00b7 15 for $13,500 \u00b7 30 for $25,000"
       },
       {
         "name": "Exclusive",
         "tag": "Own the category",
-        "text": "One brand per product category. I never promote your competitors \u2014 your products get the entire category across both accounts. Retainer + commission + performance bonuses. Once your category is taken, it is closed."
+        "text": "One brand per product category. I never promote your competitors \u2014 your products get the entire category across both accounts. Retainer + commission + performance bonuses. Once your category is taken, it is closed.",
+        "price": "From $50,000 per month \u2014 complete niche exclusivity"
       }
     ],
-    "note": "Every deal pays me the most when your product sells \u2014 I only win when you win. And because I am one person, not an agency, I keep a hard limit: four new products each month, no more. When the month is full, the next spot goes to the product that fits best. Supplement and wellness brands always come first."
+    "note": "Every deal pays me the most when your product sells \u2014 I only win when you win. And because I am one person, not an agency, I keep a hard limit: four new products each month, no more. Mailing samples to one hundred small creators gets you one hundred experiments. Working with the #1 affiliate in your category gets you a measured result in the first week. When the month is full, the next spot goes to the product that fits best. Supplement and wellness brands always come first."
   },
   "contact": {
     "heading": "Work with me",
-    "subheading": "Tell me about your product \u2014 your TikTok Shop link, category, and the commission you have in mind. I reply to every brand inquiry within 24 hours, and the person who replies is the person who makes your videos.",
+    "subheading": "Tell me about your product \u2014 your TikTok Shop link, category, and the commission you have in mind. I take on a maximum of four new products each month, and slots go to the products that fit best. I reply to every brand inquiry within 24 hours, and the person who replies is the person who makes your videos. If it is a fit, the next step is a short call where I show you the live sales dashboards.",
     "email": "contact@hammadmedia.com",
-    "formSubmitEmail": "mohamed.hammad.reply@gmail.com"
+    "formSubmitEmail": "mohamed.hammad.reply@gmail.com",
+    "whatsapp": "+12015520786"
   },
   "brands": [
     {
@@ -144,7 +148,7 @@
       },
       {
         "q": "What if it doesn't sell?",
-        "a": "On commission deals, your only risk is **one product sample** \u2014 I take the rest. And I do not give up after one video: I test different openings and styles, and some products need three videos before one takes off. My biggest winner took more than 200 videos across two years. If a product truly does not fit my audience, I will tell you directly and save us both time."
+        "a": "On commission deals, your only risk is **one product sample** \u2014 I take the rest. And I do not give up after one video: I test different openings and styles, and some products need three videos before one becomes a hit. My biggest winner took more than 200 videos across two years. If a product truly does not fit my audience, I will tell you directly and save us both time."
       },
       {
         "q": "What does a retainer cost?",
@@ -165,8 +169,17 @@
           "Example: lock collagen, and only your collagen ever appears on my accounts",
           "Month to month. One brand per category \u2014 once a category is taken, it is closed."
         ]
+      },
+      {
+        "q": "Can we run your videos as ads?",
+        "a": "Yes \u2014 through TikTok Spark Ads. I provide an authorization code so you can boost any of my videos as an ad from my own handle, which performs better than reposting the file on your brand account. My videos can also power your GMV Max campaigns. Ad usage rights are agreed per deal \u2014 tell me in your inquiry if ad usage matters to you, and I will include it in the offer."
+      },
+      {
+        "q": "Our team is not based in the US \u2014 can we still work together?",
+        "a": "Yes. Many of my partners run TikTok Shop US from teams outside the US. You ship the sample from your US warehouse, we agree terms over email, and retainers are invoiced through Hammad Media LLC, a registered US company, paid upfront by bank transfer. Commission-only deals need no payment setup at all \u2014 TikTok Shop pays the commission automatically."
       }
-    ]
+    ],
+    "sub": "Straight answers \u2014 the same ones I give on calls."
   },
   "legal": {
     "disclaimer": "Brand names and product images appear solely to document affiliate sales history and do not imply sponsorship or endorsement. All trademarks are the property of their respective owners.",
@@ -233,6 +246,6 @@
         "totalViews": "17M"
       }
     ],
-    "sub": "Six products. $1.1M in sales. Five months. Every top video is linked \u2014 check the views yourself, and on our first call I will show you the live sales dashboards."
+    "sub": "Six products. $1.1M in sales since January 1. Every top video is linked \u2014 check the views yourself, and on our first call I will show you the live sales dashboards."
   }
 }

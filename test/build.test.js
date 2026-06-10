@@ -118,6 +118,28 @@ test("summit award proof card renders with image and caption", () => {
   assert.ok(html.includes("Health Creators of the Year, 2025"), "award caption missing");
 });
 
+test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
+  for (const price of ["$0 upfront — commission only", "From $1,000 per video", "From $50,000 per month"]) {
+    assert.ok(html.includes(price), `tier price line missing: ${price}`);
+  }
+  assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
+  assert.ok((html.match(/Sales &mdash; 2026 YTD|Sales — 2026 YTD/g) || []).length >= 6, "YTD sales labels");
+  assert.ok((html.match(/Views &mdash; all time|Views — all time/g) || []).length >= 5, "all-time views labels");
+  assert.ok(html.includes('name="commission" required'), "commission select missing");
+  assert.ok(html.includes("30% or higher"), "commission options missing");
+  assert.ok(html.includes("How do you want to work together?"), "engagement label rename missing");
+  assert.strictEqual(content.faq.items.length, 8, "FAQ count");
+  assert.ok(html.includes("GMV Max"), "GMV Max mention missing");
+  assert.ok(html.includes("Hammad Media LLC, a registered US company"), "cross-border FAQ missing");
+  assert.ok(html.includes("wa.me/12015520786"), "WhatsApp link missing");
+  assert.ok(html.includes("See the proof"), "ghost CTA rename missing");
+  assert.ok(html.includes('class="nav-links"'), "desktop nav links missing");
+  assert.ok(html.includes('class="midflow"'), "sticky wrapper missing");
+  assert.ok(!html.includes("padding-bottom: 76px"), "old fixed-bar body padding still present");
+  assert.ok(html.includes('autocomplete="organization"'), "autocomplete attrs missing");
+  assert.ok(html.includes('class="form-hint"'), "form hint missing");
+});
+
 test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
   assert.ok(html.includes("Slot 07 is open"), "post-receipts slot CTA missing");
   assert.ok(html.includes("Claim a slot"), "post-tiers CTA missing");
@@ -169,7 +191,6 @@ test("partnership tiers render; commission-only positioning is gone", () => {
   for (const t of content.partnership.tiers) {
     assert.ok(html.includes(t.name), `tier missing: ${t.name}`);
   }
-  assert.ok(!/commission-only/i.test(html), "old commission-only copy still present");
   assert.ok(!/no retainers/i.test(html), "old no-retainers copy still present");
   assert.ok(/retainer/i.test(html), "retainer offering not mentioned");
 });

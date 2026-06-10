@@ -37,6 +37,7 @@
     --green-deep: #0e7a4a;
     --line-dark: rgba(61, 220, 132, 0.14);
     --line-light: #ddd9cd;
+    --card: #fffdf8;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -62,6 +63,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     html { scroll-behavior: auto; }
+    .marquee { display: none; }
   }
   .marquee:hover .track, .marquee:focus-within .track { animation-play-state: paused; }
 
@@ -81,6 +83,11 @@
     text-indent: 0.06em; /* optically balances the trailing tracking space */
   }
   .brand:hover .brand-sub { color: var(--paper); transition: color .2s ease; }
+  .nav-links { display: flex; gap: 26px; }
+  .nav-links a { color: var(--cream-dim); text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 2px; }
+  .nav-links a:hover { color: var(--green); }
+  @media (max-width: 860px) { .nav-links { display: none; } }
+  section[id] { scroll-margin-top: 16px; }
   nav a.cta {
     background: var(--green); color: var(--bg-dark); text-decoration: none;
     padding: 12px 26px; border-radius: 100px; font-size: 14px; font-weight: 800;
@@ -168,7 +175,7 @@
     transition: opacity .2s ease;
   }
   .brandwall img:hover { opacity: 1; }
-  @media (max-width: 960px) {
+  @media (max-width: 1100px) {
     .brandwall { overflow-x: auto; justify-content: flex-start; gap: 0 36px; padding-bottom: 10px; scrollbar-width: none; }
     .brandwall::-webkit-scrollbar { display: none; }
     .brandwall img { height: 24px; }
@@ -180,7 +187,7 @@
   .faq-list summary {
     cursor: pointer; list-style: none; display: flex; justify-content: space-between;
     align-items: center; gap: 16px; padding: 20px 0;
-    font-family: "Fraunces", serif; font-weight: 600; font-size: 21px; color: var(--ink);
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; color: var(--ink);
   }
   .faq-list summary::-webkit-details-marker { display: none; }
   .faq-list summary::after {
@@ -216,14 +223,22 @@
   }
 
   .award-card {
-    margin-top: 22px; background: #fffdf8; border: 1px solid var(--line-light);
-    border-radius: 18px; padding: 18px;
+    margin-top: 22px; background: var(--card); border: 1px solid var(--line-light);
+    border-radius: 18px; padding: 22px;
     display: grid; grid-template-columns: minmax(280px, 480px) 1fr;
     gap: 26px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .award-card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--green), var(--green-deep));
   }
   .award-card img { width: 100%; height: auto; border-radius: 12px; display: block; }
   .award-card figcaption { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
-  .award-card figcaption b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 8px; }
+  .award-card figcaption b {
+    display: block; color: var(--ink); font-family: "Fraunces", serif; font-weight: 600;
+    font-size: 22px; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 10px;
+  }
   @media (max-width: 860px) { .award-card { grid-template-columns: 1fr; gap: 14px; } }
 
   /* account avatars + product shots */
@@ -236,7 +251,7 @@
   .acct-head .meta { margin-bottom: 0; }
   .account-card .pod-metrics { margin-top: 18px; }
   .product-shot {
-    background: #ffffff; border-radius: 12px; border: 1px solid var(--line-light);
+    background: #ffffff; /* pure white on purpose: packshot JPGs have white backgrounds */ border-radius: 12px; border: 1px solid var(--line-light);
     margin-bottom: 20px; overflow: hidden;
   }
   .product-shot img { width: 100%; height: 210px; object-fit: contain; display: block; }
@@ -251,7 +266,7 @@
   .light + .light { border-top: 1px solid var(--line-light); }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 22px; }
   .light .card {
-    background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
+    background: var(--card); border: 1px solid var(--line-light); border-radius: 18px;
     padding: 34px 30px; position: relative; overflow: hidden;
     transition: transform .2s ease, box-shadow .2s ease;
   }
@@ -272,37 +287,43 @@
   /* ── The receipts: podium grid + scroll-snap shelf ── */
   .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 900px) { .podium { grid-template-columns: 1fr; } }
-  .shelf {
-    margin-top: 22px; display: grid; grid-auto-flow: column;
-    grid-auto-columns: calc((100% - 44px) / 3);
-    gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory;
-    padding-bottom: 12px; scrollbar-width: thin; scrollbar-color: var(--green-deep) transparent;
+  .shelf { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .tier-price {
+    font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
+    font-size: 18px; color: var(--green-deep); margin-bottom: 12px; letter-spacing: -0.01em;
   }
-  .shelf .pod { scroll-snap-align: start; }
-  .shelf::-webkit-scrollbar { height: 6px; }
-  .shelf::-webkit-scrollbar-thumb { background: rgba(14,122,74,.35); border-radius: 100px; }
   @media (max-width: 900px) {
     .shelf {
-      grid-auto-flow: row; grid-template-columns: 1fr; grid-auto-columns: auto;
-      overflow-x: visible; scroll-snap-type: none; padding-bottom: 0;
+      grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84%;
+      overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 4px;
+      padding-bottom: 12px;
     }
+    .shelf .pod { scroll-snap-align: start; }
   }
   .pod {
-    background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
+    background: var(--card); border: 1px solid var(--line-light); border-radius: 18px;
     padding: 26px 26px 28px; position: relative;
     transition: transform .2s ease, box-shadow .2s ease;
   }
-  .pod:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
+  @media (hover: hover) {
+    .pod:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
+  }
+  .pod-metrics .mv-link, .card a.handle { padding-block: 6px; margin-block: -6px; }
+  .alt-contact a, footer a { display: inline-block; padding-block: 10px; margin-block: -10px; }
   .pod-rank {
     position: absolute; top: 14px; right: 22px; z-index: 1;
     font-family: "Fraunces", serif; font-style: italic; font-size: 32px;
-    color: var(--green-deep); opacity: .7;
+    color: var(--green-deep); opacity: .85;
   }
+  .podium .pod:first-child { border-color: rgba(14,122,74,.35); }
+  .podium .pod:first-child .pod-rank { opacity: 1; }
   .pod .product-shot { margin-top: 30px; margin-bottom: 18px; position: relative; }
   .ti { width: .82em; height: .82em; vertical-align: -0.06em; margin-right: 6px; display: inline-block; }
   .shop-badge {
     position: absolute; top: 10px; left: 12px; z-index: 1;
     display: flex; align-items: center; gap: 5px; pointer-events: none;
+    background: rgba(255,255,255,.92); padding: 5px 9px 5px 7px;
+    border-radius: 8px; box-shadow: 0 1px 4px rgba(20,24,20,.10);
   }
   .shop-badge .sb-note { width: 15px; height: 15px; }
   .shop-badge .sb-text {
@@ -310,7 +331,7 @@
     font-size: 9.5px; font-weight: 700; letter-spacing: .01em; color: #161823;
   }
   .shop-badge .sb-text b { font-weight: 800; }
-  .pod h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; line-height: 1.3; margin-bottom: 14px; letter-spacing: -0.01em; min-height: 2.6em; }
+  .pod h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; line-height: 1.25; margin-bottom: 14px; letter-spacing: -0.01em; min-height: 2.5em; }
   .pod-ytd {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
     font-size: clamp(40px, 3.8vw, 48px); line-height: 1; letter-spacing: -0.02em;
@@ -331,28 +352,28 @@
   }
   .pod-metrics .mv-link { color: var(--green-deep); text-decoration: none; border-bottom: 2px solid var(--green); align-self: flex-start; }
   .pod-metrics .mv-link:hover { color: var(--ink); }
-  .pod-metrics .ml { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
+  .pod-metrics .ml { font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
 
   /* how it works: 3 boxes side by side, numbered via counters */
   .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; counter-reset: stepnum; }
   @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
   .steps .card { counter-increment: stepnum; }
   .steps .card::after {
-    content: "0" counter(stepnum); position: absolute; top: 18px; right: 22px;
-    font-family: "Fraunces", serif; font-style: italic; font-size: 30px;
-    color: var(--green-deep); opacity: .7;
+    content: "0" counter(stepnum); position: absolute; top: 14px; right: 22px;
+    font-family: "Fraunces", serif; font-style: italic; font-size: 32px;
+    color: var(--green-deep); opacity: .85;
   }
 
-  @media (max-width: 1000px) {
-    .cards.tiers { grid-template-columns: 1fr; }
-    .tiers .tier:nth-child(2) { transform: none; }
-  }
   .tiers .tier:nth-child(2) {
     border: 2px solid var(--green-deep);
     box-shadow: 0 14px 40px rgba(14,122,74,.14);
     transform: translateY(-6px);
   }
   .tiers .tier:nth-child(2):hover { transform: translateY(-10px); }
+  @media (max-width: 1000px) {
+    .cards.tiers { grid-template-columns: 1fr; }
+    .cards.tiers .tier:nth-child(2) { transform: none; }
+  }
   .light .mail-cta { margin-top: 40px; display: inline-block; }
   .tiers .tier:nth-child(2) .meta {
     display: inline-block; background: var(--green-deep); color: #fffdf8;
@@ -363,8 +384,8 @@
   }
   .note {
     margin-top: 40px; padding: 26px 30px; border-radius: 14px;
-    background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(20,148,91,.07));
-    border: 1px solid rgba(20,148,91,.25); font-size: 16px; font-weight: 600;
+    background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(61,220,132,.12));
+    border: 1px solid rgba(14,122,74,.25); font-size: 16px; font-weight: 600;
   }
   .light .note { color: var(--ink); }
 
@@ -384,22 +405,24 @@
   input, select, textarea {
     width: 100%; padding: 14px 16px; border-radius: 12px;
     border: 1px solid rgba(236,233,224,.42); background: var(--bg-dark-2);
-    color: var(--cream); font-size: 15px; font-family: inherit;
+    color: var(--cream); font-size: 16px; font-family: inherit;
     transition: border-color .15s ease;
   }
   input:hover, select:hover, textarea:hover { border-color: rgba(61,220,132,.4); }
-  ::placeholder { color: rgba(168,176,166,.55); }
+  ::placeholder { color: rgba(168,176,166,.7); }
   select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233ddc84' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
-  select:invalid { color: rgba(168,176,166,.55); }
-  .alt-contact { margin-top: 22px; font-size: 14.5px; color: var(--cream-dim); position: relative; z-index: 1; }
+  select:invalid { color: rgba(168,176,166,.7); }
+  .alt-contact { margin-top: 22px; font-size: 15px; color: var(--cream-dim); position: relative; z-index: 1; }
   .alt-contact a { color: var(--green); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(61,220,132,.4); }
   .alt-contact a:hover { border-bottom-color: var(--green); }
   input:focus, textarea:focus, select:focus { outline: 2px solid var(--green); outline-offset: 1px; }
   .light a:focus-visible, .light summary:focus-visible { outline-color: var(--green-deep); }
+  input:user-invalid, select:user-invalid, textarea:user-invalid { border-color: #ff7a7a; }
+  .form-hint { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; position: relative; z-index: 1; }
   textarea { min-height: 130px; resize: vertical; }
   button[type=submit], .mail-cta {
     background: var(--green); color: var(--bg-dark); border: none; padding: 17px 40px;
-    border-radius: 100px; font-size: 17px; font-weight: 800; cursor: pointer;
+    border-radius: 100px; font-size: 16px; font-weight: 800; cursor: pointer;
     display: inline-block; text-decoration: none; text-align: center;
     transition: transform .18s ease, box-shadow .18s ease; position: relative; z-index: 1;
   }
@@ -410,15 +433,14 @@
   .mobile-cta { display: none; }
   @media (max-width: 860px) {
     .mobile-cta {
-      display: block; position: fixed; left: 14px; right: 14px;
+      display: block; position: sticky;
       bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 5;
+      margin: 28px 14px 12px;
       background: var(--green); color: var(--bg-dark); text-decoration: none;
       text-align: center; font-weight: 800; font-size: 16px;
       padding: 15px 20px; border-radius: 100px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      box-shadow: 0 10px 30px rgba(20,24,20,.45);
     }
-    body { padding-bottom: 76px; }
-    #contact { scroll-margin-bottom: 90px; }
   }
 
   footer {
@@ -446,22 +468,24 @@
 <div class="wrap">
   <nav>
     <a class="brand" href="#top" aria-label="Hammad Media — home"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
+    <div class="nav-links"><a href="#results">Results</a><a href="#partner">Pricing</a><a href="#faq">FAQ</a></div>
     <a class="cta" href="#contact">Work with me</a>
   </nav>
 
   <header class="hero" id="top">
     <div class="hero-text">
-      <span class="kicker">#1 TikTok Shop Affiliate 2025 — Health &amp; Wellness</span>
+      <span class="kicker">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span>
       <h1>I turn supplements into <em>bestsellers</em>.</h1>
       <p class="sub">{{hero.subheadline}}</p>
       <div class="actions">
         <a class="primary" href="#contact">Let's make yours a bestseller &rarr;</a>
-        <a class="ghost" href="#results">See the receipts</a>
+        <a class="ghost" href="#results">See the proof</a>
       </div>
     </div>
   </header>
 </div>
 
+<div class="midflow">
 <div class="marquee" aria-hidden="true">
   <div class="track">
     <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>416M+</b> video views &middot; <b>$329,666</b> from one product</span><span><b>#1</b> Health &amp; Wellness affiliate &mdash; TikTok Shop 2025 &middot; <b>338K+</b> followers</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
@@ -482,7 +506,7 @@
 <section id="accounts" class="light">
   <div class="wrap">
     <h2 class="section-title">Two accounts. One creator.</h2>
-    <p class="section-sub">Both accounts are me. I plan, film, review, and post everything myself. No middlemen, no account managers. Every number can be checked on TikTok.</p>
+    <p class="section-sub">Both accounts are me. I plan, film, edit, and post everything myself. No middlemen, no account managers. Every number can be checked on TikTok.</p>
     <div class="cards">
 {{accountCards}}
     </div>
@@ -511,6 +535,8 @@
 {{partnershipSection}}
 
 {{faqSection}}
+<a class="mobile-cta" href="#contact">Let's make yours a bestseller &rarr;</a>
+</div>
 
 <section class="contact" id="contact">
   <div class="wrap">
@@ -531,6 +557,5 @@
   </div>
 </footer>
 
-<a class="mobile-cta" href="#contact">Let's make yours a bestseller &rarr;</a>
 </body>
 </html>

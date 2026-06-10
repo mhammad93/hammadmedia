@@ -70,7 +70,7 @@ function buildPodCard(c, i) {
   if (c.bestMonth)
     cells.push(`<div class="m"><span class="mv">${money(c.bestMonth)}</span><span class="ml">Best month</span></div>`);
   if (c.totalViews)
-    cells.push(`<div class="m"><span class="mv">${esc(c.totalViews)}</span><span class="ml">Total views</span></div>`);
+    cells.push(`<div class="m"><span class="mv">${esc(c.totalViews)}</span><span class="ml">Views &mdash; all time</span></div>`);
   if (c.videoUrl && c.videoViews)
     cells.push(`<div class="m"><a class="mv mv-link" href="${esc(c.videoUrl)}" target="_blank" rel="noopener">${esc(c.videoViews)} &#9654;</a><span class="ml">Top video</span></div>`);
   const metrics = cells.length ? `\n        <div class="pod-metrics">${cells.join("")}</div>` : "";
@@ -79,7 +79,7 @@ function buildPodCard(c, i) {
         <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
         <h3>${esc(c.title)}</h3>
         <div class="pod-ytd">${money(c.ytd)}</div>
-        <div class="pod-ytd-lbl">Total sales &middot; <b>${c.units.toLocaleString("en-US")}</b> units sold</div>
+        <div class="pod-ytd-lbl">Sales &mdash; 2026 YTD &middot; <b>${c.units.toLocaleString("en-US")}</b> units sold</div>
         <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
       </div>`;
 }
@@ -94,7 +94,7 @@ const caseStudiesSection = receipts
     <div class="podium">
 ${cardsArr.slice(0, 3).join("\n")}
     </div>
-    <div class="shelf" aria-label="More winning products — scroll horizontally">
+    <div class="shelf" role="region" aria-label="Products 4 to 6" tabindex="0">
 ${cardsArr.slice(3).join("\n")}
     </div>
     <a class="mail-cta" href="#contact">Slot 07 is open &mdash; put your product on this wall &rarr;</a>
@@ -119,6 +119,7 @@ ${content.partnership.tiers
     (t) => `      <div class="card tier">
         <div class="meta">${esc(t.tag)}</div>
         <h3>${esc(t.name)}</h3>
+        <div class="tier-price">${esc(t.price)}</div>
         <p>${esc(t.text)}</p>
       </div>`,
   )
@@ -131,7 +132,7 @@ ${content.partnership.tiers
   : "";
 
 const brandWall = (content.brands || []).length
-  ? `<div class="brandwall" aria-label="Brands whose products I have sold">
+  ? `<div class="brandwall" role="group" aria-label="Brands whose products I have sold">
 ${content.brands
   .map(
     (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" height="28" loading="lazy">`,
@@ -144,6 +145,7 @@ const faqSection = content.faq
   ? `<section id="faq" class="light">
   <div class="wrap">
     <h2 class="section-title">${esc(content.faq.heading)}</h2>
+    <p class="section-sub">${esc(content.faq.sub)}</p>
     <div class="faq-list">
 ${content.faq.items
   .map((f) => {
@@ -163,15 +165,16 @@ ${content.faq.items
   : "";
 
 const contactBlock = content.contact.formSubmitEmail
-  ? `    <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
+  ? `    <p class="form-hint">All fields are required unless marked optional.</p>
+    <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
       <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_next" value="https://hammadmedia.com/thanks.html">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-row">
-        <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required placeholder="Acme Wellness Co."></div>
-        <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required placeholder="you@brand.com"></div>
+        <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required autocomplete="organization" placeholder="Your brand name"></div>
+        <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@brand.com"></div>
       </div>
       <div class="form-row">
         <div><label for="f-category">Product category</label>
@@ -183,7 +186,19 @@ const contactBlock = content.contact.formSubmitEmail
             <option>Other</option>
           </select>
         </div>
-        <div><label for="f-tier">Engagement interest</label>
+        <div><label for="f-commission">Commission you can offer</label>
+          <select id="f-commission" name="commission" required>
+            <option value="" disabled selected>Choose one&hellip;</option>
+            <option>20&ndash;25%</option>
+            <option>25&ndash;30%</option>
+            <option>30% or higher</option>
+            <option>Below 20%</option>
+            <option>Not sure &mdash; recommend a rate</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label for="f-tier">How do you want to work together?</label>
           <select id="f-tier" name="engagement" required>
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Boosted Commission (pay on sales only)</option>
@@ -192,12 +207,12 @@ const contactBlock = content.contact.formSubmitEmail
             <option>Not sure yet &mdash; recommend one</option>
           </select>
         </div>
+        <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="https://shop.tiktok.com/&hellip;"></div>
       </div>
-      <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" placeholder="https://shop.tiktok.com/&hellip;"></div>
-      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What's the product, what commission do you have in mind, and what does success look like for you?"></textarea></div>
+      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What is the product, what commission do you have in mind, and what monthly sales target do you have?"></textarea></div>
       <button type="submit">Send inquiry &rarr;</button>
     </form>
-    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
+    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way. Or message me on <a href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>; WeChat available after first contact.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
 // ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
@@ -215,6 +230,7 @@ const jsonld = JSON.stringify({
       logo: `${content.site.url}/assets/favicon-512.png`,
       image: content.site.ogImage,
       areaServed: "US",
+      telephone: "+1-201-552-0786",
       award: "TikTok Shop US #1 Health & Wellness affiliate, 2025",
       sameAs: content.accounts.map((a) => a.url),
     },
@@ -233,7 +249,7 @@ const jsonld = JSON.stringify({
         name: f.q,
         acceptedAnswer: {
           "@type": "Answer",
-          text: plain([f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(" ")),
+          text: plain([f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(". ")).replace(/\.\s*\./g, "."),
         },
       })),
     },
