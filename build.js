@@ -10,6 +10,9 @@ let html = fs.readFileSync(path.join(ROOT, "template.html"), "utf8");
 
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+// FAQ-only: escape, then allow **bold** emphasis
+const emph = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+const plain = (s) => String(s).replace(/\*\*/g, "");
 
 // ── Composite fragments ──────────────────────────────────────
 // Mono TikTok logomark for handle links
@@ -145,12 +148,12 @@ const faqSection = content.faq
 ${content.faq.items
   .map((f) => {
     const bullets = f.bullets
-      ? `\n        <ul>${f.bullets.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
+      ? `\n        <ul>${f.bullets.map((x) => `<li>${emph(x)}</li>`).join("")}</ul>`
       : "";
-    const tail = f.tail ? `\n        <p>${esc(f.tail)}</p>` : "";
+    const tail = f.tail ? `\n        <p>${emph(f.tail)}</p>` : "";
     return `      <details>
         <summary>${esc(f.q)}</summary>
-        <p>${esc(f.a)}</p>${bullets}${tail}
+        <p>${emph(f.a)}</p>${bullets}${tail}
       </details>`;
   })
   .join("\n")}
@@ -230,7 +233,7 @@ const jsonld = JSON.stringify({
         name: f.q,
         acceptedAnswer: {
           "@type": "Answer",
-          text: [f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(" "),
+          text: plain([f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(" ")),
         },
       })),
     },

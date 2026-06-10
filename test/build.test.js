@@ -82,7 +82,7 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("$25,000"), "30-video package price missing");
   assert.ok(html.includes("$13,500"), "15-video package price missing");
   assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
-  assert.ok(html.includes("performance bonuses move you to the top"), "bonus-priority line missing");
+  assert.ok(/bonuses move you to the top/i.test(html), "bonus-priority line missing");
   assert.ok(html.includes("No fixed number of videos"), "boosted no-guarantee line missing");
   assert.ok(html.includes("No long-term contract"), "month-to-month line missing");
 });
