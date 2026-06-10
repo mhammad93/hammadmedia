@@ -108,7 +108,8 @@ const funnelStrip = content.funnel
   ? `    <div class="funnel-card">
       <div class="funnel-intro">
         <h3>${esc(content.funnel.title)}</h3>
-        <p>${esc(content.funnel.caption)}</p>
+        <p class="funnel-frame">${esc(content.funnel.frame)}</p>
+        <p class="funnel-prov">${esc(content.funnel.caption)}</p>
       </div>
 ${content.funnel.items
   .map(

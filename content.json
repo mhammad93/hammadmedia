@@ -250,7 +250,7 @@
   },
   "funnel": {
     "title": "The funnel, measured",
-    "caption": "From my TikTok Shop dashboards \u2014 Jan 1 to Jun 8, 2026, both accounts combined.",
+    "caption": "TikTok Shop dashboards, Jan 1 \u2013 Jun 8, 2026, both accounts.",
     "items": [
       {
         "value": "2.73%",
@@ -264,6 +264,7 @@
         "value": "$26.38",
         "label": "GMV per 1,000 product views"
       }
-    ]
+    ],
+    "frame": "Anyone can show one big number. These are the rates underneath mine \u2014 and they hold across 105M+ product views."
   }
 }

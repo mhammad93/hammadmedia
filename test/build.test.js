@@ -117,7 +117,8 @@ test("funnel strip renders verified metrics with provenance caption", () => {
     assert.ok(html.includes(m.value), `funnel value missing: ${m.value}`);
   }
   assert.ok(html.includes("The funnel, measured"), "funnel title missing");
-  assert.ok(html.includes("From my TikTok Shop dashboards"), "provenance caption missing");
+  assert.ok(html.includes("TikTok Shop dashboards"), "provenance caption missing");
+  assert.ok(html.includes("they hold across 105M+ product views"), "efficiency-at-scale frame missing");
   assert.ok(!/completion/i.test(html), "completion % must never appear (unmeasured)");
 });
 
