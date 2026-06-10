@@ -71,6 +71,31 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes('name="_honey"'), "honeypot missing");
   assert.ok(html.includes('name="_subject"'), "_subject missing");
   assert.ok(html.includes(`mailto:${content.contact.email}`), "secondary email option missing");
+  assert.ok(
+    html.includes('name="_next" value="https://hammadmedia.com/thanks.html"'),
+    "_next redirect missing",
+  );
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "thanks.html")), "thanks.html missing from dist");
+  assert.ok(html.includes("Boosted Commission (pay on sales only)"), "form options must match tier names");
+  assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
+});
+
+test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
+  assert.ok(html.includes("Slot 07 is open"), "post-receipts slot CTA missing");
+  assert.ok(html.includes("Claim a slot"), "post-tiers CTA missing");
+  assert.ok(html.includes('class="mobile-cta"'), "sticky mobile CTA bar missing");
+  const contactLinks = (html.match(/href="#contact"/g) || []).length;
+  assert.ok(contactLinks >= 5, `expected ≥5 paths to #contact, got ${contactLinks}`);
+});
+
+test("design integrity: bg alternation, animation fill mode, 416M stat", () => {
+  assert.ok(html.includes('id="partner" class="light light-alt"'), "partner section must be cream");
+  assert.ok(html.includes('id="faq" class="light"') && !html.includes('id="faq" class="light light-alt"'), "faq must be paper");
+  assert.ok(!html.includes("#services.light"), "stale #services background clause still present");
+  assert.ok(html.includes("animation: rise backwards"), "scroll animation must use backwards fill");
+  assert.ok(!html.includes("animation: rise both"), "fill-mode bug reintroduced");
+  assert.ok(html.includes("416M+"), "all-time views stat missing");
+  assert.ok(html.includes("VIDEO VIEWS — ALL TIME"), "all-time label missing");
 });
 
 test("stacked brand wordmark present in nav and footer with accessible labels", () => {

@@ -9,7 +9,7 @@
   },
   "hero": {
     "headline": "I turn supplements into bestsellers.",
-    "subheadline": "Two TikTok Shop accounts, $2.79M+ in attributed GMV this year \u2014 every video scripted, filmed, and posted by me. 105M+ product views in 2026, and 113K+ units sold to show for it."
+    "subheadline": "Two TikTok Shop accounts, $2.79M+ in attributed GMV this year \u2014 every video scripted, filmed, and posted by me. 105M+ product views and 113K+ units sold to show for it."
   },
   "stats": [
     {
@@ -25,8 +25,8 @@
       "label": "PRODUCT VIEWS \u2014 2026 YTD"
     },
     {
-      "value": "2.8M+",
-      "label": "PRODUCT CLICKS \u2014 2026 YTD"
+      "value": "416M+",
+      "label": "VIDEO VIEWS \u2014 ALL TIME"
     }
   ],
   "accounts": [
@@ -35,7 +35,7 @@
       "url": "https://www.tiktok.com/@drew.review1",
       "niche": "Supplement reviews",
       "avatar": "assets/products/avatar-drew-review1.jpg",
-      "blurb": "$1.89M GMV \u00b7 75,860 units \u00b7 68.5M product views in 2026 YTD. The volume engine \u2014 high-frequency review formats that drive roughly two-thirds of my GMV.",
+      "blurb": "$1.89M GMV \u00b7 75,860 units \u00b7 68.5M product views in 2026 YTD. The volume engine \u2014 high-frequency review formats that drive roughly two-thirds of my GMV. Posting 2+ videos a day since August 2024.",
       "followers": "155K followers"
     },
     {
@@ -43,7 +43,7 @@
       "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
       "avatar": "assets/products/avatar-drew-review.jpg",
-      "blurb": "$901K GMV \u00b7 37,198 units \u00b7 37.3M product views in 2026 YTD. The second bite \u2014 products that win on one account get re-run here with fresh hooks. One sample, two shots at the For You page.",
+      "blurb": "$901K GMV \u00b7 37,198 units \u00b7 37.3M product views in 2026 YTD. The second bite \u2014 products that win on one account get re-run here with fresh hooks. One sample, two shots at the For You page. Posting 2+ videos a day since August 2024.",
       "followers": "182.9K followers"
     }
   ],
@@ -59,7 +59,7 @@
         "text": "I make every review video myself \u2014 built around what actually converts on TikTok Shop: hooks, demos, and honest takes. No handoffs, no junior editors, no agency layers."
       },
       {
-        "title": "You watch GMV climb",
+        "title": "You verify every sale",
         "text": "Content goes live across my accounts, and every attributed sale is verified in your own TikTok Shop Seller Center \u2014 not my slides. Full transparency."
       }
     ]
@@ -71,7 +71,7 @@
       {
         "name": "Boosted Commission",
         "tag": "Start here",
-        "text": "Set an elevated, exclusive commission rate and your product enters my content rotation. You pay only on attributed sales \u2014 and the higher the rate, the higher your priority in the queue."
+        "text": "Set an elevated rate on a targeted plan and your product enters my content rotation. You pay only on attributed sales \u2014 and the higher the rate, the higher your priority in the queue."
       },
       {
         "name": "Retainer + Commission",
@@ -140,6 +140,10 @@
       {
         "q": "What if it doesn't sell?",
         "a": "On performance deals you've risked one sample. I test hooks and re-cut \u2014 some products take three videos to find the angle. And if a product truly doesn't fit my audience, I'll tell you straight instead of burning your time."
+      },
+      {
+        "q": "What does a retainer cost?",
+        "a": "It scales with video cadence and whether one or both accounts run your product. Tell me your goals in the form and you'll have exact numbers within 24 hours \u2014 and boosted-commission deals cost nothing up front."
       }
     ]
   },
@@ -157,7 +161,8 @@
         "units": 10857,
         "bestMonth": 82606,
         "videoUrl": "https://www.tiktok.com/@drew.review/video/7592733868550114574",
-        "videoViews": "6.1M"
+        "videoViews": "6.2M",
+        "totalViews": "27M"
       },
       {
         "title": "NMN Complex 1,000mg \u2014 Micro Ingredients",
@@ -165,8 +170,9 @@
         "ytd": 236531,
         "units": 7409,
         "bestMonth": 64975,
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7639174076992392461",
-        "videoViews": "97K"
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7578355445631356174",
+        "videoViews": "3.6M",
+        "totalViews": "10M"
       },
       {
         "title": "Collagen Bio-Peptides 20oz \u2014 NeoCell",
@@ -174,32 +180,38 @@
         "ytd": 209810,
         "units": 8283,
         "bestMonth": 73334,
-        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7639552113529457934",
-        "videoViews": "82K"
+        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7521464528568175902",
+        "videoViews": "21.6M",
+        "totalViews": "65M"
       },
       {
         "title": "Magnesium Complex 8-in-1 \u2014 Toplux",
         "image": "assets/products/magnesium.jpg",
         "ytd": 165064,
         "units": 12846,
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7646896933373529357",
-        "videoViews": "21K"
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7569758846734961934",
+        "videoViews": "8.4M",
+        "totalViews": "50M"
       },
       {
         "title": "NAC Capsules \u2014 Nutricost",
         "image": "assets/products/nac.jpg",
         "ytd": 85308,
         "units": 7393,
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7643272680615005454",
-        "videoViews": "55K"
+        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7594391735007055117",
+        "videoViews": "2.9M",
+        "totalViews": "12M"
       },
       {
         "title": "Saffron Extract \u2014 Nutricost",
         "image": "assets/products/saffron.jpg",
         "ytd": 79862,
-        "units": 3723
+        "units": 3723,
+        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7532016569824693534",
+        "videoViews": "2.5M",
+        "totalViews": "17M"
       }
     ],
-    "sub": "Six products. $1.1M in attributed sales. Five months. Every number verifiable in your TikTok Shop Seller Center."
+    "sub": "Six products. $1.1M in attributed sales. Five months. Every top video is linked \u2014 check the views yourself, and I'll walk you through the sales dashboards on our first call."
   }
 }

@@ -70,6 +70,7 @@ ${cardsArr.slice(0, 3).join("\n")}
     <div class="shelf" aria-label="More winning products — scroll horizontally">
 ${cardsArr.slice(3).join("\n")}
     </div>
+    <a class="mail-cta" href="#contact">Slot 07 is open &mdash; put your product on this wall &rarr;</a>
   </div>
 </section>`
   : "";
@@ -81,7 +82,7 @@ const serviceSteps = content.services.steps
   .join("\n");
 
 const partnershipSection = content.partnership
-  ? `<section id="partner" class="light">
+  ? `<section id="partner" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">${esc(content.partnership.heading)}</h2>
     <p class="section-sub">${esc(content.partnership.sub)}</p>
@@ -97,6 +98,7 @@ ${content.partnership.tiers
   .join("\n")}
     </div>
     <div class="note">${esc(content.partnership.note)}</div>
+    <a class="mail-cta" href="#contact">Claim a slot &rarr;</a>
   </div>
 </section>`
   : "";
@@ -105,14 +107,14 @@ const brandWall = (content.brands || []).length
   ? `<div class="brandwall" aria-label="Brands whose products I have sold">
 ${content.brands
   .map(
-    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" height="34" loading="lazy">`,
+    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" height="28" loading="lazy">`,
   )
   .join("\n")}
     </div>`
   : "";
 
 const faqSection = content.faq
-  ? `<section id="faq" class="light light-alt">
+  ? `<section id="faq" class="light">
   <div class="wrap">
     <h2 class="section-title">${esc(content.faq.heading)}</h2>
     <div class="faq-list">
@@ -134,6 +136,7 @@ const contactBlock = content.contact.formSubmitEmail
       <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://hammadmedia.com/thanks.html">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-row">
         <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required placeholder="Acme Wellness Co."></div>
@@ -152,18 +155,18 @@ const contactBlock = content.contact.formSubmitEmail
         <div><label for="f-tier">Engagement interest</label>
           <select id="f-tier" name="engagement" required>
             <option value="" disabled selected>Choose one&hellip;</option>
-            <option>Performance (boosted commission)</option>
-            <option>Retainer + Performance</option>
-            <option>Exclusive (category exclusivity)</option>
-            <option>Not sure yet</option>
+            <option>Boosted Commission (pay on sales only)</option>
+            <option>Retainer + Commission</option>
+            <option>Exclusive (own the category)</option>
+            <option>Not sure yet &mdash; recommend one</option>
           </select>
         </div>
       </div>
       <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" placeholder="https://shop.tiktok.com/&hellip;"></div>
-      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What is it, what makes it sell, and what does success look like for you?"></textarea></div>
+      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What's the product, what commission do you have in mind, and what does success look like for you?"></textarea></div>
       <button type="submit">Send inquiry &rarr;</button>
     </form>
-    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a></p>`
+    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
 // ── Token replacement ────────────────────────────────────────
@@ -213,4 +216,5 @@ const assetsSrc = path.join(ROOT, "assets");
 if (fs.existsSync(assetsSrc)) {
   fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), { recursive: true });
 }
+fs.copyFileSync(path.join(ROOT, "thanks.html"), path.join(ROOT, "dist", "thanks.html"));
 console.log(`Built dist/index.html (${html.length} bytes)`);

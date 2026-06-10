@@ -57,7 +57,9 @@
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
   }
+  .marquee:hover .track, .marquee:focus-within .track { animation-play-state: paused; }
 
   /* ── Nav ── */
   nav {
@@ -162,7 +164,7 @@
     transition: opacity .2s ease;
   }
   .brandwall img:hover { opacity: 1; }
-  @media (max-width: 860px) {
+  @media (max-width: 960px) {
     .brandwall { overflow-x: auto; justify-content: flex-start; gap: 0 36px; padding-bottom: 10px; scrollbar-width: none; }
     .brandwall::-webkit-scrollbar { display: none; }
     .brandwall img { height: 24px; }
@@ -222,16 +224,16 @@
   }
 
   /* account + result + service cards (markup from build.js) */
-  .light.light-alt, #services.light { background: var(--cream); }
+  .light.light-alt { background: var(--cream); }
   .light + .light { border-top: 1px solid var(--line-light); }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 22px; counter-reset: resultnum; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 22px; }
   .light .card {
     background: #fffdf8; border: 1px solid var(--line-light); border-radius: 18px;
     padding: 34px 30px; position: relative; overflow: hidden;
     transition: transform .2s ease, box-shadow .2s ease;
   }
   .light .card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(20,24,20,.1); }
-  #accounts .card::before, #results .card::before {
+  #accounts .card::before, #results .pod::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
     background: linear-gradient(var(--green), var(--green-deep));
   }
@@ -239,7 +241,7 @@
     font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
     font-weight: 800; color: var(--green-deep); margin-bottom: 14px;
   }
-  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 23px; margin-bottom: 10px; letter-spacing: -0.01em; line-height: 1.25; }
+  .card h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; margin-bottom: 10px; letter-spacing: -0.01em; line-height: 1.25; }
   .light .card p { font-size: 16px; color: var(--ink-soft); }
   .card a.handle { color: var(--ink); font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--green); }
   .card a.handle:hover { color: var(--green-deep); }
@@ -269,44 +271,59 @@
   .pod-rank {
     position: absolute; top: 14px; right: 22px; z-index: 1;
     font-family: "Fraunces", serif; font-style: italic; font-size: 32px;
-    color: var(--green-deep); opacity: .45;
+    color: var(--green-deep); opacity: .7;
   }
   .pod .product-shot { margin-top: 30px; margin-bottom: 18px; }
-  .pod h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 19px; line-height: 1.25; margin-bottom: 14px; letter-spacing: -0.01em; min-height: 2.5em; }
+  .pod h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; line-height: 1.3; margin-bottom: 14px; letter-spacing: -0.01em; min-height: 2.6em; }
   .pod-ytd {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
-    font-size: clamp(38px, 3.6vw, 46px); line-height: 1; letter-spacing: -0.02em;
+    font-size: clamp(40px, 3.8vw, 48px); line-height: 1; letter-spacing: -0.02em;
     color: var(--green-deep);
   }
   .bar { height: 7px; background: rgba(14,122,74,.12); border-radius: 100px; margin: 14px 0 12px; overflow: hidden; }
-  .bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--green-deep), var(--green)); }
-  .pod-ytd-lbl { font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; }
+  .bar span { display: block; height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--green), var(--green-deep)); }
+  .pod-ytd-lbl { font-size: 15px; color: var(--ink-soft); margin-top: 7px; }
   .pod-ytd-lbl b { color: var(--ink); font-weight: 800; }
   .pod-metrics {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-light);
+    display: flex; gap: 24px;
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line-light);
   }
   .pod-metrics .m { display: flex; flex-direction: column; min-width: 0; }
   .pod-metrics .mv {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
-    font-size: 18px; color: var(--ink); white-space: nowrap;
+    font-size: 22px; color: var(--ink); white-space: nowrap;
   }
   .pod-metrics .mv-link { color: var(--green-deep); text-decoration: none; border-bottom: 2px solid var(--green); align-self: flex-start; }
   .pod-metrics .mv-link:hover { color: var(--ink); }
-  .pod-metrics .ml { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 3px; }
+  .pod-metrics .ml { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
 
+  /* how it works: 3 boxes side by side, numbered via counters */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; counter-reset: stepnum; }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+  .steps .card { counter-increment: stepnum; }
+  .steps .card::after {
+    content: "0" counter(stepnum); position: absolute; top: 18px; right: 22px;
+    font-family: "Fraunces", serif; font-style: italic; font-size: 30px;
+    color: var(--green-deep); opacity: .7;
+  }
+
+  @media (max-width: 1000px) {
+    .cards.tiers { grid-template-columns: 1fr; }
+    .tiers .tier:nth-child(2) { transform: none; }
+  }
   .tiers .tier:nth-child(2) {
     border: 2px solid var(--green-deep);
     box-shadow: 0 14px 40px rgba(14,122,74,.14);
     transform: translateY(-6px);
   }
   .tiers .tier:nth-child(2):hover { transform: translateY(-10px); }
+  .light .mail-cta { margin-top: 40px; display: inline-block; }
   .tiers .tier:nth-child(2) .meta {
     display: inline-block; background: var(--green-deep); color: #fffdf8;
     padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em;
   }
   @supports (animation-timeline: view()) {
-    .light .card, .stat, .pod { animation: rise both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+    .light .card:not(.tier), .stat, .pod { animation: rise backwards; animation-timeline: view(); animation-range: entry 0% entry 35%; }
   }
   .note {
     margin-top: 40px; padding: 26px 30px; border-radius: 14px;
@@ -330,7 +347,7 @@
   label .optional { color: var(--cream-dim); font-weight: 600; }
   input, select, textarea {
     width: 100%; padding: 14px 16px; border-radius: 12px;
-    border: 1px solid rgba(236,233,224,.18); background: var(--bg-dark-2);
+    border: 1px solid rgba(236,233,224,.42); background: var(--bg-dark-2);
     color: var(--cream); font-size: 15px; font-family: inherit;
     transition: border-color .15s ease;
   }
@@ -341,7 +358,8 @@
   .alt-contact { margin-top: 22px; font-size: 14.5px; color: var(--cream-dim); position: relative; z-index: 1; }
   .alt-contact a { color: var(--green); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(61,220,132,.4); }
   .alt-contact a:hover { border-bottom-color: var(--green); }
-  input:focus, textarea:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+  .light a:focus-visible, .light summary:focus-visible { outline-color: var(--green-deep); }
   textarea { min-height: 130px; resize: vertical; }
   button[type=submit], .mail-cta {
     background: var(--green); color: var(--bg-dark); border: none; padding: 17px 40px;
@@ -350,6 +368,22 @@
     transition: transform .18s ease, box-shadow .18s ease; position: relative; z-index: 1;
   }
   button[type=submit]:hover, .mail-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(61,220,132,.4); }
+  form button[type=submit] { justify-self: start; }
+
+  /* sticky mobile CTA bar */
+  .mobile-cta { display: none; }
+  @media (max-width: 860px) {
+    .mobile-cta {
+      display: block; position: fixed; left: 14px; right: 14px;
+      bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 5;
+      background: var(--green); color: var(--bg-dark); text-decoration: none;
+      text-align: center; font-weight: 800; font-size: 16px;
+      padding: 15px 20px; border-radius: 100px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    }
+    body { padding-bottom: 76px; }
+    #contact { scroll-margin-bottom: 90px; }
+  }
 
   footer {
     padding: 44px 0; font-size: 14px; color: var(--cream-dim);
@@ -366,8 +400,8 @@
     .stats .grid { gap: 36px 40px; }
     .hero { padding: 48px 0 72px; }
     .tiers .tier:nth-child(2) { transform: none; }
-    .hero { padding-top: 48px; }
     section { padding: 72px 0; }
+    section.stats { padding: 72px 0 60px; }
   }
 </style>
 </head>
@@ -376,7 +410,7 @@
 <div class="wrap">
   <nav>
     <a class="brand" href="#top" aria-label="Hammad Media — home"><span class="brand-top">HAMMAD</span><span class="brand-sub">MEDIA</span></a>
-    <a class="cta" href="#contact">Work With Me</a>
+    <a class="cta" href="#contact">Work with me</a>
   </nav>
 
   <header class="hero" id="top">
@@ -385,7 +419,7 @@
       <h1>I turn supplements into <em>bestsellers</em>.</h1>
       <p class="sub">{{hero.subheadline}}</p>
       <div class="actions">
-        <a class="primary" href="#contact">Work With Me &rarr;</a>
+        <a class="primary" href="#contact">Pitch me your product &rarr;</a>
         <a class="ghost" href="#results">See the receipts</a>
       </div>
     </div>
@@ -394,8 +428,8 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>338K+</b> followers &middot; <b>4.5M+</b> likes</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>416M+</b> video views &middot; <b>$329,666</b> from one product</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>416M+</b> video views &middot; <b>$329,666</b> from one product</span><span><b>2</b> accounts &middot; <b>1</b> creator</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
   </div>
 </div>
 
@@ -454,5 +488,6 @@
   </div>
 </footer>
 
+<a class="mobile-cta" href="#contact">Pitch me your product &rarr;</a>
 </body>
 </html>
