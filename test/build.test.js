@@ -80,15 +80,25 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
 });
 
-test("TikTok logomark on every video link and account handle", () => {
-  const withVideo = content.receipts.items.filter((c) => c.videoUrl).length;
-  const expected = withVideo + content.accounts.length;
+test("TikTok Shop badge on every product box; play glyph on video links; account order", () => {
+  assert.strictEqual((html.match(/class="ti"/g) || []).length, 0, "old mono logomark must be gone");
   assert.strictEqual(
-    (html.match(/class="ti"/g) || []).length,
-    expected,
-    `expected ${expected} TikTok icons (videos + handles)`,
+    (html.match(/class="shop-badge"/g) || []).length,
+    content.receipts.items.length,
+    "every product box carries the TikTok Shop badge",
   );
-  assert.ok(html.includes('aria-hidden="true"><path d="M12.525'), "official TikTok path missing");
+  const withVideo = content.receipts.items.filter((c) => c.videoUrl).length;
+  assert.strictEqual(
+    (html.match(/&#9654;<\/a>/g) || []).length,
+    withVideo,
+    "play glyph missing from Top-video links",
+  );
+  assert.ok(html.includes('fill="#25F4EE"') && html.includes('fill="#FE2C55"'), "trichrome note colors missing");
+  assert.strictEqual(content.accounts[0].handle, "Drew.Review", "Drew.Review must be the left card");
+  assert.ok(
+    html.indexOf("@Drew.Review<") < html.indexOf("@Drew.Review1<"),
+    "Drew.Review card must render before Drew.Review1",
+  );
 });
 
 test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {

@@ -31,20 +31,20 @@
   ],
   "accounts": [
     {
-      "handle": "Drew.Review1",
-      "url": "https://www.tiktok.com/@drew.review1",
-      "niche": "Supplement reviews",
-      "avatar": "assets/products/avatar-drew-review1.jpg",
-      "blurb": "$1.89M GMV \u00b7 75,860 units \u00b7 68.5M product views in 2026 YTD. The volume engine \u2014 high-frequency review formats that drive roughly two-thirds of my GMV. Posting 2+ videos a day since August 2024.",
-      "followers": "155K followers"
-    },
-    {
       "handle": "Drew.Review",
       "url": "https://www.tiktok.com/@drew.review",
       "niche": "Supplement reviews",
       "avatar": "assets/products/avatar-drew-review.jpg",
       "blurb": "$901K GMV \u00b7 37,198 units \u00b7 37.3M product views in 2026 YTD. The second bite \u2014 products that win on one account get re-run here with fresh hooks. One sample, two shots at the For You page. Posting 2+ videos a day since August 2024.",
       "followers": "182.9K followers"
+    },
+    {
+      "handle": "Drew.Review1",
+      "url": "https://www.tiktok.com/@drew.review1",
+      "niche": "Supplement reviews",
+      "avatar": "assets/products/avatar-drew-review1.jpg",
+      "blurb": "$1.89M GMV \u00b7 75,860 units \u00b7 68.5M product views in 2026 YTD. The volume engine \u2014 high-frequency review formats that drive roughly two-thirds of my GMV. Posting 2+ videos a day since August 2024.",
+      "followers": "155K followers"
     }
   ],
   "services": {
