@@ -26,7 +26,7 @@ const accountCards = content.accounts
       : "";
     return `      <div class="card account-card">
         ${avatar}
-        <div class="meta">${esc(a.niche)}</div>
+        <div class="meta">${esc(a.niche)}${a.followers ? ` &middot; ${esc(a.followers)}` : ""}</div>
         <h3><a class="handle" href="${esc(a.url)}" target="_blank" rel="noopener">@${esc(a.handle)}</a></h3>
         <p>${esc(a.blurb)}</p>
       </div>`;
