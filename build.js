@@ -143,12 +143,16 @@ const faqSection = content.faq
     <h2 class="section-title">${esc(content.faq.heading)}</h2>
     <div class="faq-list">
 ${content.faq.items
-  .map(
-    (f) => `      <details>
+  .map((f) => {
+    const bullets = f.bullets
+      ? `\n        <ul>${f.bullets.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
+      : "";
+    const tail = f.tail ? `\n        <p>${esc(f.tail)}</p>` : "";
+    return `      <details>
         <summary>${esc(f.q)}</summary>
-        <p>${esc(f.a)}</p>
-      </details>`,
-  )
+        <p>${esc(f.a)}</p>${bullets}${tail}
+      </details>`;
+  })
   .join("\n")}
     </div>
   </div>
@@ -224,7 +228,10 @@ const jsonld = JSON.stringify({
       mainEntity: content.faq.items.map((f) => ({
         "@type": "Question",
         name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.a },
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: [f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(" "),
+        },
       })),
     },
   ],
