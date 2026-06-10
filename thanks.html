@@ -15,10 +15,13 @@
 <title>Inquiry received — Hammad Media</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&family=Manrope:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/fraunces-roman.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  @font-face { font-family: "Fraunces"; src: url(assets/fonts/fraunces-roman.woff2) format("woff2-variations"); font-style: normal; font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Fraunces"; src: url(assets/fonts/fraunces-italic.woff2) format("woff2-variations"); font-style: italic; font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Manrope"; src: url(assets/fonts/manrope.woff2) format("woff2-variations"); font-style: normal; font-weight: 200 800; font-display: swap; }
   :root { --bg-dark: #0b130e; --paper: #f6f4ee; --cream-dim: #a8b0a6; --green: #3ddc84; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {

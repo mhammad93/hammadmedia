@@ -283,3 +283,15 @@ test("Google tag present exactly once on every page", () => {
     assert.strictEqual((page.match(/gtag\('config', 'G-NEX74824JL'\)/g) || []).length, 1, `${name}: gtag config count wrong`);
   }
 });
+
+test("fonts are self-hosted with preload", () => {
+  assert.ok(!html.includes("fonts.googleapis.com"), "Google Fonts CSS still referenced");
+  assert.ok(!html.includes("fonts.gstatic.com"), "gstatic preconnect still referenced");
+  assert.strictEqual((html.match(/rel="preload" href="assets\/fonts\/[a-z-]+\.woff2" as="font" type="font\/woff2" crossorigin/g) || []).length, 3, "3 font preloads expected");
+  assert.strictEqual((html.match(/@font-face/g) || []).length, 3, "3 @font-face blocks expected");
+  for (const f of ["fraunces-roman", "fraunces-italic", "manrope"]) {
+    assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "fonts", `${f}.woff2`)), `${f}.woff2 missing from dist`);
+  }
+  const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
+  assert.ok(!thanks.includes("fonts.googleapis.com"), "thanks.html still uses Google Fonts");
+});
