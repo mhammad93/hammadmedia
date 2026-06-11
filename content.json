@@ -18,16 +18,16 @@
       "label": "GMV — ALL TIME"
     },
     {
+      "value": "416M+",
+      "label": "VIDEO VIEWS — ALL TIME"
+    },
+    {
       "value": "113K+",
       "label": "UNITS SOLD — 2026 SO FAR"
     },
     {
       "value": "105M+",
       "label": "PRODUCT VIEWS — 2026 SO FAR"
-    },
-    {
-      "value": "416M+",
-      "label": "VIDEO VIEWS — ALL TIME"
     }
   ],
   "accounts": [
@@ -207,6 +207,7 @@
       {
         "title": "Astaxanthin 12mg — Micro Ingredients",
         "image": "assets/products/astaxanthin.jpg",
+        "alt": "Bottle of Astaxanthin 12mg softgels — Micro Ingredients packshot",
         "ytd": 329666,
         "units": 10857,
         "bestMonth": 82606,
@@ -217,6 +218,7 @@
       {
         "title": "NMN Complex 1,000mg — Micro Ingredients",
         "image": "assets/products/nmn.jpg",
+        "alt": "Bottle of NMN Complex 1,000mg capsules — Micro Ingredients packshot",
         "ytd": 236531,
         "units": 7409,
         "bestMonth": 64975,
@@ -227,6 +229,7 @@
       {
         "title": "Collagen Bio-Peptides 20oz — NeoCell",
         "image": "assets/products/collagen.jpg",
+        "alt": "Tub of Collagen Bio-Peptides powder — NeoCell packshot",
         "ytd": 209810,
         "units": 8283,
         "bestMonth": 73334,
@@ -235,6 +238,7 @@
       {
         "title": "Magnesium Complex 8-in-1 — Toplux",
         "image": "assets/products/magnesium.jpg",
+        "alt": "Bottle of Magnesium Complex 8-in-1 capsules — Toplux packshot",
         "ytd": 165064,
         "units": 12846,
         "videoUrl": "https://www.tiktok.com/@drew.review/video/7569758846734961934",
@@ -244,6 +248,7 @@
       {
         "title": "NAC Capsules — Nutricost",
         "image": "assets/products/nac.jpg",
+        "alt": "Bottle of NAC capsules — Nutricost packshot",
         "ytd": 85308,
         "units": 7393,
         "videoUrl": "https://www.tiktok.com/@drew.review1/video/7594391735007055117",
@@ -253,6 +258,7 @@
       {
         "title": "Saffron Extract — Nutricost",
         "image": "assets/products/saffron.jpg",
+        "alt": "Bottle of Saffron Extract capsules — Nutricost packshot",
         "ytd": 79862,
         "units": 3723,
         "videoUrl": "https://www.tiktok.com/@drew.review1/video/7532016569824693534",

@@ -101,9 +101,14 @@ test("TikTok Shop badge on every product box; play glyph on video links; account
   );
   const withVideo = content.receipts.items.filter((c) => c.videoUrl).length;
   assert.strictEqual(
-    (html.match(/&#9654;<\/a>/g) || []).length,
+    (html.match(/<span aria-hidden="true">&#9654;<\/span><\/a>/g) || []).length,
     withVideo,
-    "play glyph missing from Top-video links",
+    "decorative play glyph missing from Top-video links",
+  );
+  assert.strictEqual(
+    (html.match(/aria-label="Top video for [^"]+ views on TikTok \(opens in new tab\)"/g) || []).length,
+    withVideo,
+    "accessible names missing from Top-video links",
   );
   assert.ok(html.includes('fill="#25F4EE"') && html.includes('fill="#FE2C55"'), "trichrome note colors missing");
   assert.strictEqual(content.accounts[0].handle, "Drew.Review", "Drew.Review must be the left card");
@@ -132,10 +137,15 @@ test("summit award proof card renders with image and caption", () => {
 });
 
 test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
+  // tier prices are split into stacked spans, so compare against tag-stripped text
+  const flatText = html.replace(/<[^>]+>/g, "");
   for (const price of ["$0 upfront — commission only", "From $1,000 per video", "From $50,000 per month"]) {
-    assert.ok(html.includes(price), `tier price line missing: ${price}`);
+    assert.ok(flatText.includes(price), `tier price line missing: ${price}`);
   }
   assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
+  assert.strictEqual((html.match(/class="tp-figure"/g) || []).length, 3, "lead price figures");
+  assert.strictEqual((html.match(/class="tier-cta"/g) || []).length, 3, "per-tier CTAs");
+  assert.strictEqual((html.match(/data-tier="/g) || []).length, 3, "tier preselect data attrs");
   assert.ok((html.match(/Total sales (&mdash;|—) 2026 so far/g) || []).length >= 6, "2026-so-far sales kickers");
   assert.ok((html.match(/Views &mdash; all time|Views — all time/g) || []).length >= 5, "all-time views labels");
   assert.ok(html.includes('name="commission" required'), "commission select missing");
@@ -165,7 +175,8 @@ test("design integrity: bg alternation, animation fill mode, 416M stat", () => {
   assert.ok(html.includes('id="partner" class="light light-alt"'), "partner section must be cream");
   assert.ok(html.includes('id="faq" class="light"') && !html.includes('id="faq" class="light light-alt"'), "faq must be paper");
   assert.ok(!html.includes("#services.light"), "stale #services background clause still present");
-  assert.ok(html.includes("animation: rise backwards"), "scroll animation must use backwards fill");
+  assert.ok(html.includes("animation: rise-move backwards"), "scroll animation must be transform-only with backwards fill (visible at rest)");
+  assert.ok(!html.includes("animation: rise backwards"), "opacity-gated scroll animation reintroduced");
   assert.ok(!html.includes("animation: rise both"), "fill-mode bug reintroduced");
   assert.ok(html.includes("416M+"), "all-time views stat missing");
   assert.ok(html.includes("VIDEO VIEWS — ALL TIME"), "all-time label missing");
@@ -189,7 +200,7 @@ test("product images + avatars render with alts and exist in dist", () => {
   for (const a of content.accounts) {
     if (!a.avatar) continue;
     assert.ok(html.includes(`src="${a.avatar}"`), `avatar missing: ${a.avatar}`);
-    assert.ok(html.includes(`alt="@${a.handle} TikTok profile picture"`), `avatar alt missing for ${a.handle}`);
+    assert.ok(html.includes(`<img class="avatar" src="${a.avatar}" alt=""`), `avatar must be decorative (alt="") for ${a.handle}`);
     assert.ok(fs.existsSync(path.join(ROOT, "dist", a.avatar)), `dist missing ${a.avatar}`);
   }
   assert.strictEqual((html.match(/width="216" height="216"/g) || []).length, 2, "both avatars should declare 216×216 intrinsic dims");
