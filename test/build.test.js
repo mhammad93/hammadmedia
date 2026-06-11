@@ -80,7 +80,8 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   assert.ok(html.includes("Your product, and anything you want me to know."), "textarea single-ask placeholder missing");
   assert.ok(html.includes("I reply within 24 hours."), "24-hour reply microcopy missing");
   assert.ok(html.includes("$1,000 per video"), "per-video retainer floor missing");
-  assert.ok(html.includes("$25,000"), "30-video package price missing");
+  assert.ok(html.includes("$18,000"), "20-video package price missing");
+  assert.ok(html.includes("$9,000"), "10-video package price missing");
   assert.ok(html.includes("$13,500"), "15-video package price missing");
   assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
   assert.ok(/bonuses move you to the top/i.test(html), "bonus-priority line missing");
