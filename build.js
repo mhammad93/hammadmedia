@@ -273,7 +273,7 @@ const marquee = [
   `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold</span>`,
   `<span>${productNames}</span>`,
   `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
-  `<span><b>#1</b> Health &amp; Wellness affiliate &mdash; TikTok Shop 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
+  `<span><b>#1</b> Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
   `<span>Boosted commissions &middot; retainers &middot; exclusivity</span>`,
 ].join("");
 
@@ -294,7 +294,7 @@ const jsonld = JSON.stringify({
       telephone: "+1-201-552-0786",
       areaServed: "United States",
       priceRange: "$1,000 - $50,000+",
-      award: "TikTok Shop US #1 Health & Wellness affiliate, 2025",
+      award: "#1 Health & Wellness Affiliate — TikTok Shop US, 2025",
       sameAs: content.accounts.map((a) => a.url),
     },
     {
