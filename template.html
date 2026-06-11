@@ -550,6 +550,19 @@
   input:focus, textarea:focus, select:focus { outline: 2px solid var(--green); outline-offset: 1px; }
   .light a:focus-visible, .light summary:focus-visible { outline-color: var(--green-deep); }
   input:user-invalid, select:user-invalid, textarea:user-invalid { border-color: #ff7a7a; }
+  .qual-note {
+    margin-top: 12px; padding: 14px 16px; border-radius: 12px;
+    background: rgba(61, 220, 132, .08); border: 1px solid var(--line-dark);
+    font-size: 14px; line-height: 1.6; color: var(--cream-dim);
+  }
+  .qual-note b { color: var(--cream); }
+  .qual-note button {
+    margin-top: 10px; display: inline-block; background: var(--green); color: var(--bg-dark);
+    border: none; border-radius: 100px; padding: 9px 18px;
+    font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+  }
+  .qual-note button:hover { filter: brightness(1.08); }
+  .qual-note button:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
   .err { font-size: 13px; font-weight: 600; color: #ffb4b4; margin-top: 7px; }
   .err::before { content: "\26A0\FE0E "; color: #ff7a7a; }
   .form-hint { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; position: relative; z-index: 1; }
@@ -733,8 +746,47 @@
     var a = e.target && e.target.closest ? e.target.closest("a[data-tier]") : null;
     if (!a) return;
     var sel = document.getElementById("f-tier");
-    if (sel) sel.value = a.getAttribute("data-tier");
+    if (sel) {
+      sel.value = a.getAttribute("data-tier");
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
   });
+
+  // Boosted Commission qualification branch: 10,000+ units gate
+  var tierSel = document.getElementById("f-tier");
+  var unitsRow = document.getElementById("f-units-row");
+  var unitsSel = document.getElementById("f-units");
+  var unitsNote = document.getElementById("f-units-note");
+  function syncBoostedQual() {
+    if (!tierSel || !unitsRow || !unitsSel) return;
+    var boosted = tierSel.value.indexOf("Boosted") === 0;
+    unitsRow.hidden = !boosted;
+    unitsSel.required = boosted;
+    if (!boosted) {
+      unitsSel.value = "";
+      if (unitsNote) unitsNote.hidden = true;
+      var err = document.getElementById("f-units-err");
+      if (err) err.hidden = true;
+    }
+  }
+  if (tierSel && unitsRow) {
+    tierSel.addEventListener("change", syncBoostedQual);
+    syncBoostedQual();
+  }
+  if (unitsSel) {
+    unitsSel.addEventListener("change", function () {
+      if (unitsNote) unitsNote.hidden = unitsSel.value.indexOf("No") !== 0;
+    });
+  }
+  var switchBtn = document.getElementById("f-units-switch");
+  if (switchBtn) {
+    switchBtn.addEventListener("click", function () {
+      if (!tierSel) return;
+      tierSel.value = "Retainer + Commission";
+      tierSel.dispatchEvent(new Event("change", { bubbles: true }));
+      tierSel.focus();
+    });
+  }
 
   // Persistent, non-color form error feedback
   var form = document.querySelector(".contact form");

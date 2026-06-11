@@ -249,6 +249,19 @@ const contactBlock = content.contact.formSubmitEmail
         </div>
         <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="https://shop.tiktok.com/&hellip;"></div>
       </div>
+      <div id="f-units-row" hidden>
+        <label for="f-units">Has this product already sold 10,000+ units on TikTok Shop?</label>
+        <select id="f-units" name="boosted_10k_units" aria-describedby="f-units-err">
+          <option value="" disabled selected>Choose one&hellip;</option>
+          <option>Yes &mdash; 10,000+ units sold</option>
+          <option>No &mdash; not yet</option>
+        </select>
+        <p class="err" id="f-units-err" hidden>Choose yes or no</p>
+        <div class="qual-note" id="f-units-note" hidden>
+          <p>No problem. Boosted Commission needs <b>10,000+ units already sold</b>. For products below that, <b>Retainer + Commission</b> is the right way to start: a guaranteed number of videos, from $1,000 per video, plus commission.</p>
+          <button type="button" id="f-units-switch">Switch me to Retainer + Commission &rarr;</button>
+        </div>
+      </div>
       <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="Your product, and anything you want me to know." aria-describedby="f-msg-err"></textarea><p class="err" id="f-msg-err" hidden>Tell me about your product</p></div>
       <div class="form-ctas">
         <button type="submit">Send inquiry &rarr;</button>

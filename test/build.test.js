@@ -392,3 +392,13 @@ test("infra: marquee is generated from content.json sources (no drift)", () => {
   const dup = html.match(/\{\{marquee\}\}/g);
   assert.strictEqual(dup, null, "marquee token unresolved");
 });
+
+test("boosted qualification branch: hidden 10k-units follow-up with reroute note", () => {
+  assert.ok(html.includes('id="f-units-row" hidden'), "qualification row must ship hidden");
+  assert.ok(html.includes('name="boosted_10k_units"'), "qualification select missing");
+  assert.ok(html.includes("Has this product already sold 10,000+ units on TikTok Shop?"), "qualification question missing");
+  assert.ok(html.includes('id="f-units-switch"'), "switch-to-retainer button missing");
+  assert.ok(/Retainer \+ Commission<\/b> is the right way to start/.test(html), "reroute note missing");
+  assert.ok(!html.includes('id="f-units" name="boosted_10k_units" required'), "must not be required while hidden (JS toggles it)");
+  assert.ok(html.includes("syncBoostedQual"), "qualification JS missing");
+});
