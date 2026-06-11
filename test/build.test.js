@@ -250,7 +250,11 @@ test("og/social meta present with absolute image URL", () => {
   assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'));
   assert.ok(html.includes('property="og:title"'));
   assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
-  assert.ok(html.includes('rel="canonical" href="https://hammadmedia.com"'));
+  assert.ok(html.includes('rel="canonical" href="https://hammadmedia.com/"'), "canonical must include trailing slash");
+  assert.ok(html.includes('property="og:url" content="https://hammadmedia.com/"'), "og:url must include trailing slash");
+  assert.ok(html.includes('property="og:image:width" content="1200"'), "og:image:width missing");
+  assert.ok(html.includes('property="og:image:height" content="630"'), "og:image:height missing");
+  assert.ok(html.includes('property="og:image:alt"'), "og:image:alt missing");
 });
 
 test("no personal names on the page", () => {
