@@ -492,10 +492,10 @@
     .light .card:not(.tier), .stat, .pod { animation: rise-move backwards; animation-timeline: view(); animation-range: entry 0% entry 35%; }
   }
   .note {
-    margin-top: 40px; padding: 26px 30px; border-radius: 14px;
+    margin-top: 40px; padding: 26px 34px; border-radius: 14px;
     background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(61,220,132,.12));
     border: 1px solid rgba(14,122,74,.25); font-size: 16px; font-weight: 500;
-    max-width: 72ch; line-height: 1.7;
+    max-width: 88ch; line-height: 1.7; margin-inline: auto;
   }
   .note p + p { margin-top: 14px; }
   .note b { font-weight: 800; }
@@ -512,10 +512,11 @@
   /* trust signal at the moment of highest anxiety — reuses the hero badge claims */
   .contact .kicker-row { text-align: center; position: relative; z-index: 1; }
   .contact .kicker {
-    display: inline-block; border: 1px solid var(--line-dark); border-radius: 100px;
-    padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
+    display: inline-block; border: 1px solid var(--line-dark); border-radius: 22px;
+    padding: 10px 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--green); margin-bottom: 22px;
   }
+  .contact .kicker-line { display: block; line-height: 1.7; }
   /* closing CTA reads as one centered column — wrap narrows to the form width */
   .contact .wrap { max-width: 696px; }
   .contact h2.section-title, .contact .form-hint, .contact .alt-contact { text-align: center; }
@@ -694,7 +695,7 @@
 
 <section class="contact" id="contact">
   <div class="wrap">
-    <p class="kicker-row"><span class="kicker">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025 &middot; $8M+ GMV all time</span></p>
+    <p class="kicker-row"><span class="kicker"><span class="kicker-line">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span><span class="kicker-line">$8M+ GMV all time</span></span></p>
     <h2 class="section-title">{{contact.heading}}</h2>
     <p class="section-sub">{{contact.subheading}}</p>
 {{contactBlock}}
