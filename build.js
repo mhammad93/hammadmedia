@@ -51,9 +51,9 @@ const accountCards = content.accounts
           </div>
         </div>
         <div class="pod-metrics">
-          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; 2026 YTD</span></div>
-          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold</span></div>
-          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views</span></div>
+          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; 2026 so far</span></div>
+          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold &mdash; 2026 so far</span></div>
+          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views &mdash; 2026 so far</span></div>
         </div>
       </div>`;
   })
@@ -68,7 +68,7 @@ const barPct = (ytd) => Math.max(4, Math.round((ytd / maxYtd) * 100));
 function buildPodCard(c, i) {
   const cells = [];
   if (c.bestMonth)
-    cells.push(`<div class="m"><span class="mv">${money(c.bestMonth)}</span><span class="ml">Best month</span></div>`);
+    cells.push(`<div class="m"><span class="mv">${money(c.bestMonth)}</span><span class="ml">Best single month</span></div>`);
   if (c.totalViews)
     cells.push(`<div class="m"><span class="mv">${esc(c.totalViews)}</span><span class="ml">Views &mdash; all time</span></div>`);
   if (c.videoUrl && c.videoViews)
@@ -78,7 +78,7 @@ function buildPodCard(c, i) {
         <span class="pod-rank">0${i + 1}</span>
         <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.title)} product" width="800" height="800" loading="lazy"></div>
         <h3>${esc(c.title)}</h3>
-        <div class="pod-kicker">Total sales &mdash; 2026 YTD</div>
+        <div class="pod-kicker">Total sales &mdash; 2026 so far</div>
         <div class="pod-ytd">${money(c.ytd)}</div>
         <div class="pod-ytd-lbl"><b>${c.units.toLocaleString("en-US")}</b> units sold</div>
         <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
@@ -194,8 +194,8 @@ const contactBlock = content.contact.formSubmitEmail
         <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@brand.com"></div>
       </div>
       <div class="form-row">
-        <div><label for="f-category">Product category</label>
-          <select id="f-category" name="category" required>
+        <div><label for="f-category">Product category <span class="optional">(optional)</span></label>
+          <select id="f-category" name="category">
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Supplements</option>
             <option>Wellness</option>
@@ -226,8 +226,9 @@ const contactBlock = content.contact.formSubmitEmail
         </div>
         <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="https://shop.tiktok.com/&hellip;"></div>
       </div>
-      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="What is the product, what commission do you have in mind, and what monthly sales target do you have?"></textarea></div>
+      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="Your product, and anything you want me to know."></textarea></div>
       <button type="submit">Send inquiry &rarr;</button>
+      <p class="form-hint">I reply within 24 hours.</p>
     </form>
     <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way. Or message me on <a href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
