@@ -352,3 +352,26 @@ test("vercel.json keeps the redirect and security headers", () => {
     assert.ok(all.includes(k), `header ${k} missing from vercel.json`);
   }
 });
+
+test("infra: favicon.ico and 404.html ship in dist", () => {
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "favicon.ico")), "favicon.ico missing from dist");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "404.html")), "404.html missing from dist");
+  const nf = fs.readFileSync(path.join(ROOT, "dist", "404.html"), "utf8");
+  assert.ok(nf.includes('name="robots" content="noindex"'), "404 page must be noindex");
+  assert.ok(nf.includes('src="/assets/'), "404 assets must be root-absolute");
+});
+
+test("infra: marquee is generated from content.json sources (no drift)", () => {
+  const m = html.match(/<div class="track">([\s\S]*?)<\/div>/);
+  assert.ok(m, "marquee track missing");
+  const track = m[1];
+  assert.ok(track.includes(`<b>${content.hero.gmvYtd}</b> GMV in 2026`), "marquee GMV must come from hero.gmvYtd");
+  for (const kw of ["UNITS SOLD", "PRODUCT VIEWS", "VIDEO VIEWS"]) {
+    const s = content.stats.find((x) => x.label.includes(kw));
+    assert.ok(track.includes(`<b>${s.value}</b>`), `marquee missing stat ${s.value}`);
+  }
+  const top = "$" + Math.max(...content.receipts.items.map((i) => i.ytd)).toLocaleString("en-US");
+  assert.ok(track.includes(`<b>${top}</b> from one product`), "marquee top-product figure must match receipts max");
+  const dup = html.match(/\{\{marquee\}\}/g);
+  assert.strictEqual(dup, null, "marquee token unresolved");
+});

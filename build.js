@@ -232,6 +232,24 @@ const contactBlock = content.contact.formSubmitEmail
     <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way. Or message me on <a href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}" target="_blank" rel="noopener">WhatsApp</a>.</p>`
   : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
 
+// ── Marquee: generated from content.json so the numbers can never drift from their sources ──
+
+const statByLabel = (kw) => content.stats.find((s) => s.label.includes(kw));
+const topProductYtd = money(Math.max(...content.receipts.items.map((i) => i.ytd)));
+const productNames = content.receipts.items.map((i) => esc(i.title.split(" ")[0])).join(" &middot; ");
+const followersTotalK = Math.round(
+  content.accounts.reduce((sum, a) => sum + parseFloat(String(a.followers).replace(/[^\d.]/g, "")), 0),
+);
+const marquee = [
+  `<span><b>${esc(content.hero.gmvYtd)}</b> GMV in 2026</span>`,
+  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views</span>`,
+  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold</span>`,
+  `<span>${productNames}</span>`,
+  `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
+  `<span><b>#1</b> Health &amp; Wellness affiliate &mdash; TikTok Shop 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
+  `<span>Boosted commissions &middot; retainers &middot; exclusivity</span>`,
+].join("");
+
 // ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
 
 const jsonld = JSON.stringify({
@@ -300,6 +318,7 @@ const tokens = {
   contactBlock,
   brandWall,
   faqSection,
+  marquee,
   "legal.disclaimer": esc(content.legal.disclaimer),
   "legal.privacy": esc(content.legal.privacy),
   "site.ogImage": esc(content.site.ogImage),
@@ -331,6 +350,8 @@ if (fs.existsSync(assetsSrc)) {
 }
 fs.copyFileSync(path.join(ROOT, "thanks.html"), path.join(ROOT, "dist", "thanks.html"));
 fs.copyFileSync(path.join(ROOT, "robots.txt"), path.join(ROOT, "dist", "robots.txt"));
+fs.copyFileSync(path.join(ROOT, "404.html"), path.join(ROOT, "dist", "404.html"));
+fs.copyFileSync(path.join(ROOT, "favicon.ico"), path.join(ROOT, "dist", "favicon.ico"));
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
