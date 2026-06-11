@@ -53,7 +53,7 @@ test("receipts: 3 podium + 3 shelf cards, sexy-numbers sub, metric grid, sane ba
   }
   assert.ok(html.includes(`width:100%`), "top product must have full-width bar");
   assert.strictEqual((html.match(/class="bar"/g) || []).length, 6, "every card carries a scale bar");
-  assert.ok(html.includes(">Best month</span>"), "Best month metric label missing");
+  assert.ok(html.includes(">Best single month</span>"), "Best single month metric label missing");
   assert.ok(html.includes(">Top video</span>"), "Top video metric label missing");
   assert.ok((html.match(/units sold/g) || []).length >= 6, "units must be spelled out on every card");
   assert.ok(!/\d u</.test(html), "cryptic 'u' abbreviation must not appear");
@@ -77,13 +77,15 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   );
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "thanks.html")), "thanks.html missing from dist");
   assert.ok(html.includes("Boosted Commission (pay on sales only)"), "form options must match tier names");
-  assert.ok(html.includes("what commission do you have in mind"), "commission qualifier missing from textarea");
+  assert.ok(html.includes("Your product, and anything you want me to know."), "textarea single-ask placeholder missing");
+  assert.ok(html.includes("I reply within 24 hours."), "24-hour reply microcopy missing");
   assert.ok(html.includes("$1,000 per video"), "per-video retainer floor missing");
-  assert.ok(html.includes("$25,000"), "30-video package price missing");
+  assert.ok(html.includes("$18,000"), "20-video package price missing");
+  assert.ok(html.includes("$9,000"), "10-video package price missing");
   assert.ok(html.includes("$13,500"), "15-video package price missing");
   assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
   assert.ok(/bonuses move you to the top/i.test(html), "bonus-priority line missing");
-  assert.ok(html.includes("No fixed number of videos"), "boosted no-guarantee line missing");
+  assert.ok(/no fixed number of videos/i.test(html), "boosted no-guarantee line missing");
   assert.ok(/no long-term contract/i.test(html), "month-to-month line missing");
 });
 
@@ -100,9 +102,14 @@ test("TikTok Shop badge on every product box; play glyph on video links; account
   );
   const withVideo = content.receipts.items.filter((c) => c.videoUrl).length;
   assert.strictEqual(
-    (html.match(/&#9654;<\/a>/g) || []).length,
+    (html.match(/<span aria-hidden="true">&#9654;<\/span><\/a>/g) || []).length,
     withVideo,
-    "play glyph missing from Top-video links",
+    "decorative play glyph missing from Top-video links",
+  );
+  assert.strictEqual(
+    (html.match(/aria-label="Top video for [^"]+ views on TikTok \(opens in new tab\)"/g) || []).length,
+    withVideo,
+    "accessible names missing from Top-video links",
   );
   assert.ok(html.includes('fill="#25F4EE"') && html.includes('fill="#FE2C55"'), "trichrome note colors missing");
   assert.strictEqual(content.accounts[0].handle, "Drew.Review", "Drew.Review must be the left card");
@@ -116,9 +123,9 @@ test("funnel strip renders verified metrics with provenance caption", () => {
   for (const m of content.funnel.items) {
     assert.ok(html.includes(m.value), `funnel value missing: ${m.value}`);
   }
-  assert.ok(html.includes("The funnel, measured"), "funnel title missing");
+  assert.ok(html.includes(content.funnel.title), "funnel title missing");
   assert.ok(html.includes("TikTok Shop dashboards"), "provenance caption missing");
-  assert.ok(html.includes("they hold across 105M+ product views"), "efficiency-at-scale frame missing");
+  assert.ok(html.includes("105M+ product views"), "efficiency-at-scale frame missing");
   assert.ok(!/completion/i.test(html), "completion % must never appear (unmeasured)");
 });
 
@@ -131,16 +138,21 @@ test("summit award proof card renders with image and caption", () => {
 });
 
 test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
+  // tier prices are split into stacked spans, so compare against tag-stripped text
+  const flatText = html.replace(/<[^>]+>/g, "");
   for (const price of ["$0 upfront — commission only", "From $1,000 per video", "From $50,000 per month"]) {
-    assert.ok(html.includes(price), `tier price line missing: ${price}`);
+    assert.ok(flatText.includes(price), `tier price line missing: ${price}`);
   }
   assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
-  assert.ok((html.match(/Total sales (&mdash;|—) 2026 YTD/g) || []).length >= 6, "YTD sales kickers");
+  assert.strictEqual((html.match(/class="tp-figure"/g) || []).length, 3, "lead price figures");
+  assert.strictEqual((html.match(/class="tier-cta"/g) || []).length, 3, "per-tier CTAs");
+  assert.strictEqual((html.match(/data-tier="/g) || []).length, 3, "tier preselect data attrs");
+  assert.ok((html.match(/Total sales (&mdash;|—) 2026 so far/g) || []).length >= 6, "2026-so-far sales kickers");
   assert.ok((html.match(/Views &mdash; all time|Views — all time/g) || []).length >= 5, "all-time views labels");
   assert.ok(html.includes('name="commission" required'), "commission select missing");
   assert.ok(html.includes("30% or higher"), "commission options missing");
   assert.ok(html.includes("How do you want to work together?"), "engagement label rename missing");
-  assert.strictEqual(content.faq.items.length, 8, "FAQ count");
+  assert.strictEqual(content.faq.items.length, 9, "FAQ count");
   assert.ok(html.includes("GMV Max"), "GMV Max mention missing");
   assert.ok(html.includes("Hammad Media LLC, a registered US company"), "cross-border FAQ missing");
   assert.ok(html.includes("wa.me/12015520786"), "WhatsApp link missing");
@@ -164,7 +176,8 @@ test("design integrity: bg alternation, animation fill mode, 416M stat", () => {
   assert.ok(html.includes('id="partner" class="light light-alt"'), "partner section must be cream");
   assert.ok(html.includes('id="faq" class="light"') && !html.includes('id="faq" class="light light-alt"'), "faq must be paper");
   assert.ok(!html.includes("#services.light"), "stale #services background clause still present");
-  assert.ok(html.includes("animation: rise backwards"), "scroll animation must use backwards fill");
+  assert.ok(html.includes("animation: rise-move backwards"), "scroll animation must be transform-only with backwards fill (visible at rest)");
+  assert.ok(!html.includes("animation: rise backwards"), "opacity-gated scroll animation reintroduced");
   assert.ok(!html.includes("animation: rise both"), "fill-mode bug reintroduced");
   assert.ok(html.includes("416M+"), "all-time views stat missing");
   assert.ok(html.includes("VIDEO VIEWS — ALL TIME"), "all-time label missing");
@@ -188,7 +201,7 @@ test("product images + avatars render with alts and exist in dist", () => {
   for (const a of content.accounts) {
     if (!a.avatar) continue;
     assert.ok(html.includes(`src="${a.avatar}"`), `avatar missing: ${a.avatar}`);
-    assert.ok(html.includes(`alt="@${a.handle} TikTok profile picture"`), `avatar alt missing for ${a.handle}`);
+    assert.ok(html.includes(`<img class="avatar" src="${a.avatar}" alt=""`), `avatar must be decorative (alt="") for ${a.handle}`);
     assert.ok(fs.existsSync(path.join(ROOT, "dist", a.avatar)), `dist missing ${a.avatar}`);
   }
   assert.strictEqual((html.match(/width="216" height="216"/g) || []).length, 2, "both avatars should declare 216×216 intrinsic dims");
@@ -218,7 +231,7 @@ test("brand wall, FAQ, and legal lines render", () => {
   }
   assert.strictEqual((html.match(/<details>/g) || []).length, content.faq.items.length, "FAQ count mismatch");
   for (const f of content.faq.items) assert.ok(html.includes(f.q), `FAQ missing: ${f.q}`);
-  assert.ok(html.includes("do not imply sponsorship or endorsement"), "trademark disclaimer missing");
+  assert.ok(html.includes("do not mean that any brand sponsors or endorses this site"), "trademark disclaimer missing");
   assert.ok(html.includes('id="privacy"'), "privacy note missing");
 });
 
@@ -250,7 +263,11 @@ test("og/social meta present with absolute image URL", () => {
   assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'));
   assert.ok(html.includes('property="og:title"'));
   assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
-  assert.ok(html.includes('rel="canonical" href="https://hammadmedia.com"'));
+  assert.ok(html.includes('rel="canonical" href="https://hammadmedia.com/"'), "canonical must include trailing slash");
+  assert.ok(html.includes('property="og:url" content="https://hammadmedia.com/"'), "og:url must include trailing slash");
+  assert.ok(html.includes('property="og:image:width" content="1200"'), "og:image:width missing");
+  assert.ok(html.includes('property="og:image:height" content="630"'), "og:image:height missing");
+  assert.ok(html.includes('property="og:image:alt"'), "og:image:alt missing");
 });
 
 test("no personal names on the page", () => {
@@ -351,4 +368,27 @@ test("vercel.json keeps the redirect and security headers", () => {
   for (const k of ["X-Content-Type-Options", "Referrer-Policy", "X-Frame-Options", "Permissions-Policy", "Cache-Control"]) {
     assert.ok(all.includes(k), `header ${k} missing from vercel.json`);
   }
+});
+
+test("infra: favicon.ico and 404.html ship in dist", () => {
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "favicon.ico")), "favicon.ico missing from dist");
+  assert.ok(fs.existsSync(path.join(ROOT, "dist", "404.html")), "404.html missing from dist");
+  const nf = fs.readFileSync(path.join(ROOT, "dist", "404.html"), "utf8");
+  assert.ok(nf.includes('name="robots" content="noindex"'), "404 page must be noindex");
+  assert.ok(nf.includes('src="/assets/'), "404 assets must be root-absolute");
+});
+
+test("infra: marquee is generated from content.json sources (no drift)", () => {
+  const m = html.match(/<div class="track">([\s\S]*?)<\/div>/);
+  assert.ok(m, "marquee track missing");
+  const track = m[1];
+  assert.ok(track.includes(`<b>${content.hero.gmvYtd}</b> GMV in 2026`), "marquee GMV must come from hero.gmvYtd");
+  for (const kw of ["UNITS SOLD", "PRODUCT VIEWS", "VIDEO VIEWS"]) {
+    const s = content.stats.find((x) => x.label.includes(kw));
+    assert.ok(track.includes(`<b>${s.value}</b>`), `marquee missing stat ${s.value}`);
+  }
+  const top = "$" + Math.max(...content.receipts.items.map((i) => i.ytd)).toLocaleString("en-US");
+  assert.ok(track.includes(`<b>${top}</b> from one product`), "marquee top-product figure must match receipts max");
+  const dup = html.match(/\{\{marquee\}\}/g);
+  assert.strictEqual(dup, null, "marquee token unresolved");
 });

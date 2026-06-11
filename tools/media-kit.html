@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hammad Media — Media Kit</title>
+<style>
+  @font-face { font-family: "Fraunces"; src: url(../assets/fonts/fraunces-roman.woff2) format("woff2-variations"); font-weight: 100 900; }
+  @font-face { font-family: "Fraunces"; src: url(../assets/fonts/fraunces-italic.woff2) format("woff2-variations"); font-style: italic; font-weight: 100 900; }
+  @font-face { font-family: "Manrope"; src: url(../assets/fonts/manrope.woff2) format("woff2-variations"); font-weight: 200 800; }
+  :root {
+    --bg: #0b130e; --paper: #f6f4ee; --cream: #ece9e0; --dim: #b3bbb1;
+    --green: #3ddc84; --green-deep: #0e7a4a; --card: rgba(61,220,132,.07);
+    --line: rgba(61,220,132,.22);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4 portrait; margin: 0; }
+  html, body { width: 210mm; height: 297mm; }
+  body {
+    font-family: "Manrope", sans-serif; font-weight: 450; background: var(--bg); color: var(--cream);
+    padding: 13mm 14mm; display: flex; flex-direction: column; gap: 5.5mm;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  header { display: flex; justify-content: space-between; align-items: center; }
+  header img { height: 11mm; width: auto; }
+  .badge {
+    border: 1px solid var(--line); border-radius: 100px; padding: 2.4mm 5mm;
+    color: var(--green); font-size: 8.4pt; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  }
+  h1 { font-family: "Fraunces", serif; font-weight: 600; font-size: 27pt; line-height: 1.1; color: var(--paper); }
+  h1 em { font-style: italic; color: var(--green); }
+  .sub { color: var(--dim); font-size: 10.5pt; max-width: 150mm; line-height: 1.55; }
+  .statgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 3mm; padding: 4mm 3mm; text-align: center; }
+  .stat .v { font-family: "Fraunces", serif; font-weight: 600; font-size: 16.5pt; color: var(--green); }
+  .stat .l { font-size: 6.6pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-top: 1.2mm; }
+  h2 { font-family: "Fraunces", serif; font-weight: 600; font-size: 13pt; color: var(--paper); margin-bottom: 2.4mm; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 3mm; padding: 5mm; }
+  .funnel { display: flex; gap: 6mm; }
+  .funnel div { flex: 1; }
+  .funnel .v { font-family: "Fraunces", serif; font-size: 15pt; font-weight: 600; color: var(--paper); }
+  .funnel .l { font-size: 7.4pt; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin-top: 1mm; }
+  .prov { font-size: 7.4pt; color: var(--dim); margin-top: 2.6mm; }
+  ul.acc { list-style: none; font-size: 9.6pt; line-height: 1.75; }
+  ul.acc b { color: var(--green); }
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.6mm; }
+  .tier { background: var(--card); border: 1px solid var(--line); border-radius: 3mm; padding: 4.4mm; }
+  .tier.hot { border-color: var(--green); }
+  .tier .tag { font-size: 6.6pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+  .tier h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 11.5pt; color: var(--paper); margin: 1.6mm 0 .8mm; }
+  .tier .p { font-size: 9.4pt; font-weight: 700; color: var(--green); }
+  .tier .d { font-size: 8pt; color: var(--dim); line-height: 1.5; margin-top: 1.6mm; }
+  .steps { display: flex; gap: 5mm; font-size: 8.6pt; color: var(--dim); line-height: 1.5; }
+  .steps b { display: block; color: var(--cream); font-size: 9.4pt; margin-bottom: 1mm; }
+  .steps span.n { color: var(--green); font-family: "Fraunces", serif; font-style: italic; font-size: 12pt; margin-right: 1.4mm; }
+  footer { margin-top: auto; border-top: 1px solid var(--line); padding-top: 4mm;
+    display: flex; justify-content: space-between; align-items: center; font-size: 9.6pt; }
+  footer .c b { color: var(--green); font-weight: 700; }
+  footer .note { font-size: 7pt; color: var(--dim); max-width: 70mm; text-align: right; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <header>
+    <img src="../assets/logo-v2.webp" alt="Hammad Media">
+    <span class="badge">#1 Health &amp; Wellness Affiliate — TikTok Shop US, 2025</span>
+  </header>
+
+  <div>
+    <h1>I turn supplements into <em>bestsellers.</em></h1>
+    <p class="sub" style="margin-top:3mm">One creator. Two TikTok Shop accounts. I write, film, and post every video myself.
+    You check every sale in your own TikTok Shop Seller Center.</p>
+  </div>
+
+  <div class="statgrid">
+    <div class="stat"><div class="v">$8M+</div><div class="l">GMV — all time</div></div>
+    <div class="stat"><div class="v">$2.79M+</div><div class="l">GMV — 2026 so far</div></div>
+    <div class="stat"><div class="v">113K+</div><div class="l">Units — 2026 so far</div></div>
+    <div class="stat"><div class="v">105M+</div><div class="l">Product views — 2026</div></div>
+    <div class="stat"><div class="v">416M+</div><div class="l">Video views — all time</div></div>
+  </div>
+
+  <div class="row">
+    <div class="panel">
+      <h2>From views to orders</h2>
+      <div class="funnel">
+        <div><div class="v">2.73%</div><div class="l">Product click-through</div></div>
+        <div><div class="v">3.91%</div><div class="l">Click to order</div></div>
+        <div><div class="v">$26.38</div><div class="l">GMV per 1,000 views</div></div>
+      </div>
+      <p class="prov">TikTok Shop dashboards, Jan 1 – Jun 8, 2026, both accounts.</p>
+    </div>
+    <div class="panel">
+      <h2>The accounts</h2>
+      <ul class="acc">
+        <li><b>@drew.review</b> — 182.9K followers · $901K GMV · 37.3M product views (2026 so far)</li>
+        <li><b>@drew.review1</b> — 155K followers · $1.89M GMV · 68.5M product views (2026 so far)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <h2>Ways to partner</h2>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tag">Start here</div><h3>Boosted Commission</h3>
+        <div class="p">$0 upfront — commission only</div>
+        <div class="d">For products with 10,000+ units already sold on TikTok Shop. You pay only when your product sells.</div>
+      </div>
+      <div class="tier hot">
+        <div class="tag">Most popular</div><h3>Retainer + Commission</h3>
+        <div class="p">From $1,000 per video</div>
+        <div class="d">10 for $9,000 (save $1,000) · 15 for $13,500 (save $1,500) · 20 for $18,000 (save $2,000). Guaranteed videos on both accounts, month to month.</div>
+      </div>
+      <div class="tier">
+        <div class="tag">Own the category</div><h3>Exclusive</h3>
+        <div class="p">From $50,000 per month</div>
+        <div class="d">One brand per category. I never promote your competitors. Once your category is taken, it is closed.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div><b><span class="n">1</span>Send me your product</b>Ship one sample and set an affiliate commission on TikTok Shop.</div>
+    <div><b><span class="n">2</span>I create the content</b>First video usually live within 48 hours. No editors, no agencies, no approval rounds.</div>
+    <div><b><span class="n">3</span>You check every sale</b>Every attributed sale is visible in your own Seller Center.</div>
+  </div>
+
+  <footer>
+    <div class="c"><b>contact@hammadmedia.com</b> &nbsp;·&nbsp; WhatsApp +1 (201) 552-0786 &nbsp;·&nbsp; hammadmedia.com</div>
+    <div class="note">I take on four new products each month. I reply to every brand inquiry within 24 hours. Figures from TikTok Shop dashboards, updated June 8, 2026.</div>
+  </footer>
+</body>
+</html>

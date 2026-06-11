@@ -15,17 +15,20 @@
 <title>{{site.title}}</title>
 <meta name="description" content="{{site.description}}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{{site.url}}">
+<meta property="og:url" content="{{site.url}}/">
 <meta property="og:title" content="{{site.title}}">
 <meta property="og:description" content="{{site.description}}">
 <meta property="og:image" content="{{site.ogImage}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="I turn supplements into bestsellers. $2.79M+ GMV in 2026. 105M+ product views. 113K+ units sold. #1 Health &amp; Wellness Affiliate — TikTok Shop US, 2025. HAMMADMEDIA.COM">
 <meta property="og:site_name" content="Hammad Media">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:description" content="{{site.description}}">
 <meta name="twitter:title" content="{{site.title}}">
 <meta name="twitter:image" content="{{site.ogImage}}">
-<link rel="canonical" href="{{site.url}}">
+<link rel="canonical" href="{{site.url}}/">
 {{jsonld}}
 <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png">
@@ -42,9 +45,9 @@
     --bg-dark-2: #101b14;
     --paper: #f6f4ee;
     --ink: #141814;
-    --ink-soft: #4a524b;
+    --ink-soft: #3f4740;
     --cream: #ece9e0;
-    --cream-dim: #a8b0a6;
+    --cream-dim: #b3bbb1;
     --green: #3ddc84;
     --green-deep: #0e7a4a;
     --line-dark: rgba(61, 220, 132, 0.14);
@@ -58,6 +61,7 @@
     background: var(--bg-dark);
     color: var(--cream);
     line-height: 1.6;
+    font-weight: 450; /* variable-font half-step above regular: body reads with intent next to Fraunces display */
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
@@ -76,9 +80,22 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     html { scroll-behavior: auto; }
-    .marquee { display: none; }
+    .marquee-wrap { display: none; }
+  }
+  @media print {
+    *, *::before, *::after { animation: none !important; opacity: 1 !important; }
   }
   .marquee:hover .track, .marquee:focus-within .track { animation-play-state: paused; }
+  .marquee.paused .track { animation-play-state: paused; }
+  .marquee-wrap { position: relative; }
+  .marquee-pause {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 3;
+    background: var(--bg-dark-2); color: var(--cream-dim);
+    border: 1px solid var(--line-dark); border-radius: 100px;
+    font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+    padding: 7px 14px; min-height: 28px; cursor: pointer;
+  }
+  .marquee-pause:hover { color: var(--green); border-color: var(--green); }
 
   /* ── Nav ── */
   nav {
@@ -101,7 +118,12 @@
   .nav-links { display: flex; gap: 26px; }
   .nav-links a { color: var(--cream-dim); text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 2px; }
   .nav-links a:hover { color: var(--green); }
-  @media (max-width: 860px) { .nav-links { display: none; } }
+  /* mobile: reflow the anchor links to a second row instead of hiding them */
+  @media (max-width: 860px) {
+    nav { flex-wrap: wrap; row-gap: 2px; }
+    .nav-links { order: 3; width: 100%; gap: 18px; }
+    .nav-links a { font-size: 13px; padding: 10px 2px; }
+  }
   section[id] { scroll-margin-top: 16px; }
   nav a.cta {
     background: var(--green); color: var(--bg-dark); text-decoration: none;
@@ -144,7 +166,7 @@
   .hero .actions a.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(61,220,132,.4); }
   .hero .actions a.ghost {
     color: var(--cream); text-decoration: none; padding: 17px 30px;
-    border: 1px solid rgba(236,233,224,.25); border-radius: 100px; font-size: 16px; font-weight: 700;
+    border: 1px solid rgba(236,233,224,.45); border-radius: 100px; font-size: 16px; font-weight: 700;
     transition: border-color .18s ease;
   }
   .hero .actions a.ghost:hover { border-color: var(--green); color: var(--green); }
@@ -177,7 +199,7 @@
   }
   .stat .lbl {
     margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
-    color: var(--cream-dim);
+    color: var(--cream-dim); text-wrap: balance;
   }
   .stats .updated { margin-top: 44px; font-size: 13px; color: var(--cream-dim); opacity: .8; }
   .brandwall {
@@ -189,11 +211,20 @@
     height: 28px; width: auto; display: block; opacity: .65; flex-shrink: 0;
     transition: opacity .2s ease;
   }
+  /* optical sizing: heavy SNAP wordmark reads smaller, light Micro Ingredients lockup reads larger */
+  .brandwall img[alt^="Snap"] { height: 22px; }
+  .brandwall img[alt^="Micro"] { height: 34px; }
   .brandwall img:hover { opacity: 1; }
   @media (max-width: 1100px) {
-    .brandwall { overflow-x: auto; justify-content: flex-start; gap: 0 36px; padding-bottom: 10px; scrollbar-width: none; }
+    .brandwall {
+      overflow-x: auto; justify-content: flex-start; gap: 0 36px; padding-bottom: 10px; scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
+      mask-image: linear-gradient(90deg, #000 92%, transparent);
+    }
     .brandwall::-webkit-scrollbar { display: none; }
     .brandwall img { height: 24px; }
+    .brandwall img[alt^="Snap"] { height: 19px; }
+    .brandwall img[alt^="Micro"] { height: 29px; }
   }
   .faq-list { max-width: 760px; }
   .faq-list details {
@@ -237,24 +268,27 @@
     display: flex; flex-direction: column; align-items: center;
   }
 
+  /* the one dark card on the light page — the page's biggest differentiator */
   .award-card {
-    margin-top: 22px; background: var(--card); border: 1px solid var(--line-light);
-    border-radius: 18px; padding: 22px;
-    display: grid; grid-template-columns: minmax(280px, 480px) 1fr;
-    gap: 26px; align-items: center;
+    margin-top: 22px; background: var(--bg-dark); border: 1px solid var(--line-dark);
+    border-radius: 18px; padding: 28px;
+    display: grid; grid-template-columns: minmax(320px, 1.1fr) 1fr;
+    gap: 32px; align-items: center;
     position: relative; overflow: hidden;
+    color: var(--cream);
   }
   .award-card::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
     background: linear-gradient(var(--green), var(--green-deep));
   }
+  .award-card .award-zoom { display: block; border-radius: 12px; }
   .award-card img { width: 100%; height: auto; border-radius: 12px; display: block; }
-  .award-card figcaption { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+  .award-card figcaption { font-size: 17px; line-height: 1.65; color: var(--cream-dim); }
   .award-card figcaption b {
-    display: block; color: var(--ink); font-family: "Fraunces", serif; font-weight: 600;
-    font-size: 22px; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 10px;
+    display: block; color: var(--paper); font-family: "Fraunces", serif; font-weight: 600;
+    font-size: clamp(26px, 3vw, 34px); line-height: 1.2; letter-spacing: -0.012em; margin-bottom: 12px;
   }
-  @media (max-width: 860px) { .award-card { grid-template-columns: 1fr; gap: 14px; } }
+  @media (max-width: 860px) { .award-card { grid-template-columns: 1fr; gap: 18px; } }
 
   .funnel-card {
     margin-top: 22px; background: var(--card); border: 1px solid var(--line-light);
@@ -269,7 +303,7 @@
   }
   .funnel-intro h3 { font-family: "Fraunces", serif; font-weight: 600; font-size: 22px; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 6px; }
   .funnel-intro .funnel-frame { font-size: 15px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 8px; }
-  .funnel-intro .funnel-prov { font-size: 12px; color: var(--ink-soft); opacity: .75; }
+  .funnel-intro .funnel-prov { font-size: 12px; color: var(--ink-soft); }
   .fm { display: flex; flex-direction: column; min-width: 0; }
   .fm-v {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
@@ -300,6 +334,18 @@
     outline: 3px solid var(--green); outline-offset: 3px; border-radius: 4px;
   }
 
+  /* a11y utilities */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .skip {
+    position: absolute; left: -9999px; top: 0; z-index: 10;
+    background: var(--green); color: var(--bg-dark); text-decoration: none;
+    font-weight: 800; font-size: 14px; padding: 12px 22px; border-radius: 0 0 12px 0;
+  }
+  .skip:focus, .skip:focus-visible { left: 0; }
+
   /* account + result + service cards (markup from build.js) */
   .light.light-alt { background: var(--cream); }
   .light + .light { border-top: 1px solid var(--line-light); }
@@ -327,9 +373,23 @@
   .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 900px) { .podium { grid-template-columns: minmax(0, 1fr); } }
   .shelf { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .tier-price {
+  .tier-price { display: flex; flex-direction: column; gap: 3px; margin-bottom: 14px; }
+  .tier-price .tp-figure {
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
-    font-size: 18px; color: var(--green-deep); margin-bottom: 12px; letter-spacing: -0.01em;
+    font-size: clamp(28px, 2.6vw, 32px); line-height: 1.1; color: var(--green-deep); letter-spacing: -0.01em;
+  }
+  .tier-price .tp-qual {
+    font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .tier-price .tp-line { font-size: 14px; font-weight: 600; color: var(--ink-soft); margin-top: 2px; }
+  .tier-cta {
+    display: inline-block; margin-top: 18px; color: var(--green-deep);
+    font-weight: 800; font-size: 15px; text-decoration: none;
+  }
+  .tier-cta:hover {
+    text-decoration: underline; text-decoration-color: var(--green);
+    text-decoration-thickness: 2px; text-underline-offset: 4px;
   }
   @media (max-width: 900px) {
     .shelf {
@@ -354,8 +414,10 @@
     font-family: "Fraunces", serif; font-style: italic; font-size: 32px;
     color: var(--green-deep); opacity: .85;
   }
-  .podium .pod:first-child { border-color: rgba(14,122,74,.35); }
+  /* podium leader: visible #1 treatment, mirrors the tier-2 'Most popular' pattern */
+  .podium .pod:first-child { border: 2px solid var(--green-deep); box-shadow: 0 14px 40px rgba(14,122,74,.14); }
   .podium .pod:first-child .pod-rank { opacity: 1; }
+  .podium .pod:first-child .pod-ytd { font-size: clamp(48px, 4.5vw, 60px); }
   .pod .product-shot { margin-top: 30px; margin-bottom: 18px; position: relative; }
   .ti { width: .82em; height: .82em; vertical-align: -0.06em; margin-right: 6px; display: inline-block; }
   .shop-badge {
@@ -393,7 +455,11 @@
     font-family: "Fraunces", serif; font-weight: 700; font-variant-numeric: tabular-nums;
     font-size: 22px; color: var(--ink); white-space: nowrap;
   }
-  .pod-metrics .mv-link { color: var(--green-deep); text-decoration: none; border-bottom: 2px solid var(--green); align-self: flex-start; }
+  .pod-metrics .mv-link {
+    color: var(--green-deep); align-self: flex-start;
+    text-decoration: underline; text-decoration-color: var(--green);
+    text-decoration-thickness: 2px; text-underline-offset: 4px;
+  }
   .pod-metrics .mv-link:hover { color: var(--ink); }
   .pod-metrics .ml { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; white-space: nowrap; }
 
@@ -422,14 +488,18 @@
     display: inline-block; background: var(--green-deep); color: #fffdf8;
     padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em;
   }
+  /* transform-only so the resting state stays visible in print, PDF, and screenshot bots */
   @supports (animation-timeline: view()) {
-    .light .card:not(.tier), .stat, .pod { animation: rise backwards; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+    .light .card:not(.tier), .stat, .pod { animation: rise-move backwards; animation-timeline: view(); animation-range: entry 0% entry 35%; }
   }
   .note {
-    margin-top: 40px; padding: 26px 30px; border-radius: 14px;
+    margin-top: 40px; padding: 26px 34px; border-radius: 14px;
     background: linear-gradient(120deg, rgba(61,220,132,.12), rgba(61,220,132,.12));
-    border: 1px solid rgba(14,122,74,.25); font-size: 16px; font-weight: 600;
+    border: 1px solid rgba(14,122,74,.25); font-size: 16px; font-weight: 500;
+    line-height: 1.7;
   }
+  .note p + p { margin-top: 14px; }
+  .note b { font-weight: 800; }
   .light .note { color: var(--ink); }
 
   /* ── Contact ── */
@@ -440,10 +510,19 @@
   }
   .contact h2.section-title { color: var(--paper); }
   .contact p.section-sub { color: var(--cream-dim); }
+  /* trust signal at the moment of highest anxiety — reuses the hero badge claims */
+  .contact .kicker-row { text-align: center; position: relative; z-index: 1; }
+  .contact .kicker {
+    display: inline-block; border: 1px solid var(--line-dark); border-radius: 22px;
+    padding: 10px 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 22px;
+  }
+  .contact .kicker-line { display: block; line-height: 1.7; }
   /* closing CTA reads as one centered column — wrap narrows to the form width */
   .contact .wrap { max-width: 696px; }
-  .contact h2.section-title, .contact p.section-sub, .contact .form-hint, .contact .alt-contact { text-align: center; }
-  .contact p.section-sub { margin-inline: auto; }
+  .contact h2.section-title, .contact .form-hint, .contact .alt-contact { text-align: center; }
+  /* long intro paragraph reads left-aligned; block stays centered as an object */
+  .contact p.section-sub { text-align: left; margin-inline: auto; }
   .contact form { margin-inline: auto; }
   .contact form button[type=submit] { justify-self: center; }
   form { max-width: 640px; display: grid; gap: 18px; position: relative; z-index: 1; }
@@ -458,15 +537,21 @@
     transition: border-color .15s ease;
   }
   input:hover, select:hover, textarea:hover { border-color: rgba(61,220,132,.4); }
-  ::placeholder { color: rgba(168,176,166,.7); }
+  ::placeholder { color: rgba(168,176,166,.8); }
   select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233ddc84' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
-  select:invalid { color: rgba(168,176,166,.7); }
+  select:invalid { color: rgba(168,176,166,.8); }
   .alt-contact { margin-top: 22px; font-size: 15px; color: var(--cream-dim); position: relative; z-index: 1; }
-  .alt-contact a { color: var(--green); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(61,220,132,.4); }
-  .alt-contact a:hover { border-bottom-color: var(--green); }
+  .alt-contact a {
+    color: var(--green); font-weight: 700;
+    text-decoration: underline; text-decoration-color: rgba(61,220,132,.4);
+    text-decoration-thickness: 2px; text-underline-offset: 4px;
+  }
+  .alt-contact a:hover { text-decoration-color: var(--green); }
   input:focus, textarea:focus, select:focus { outline: 2px solid var(--green); outline-offset: 1px; }
   .light a:focus-visible, .light summary:focus-visible { outline-color: var(--green-deep); }
   input:user-invalid, select:user-invalid, textarea:user-invalid { border-color: #ff7a7a; }
+  .err { font-size: 13px; font-weight: 600; color: #ffb4b4; margin-top: 7px; }
+  .err::before { content: "\26A0\FE0E "; color: #ff7a7a; }
   .form-hint { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; position: relative; z-index: 1; }
   textarea { min-height: 130px; resize: vertical; }
   button[type=submit], .mail-cta {
@@ -477,6 +562,14 @@
   }
   button[type=submit]:hover, .mail-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(61,220,132,.4); }
   form button[type=submit] { justify-self: start; }
+  .form-ctas { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
+  .btn-secondary {
+    color: var(--cream); text-decoration: none; padding: 16px 30px;
+    border: 1px solid rgba(236,233,224,.45); border-radius: 100px;
+    font-size: 16px; font-weight: 700; text-align: center; display: inline-block;
+    transition: border-color .18s ease, color .18s ease;
+  }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
 
   /* sticky mobile CTA bar */
   .mobile-cta { display: none; }
@@ -503,6 +596,11 @@
     .brand .logo-img { height: 40px; }
     .stats .grid { gap: 36px 40px; }
     .hero { padding: 48px 0 72px; }
+    /* box-relative glow: completes its fade inside the hero instead of clipping to hard edges */
+    header.hero::after {
+      left: 0; top: 0; transform: none; width: 100%; height: 100%;
+      background: radial-gradient(120% 70% at 50% 0%, rgba(61,220,132,.13), transparent 70%);
+    }
     .tiers .tier:nth-child(2) { transform: none; }
     section { padding: 72px 0; }
     section.stats { padding: 72px 0 60px; }
@@ -511,13 +609,18 @@
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
+
 <div class="wrap">
   <nav>
     <a class="brand" href="#top" aria-label="Hammad Media — home"><img class="logo-img" src="assets/logo-v2.webp" alt="Hammad Media" width="560" height="138"></a>
-    <div class="nav-links"><a href="#results">Results</a><a href="#partner">Pricing</a><a href="#faq">FAQ</a></div>
+    <div class="nav-links"><a href="#results">Results</a><a href="#partner">Partner &amp; pricing</a><a href="#faq">FAQ</a></div>
     <a class="cta" href="#contact">Work with me</a>
   </nav>
+</div>
 
+<main id="main">
+<div class="wrap">
   <header class="hero" id="top">
     <div class="hero-text">
       <span class="kicker">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span>
@@ -532,15 +635,19 @@
 </div>
 
 <div class="midflow">
-<div class="marquee" aria-hidden="true">
-  <div class="track">
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>416M+</b> video views &middot; <b>$329,666</b> from one product</span><span><b>#1</b> Health &amp; Wellness affiliate &mdash; TikTok Shop 2025 &middot; <b>338K+</b> followers</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
-    <span><b>$2.79M+</b> GMV in 2026</span><span><b>105M+</b> product views</span><span><b>113K+</b> units sold</span><span>Astaxanthin &middot; Collagen &middot; NMN &middot; Magnesium &middot; Saffron</span><span><b>416M+</b> video views &middot; <b>$329,666</b> from one product</span><span><b>#1</b> Health &amp; Wellness affiliate &mdash; TikTok Shop 2025 &middot; <b>338K+</b> followers</span><span>Boosted commissions &middot; retainers &middot; exclusivity</span>
+<div class="marquee-wrap">
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      {{marquee}}
+      {{marquee}}
+    </div>
   </div>
+  <button type="button" class="marquee-pause" aria-pressed="false">Pause</button>
 </div>
 
 <section class="stats">
   <div class="wrap">
+    <h2 class="sr-only">Track record</h2>
     <div class="grid">
 {{statsCards}}
     </div>
@@ -557,7 +664,9 @@
 {{accountCards}}
     </div>
     <figure class="award-card">
-      <img src="assets/award-summit.webp" alt="TikTok Shop Summit stage slide naming the Health Creators of the Year, with @drew.review1 listed first in the Short Video category" width="1100" height="854" loading="lazy">
+      <a class="award-zoom" href="assets/award-summit.webp" target="_blank" rel="noopener" aria-label="View the award photo full size (opens in new tab)">
+        <img src="assets/award-summit.webp" alt="TikTok Shop Summit stage slide naming the Health Creators of the Year, with @drew.review1 listed first in the Short Video category" width="1100" height="854" loading="lazy">
+      </a>
       <figcaption>
         <b>TikTok Shop Summit &mdash; Health Creators of the Year, 2025.</b>
         @drew.review1 &mdash; ranked first in the Short Video category by TikTok Shop itself, announced live on stage at its annual Summit.
@@ -582,16 +691,18 @@
 {{partnershipSection}}
 
 {{faqSection}}
-<a class="mobile-cta" href="#contact">Let's make yours a bestseller &rarr;</a>
+<a class="mobile-cta" href="#contact">Send your product &mdash; reply in 24 hours &rarr;</a>
 </div>
 
 <section class="contact" id="contact">
   <div class="wrap">
+    <p class="kicker-row"><span class="kicker"><span class="kicker-line">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span><span class="kicker-line">$8M+ GMV all time</span></span></p>
     <h2 class="section-title">{{contact.heading}}</h2>
     <p class="section-sub">{{contact.subheading}}</p>
 {{contactBlock}}
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap frow">
@@ -603,6 +714,44 @@
     <p>{{legal.disclaimer}}</p>
   </div>
 </footer>
+
+<script>
+(function () {
+  // Marquee pause toggle (WCAG 2.2.2)
+  var pauseBtn = document.querySelector(".marquee-pause");
+  var marquee = document.querySelector(".marquee");
+  if (pauseBtn && marquee) {
+    pauseBtn.addEventListener("click", function () {
+      var paused = marquee.classList.toggle("paused");
+      pauseBtn.setAttribute("aria-pressed", String(paused));
+      pauseBtn.textContent = paused ? "Play" : "Pause";
+    });
+  }
+
+  // Per-tier CTAs preselect the engagement field
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[data-tier]") : null;
+    if (!a) return;
+    var sel = document.getElementById("f-tier");
+    if (sel) sel.value = a.getAttribute("data-tier");
+  });
+
+  // Persistent, non-color form error feedback
+  var form = document.querySelector(".contact form");
+  if (form) {
+    form.addEventListener("invalid", function (e) {
+      var err = document.getElementById(e.target.id + "-err");
+      if (err) err.hidden = false;
+    }, true);
+    var clear = function (e) {
+      var err = document.getElementById(e.target.id + "-err");
+      if (err && e.target.checkValidity()) err.hidden = true;
+    };
+    form.addEventListener("input", clear, true);
+    form.addEventListener("change", clear, true);
+  }
+})();
+</script>
 
 </body>
 </html>

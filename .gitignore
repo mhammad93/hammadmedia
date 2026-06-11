@@ -2,3 +2,4 @@ dist/
 .superpowers/
 node_modules/
 .vercel
+.audit/
