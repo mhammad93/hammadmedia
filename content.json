@@ -83,7 +83,7 @@
         "name": "Retainer + Commission",
         "tag": "Most popular",
         "text": "You get a guaranteed number of review videos every month. I post them on both accounts. I also earn commission on every sale. You pay upfront, month to month. No long-term contract.",
-        "price": "From $1,000 per video · 15 for $13,500 (save $1,500) · 30 for $25,000 (save $5,000)"
+        "price": "From $1,000 per video · 10 for $9,000 (save $1,000) · 15 for $13,500 (save $1,500) · 30 for $25,000 (save $5,000)"
       },
       {
         "name": "Exclusive",
@@ -162,6 +162,7 @@
         "a": "Pricing is per video, **paid upfront**. We agree on the video count before we start:",
         "bullets": [
           "**$1,000 per video** minimum",
+          "10 videos — **$9,000** (save $1,000)",
           "15 videos — **$13,500** (save $1,500)",
           "30 videos — **$25,000** (save $5,000)",
           "Month to month — no long-term contract."
