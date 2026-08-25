@@ -155,7 +155,7 @@ test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav l
   assert.strictEqual(content.faq.items.length, 9, "FAQ count");
   assert.ok(html.includes("GMV Max"), "GMV Max mention missing");
   assert.ok(html.includes("Hammad Media LLC, a registered US company"), "cross-border FAQ missing");
-  assert.ok(html.includes("wa.me/12015520786"), "WhatsApp link missing");
+  assert.ok(html.includes("wa.me/19297709434"), "WhatsApp link missing");
   assert.ok(html.includes("See the proof"), "ghost CTA rename missing");
   assert.ok(html.includes('class="nav-links"'), "desktop nav links missing");
   assert.ok(html.includes('class="midflow"'), "sticky wrapper missing");
