@@ -304,7 +304,7 @@ const jsonld = JSON.stringify({
       description: content.site.description,
       logo: `${content.site.url}/assets/favicon-512.png`,
       image: content.site.ogImage,
-      telephone: "+1-201-552-0786",
+      telephone: "+1-929-770-9434",
       areaServed: "United States",
       priceRange: "$1,000 - $50,000+",
       award: "#1 Health & Wellness Affiliate — TikTok Shop US, 2025",
