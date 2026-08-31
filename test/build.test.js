@@ -190,6 +190,7 @@ test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav l
 
 test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
   assert.ok(html.includes("Your product could be next"), "post-receipts availability CTA missing");
+  assert.ok(html.includes('href="#partner">Your product could be next'), "receipts availability CTA must go to packages, not skip to the form");
   assert.ok(html.includes("Check availability"), "post-tiers availability CTA missing");
   assert.ok(html.includes('class="mobile-cta"'), "sticky mobile CTA bar missing");
   const contactLinks = (html.match(/href="#contact"/g) || []).length;
@@ -489,6 +490,10 @@ test("infra: marquee is generated from content.json sources (no drift)", () => {
   assert.ok(m, "marquee track missing");
   const track = m[1];
   assert.ok(track.includes(`<b>${content.hero.gmvYtd}</b> GMV Jan 1&ndash;Jun 8, 2026`), "marquee GMV must come from hero.gmvYtd with dated window");
+  const views = content.stats.find((x) => x.label.includes("PRODUCT VIEWS"));
+  const units = content.stats.find((x) => x.label.includes("UNITS SOLD"));
+  assert.ok(track.includes(`<b>${views.value}</b> product views Jan 1&ndash;Jun 8, 2026`), "marquee product views must use the closed window");
+  assert.ok(track.includes(`<b>${units.value}</b> units sold Jan 1&ndash;Jun 8, 2026`), "marquee units sold must use the closed window");
   for (const kw of ["UNITS SOLD", "PRODUCT VIEWS", "VIDEO VIEWS"]) {
     const s = content.stats.find((x) => x.label.includes(kw));
     assert.ok(track.includes(`<b>${s.value}</b>`), `marquee missing stat ${s.value}`);
@@ -550,6 +555,13 @@ test("public copy uses creator-led language and omits retired claims", () => {
   assert.ok(html.includes("Choose and pay for a package"), "how-it-works step 1 missing");
   assert.ok(html.includes("Prepare for production"), "how-it-works step 2 missing");
   assert.ok(html.includes("Creator-led production and measurable sales"), "how-it-works step 3 missing");
+  assert.ok(html.includes("no routine draft approvals, revision rounds, or reshoots unless expressly agreed in writing"), "FAQ/pricing draft policy must allow a written exception");
+  assert.ok(!html.includes("I do not send drafts. I do not re-film after brand notes."), "absolute no-drafts FAQ still present");
+  const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
+  assert.ok(
+    thanks.includes("Every campaign remains creator-led. I personally write, film, and appear in the content, while editing follows my direction and established production standards."),
+    "thanks.html must use the full authorized creator-led sentence",
+  );
   assert.ok(html.includes("After payment is confirmed, the product is in hand, TikTok Shop commission is active, and the campaign is scheduled, the first-video timing is confirmed in writing."), "first-video timing line missing");
   assert.ok(html.includes("For paid campaigns, Hammad Media LLC invoices 100% upfront. Payment can be bank transfer or PayPal invoice. TikTok Shop separately pays the agreed sales commission automatically."), "international invoice line missing");
   assert.ok(!html.includes("You pay upfront by bank transfer."), "leftover bank-transfer payment line still present");

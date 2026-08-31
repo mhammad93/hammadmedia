@@ -17,6 +17,14 @@ test("hero has headline and subheadline", () => {
   assert.strictEqual(content.hero.headline, "I turn supplements into bestsellers.");
   assert.ok(content.hero.subheadline.length > 10);
   assert.ok(!/2026 so far/i.test(content.hero.subheadline), "hero must use the dated June 8 window");
+  assert.ok(
+    content.hero.subheadline.includes("105M+ product views, Jan 1–Jun 8, 2026"),
+    "hero must date product views",
+  );
+  assert.ok(
+    content.hero.subheadline.includes("113K+ units sold, Jan 1–Jun 8, 2026"),
+    "hero must date units sold",
+  );
 });
 
 test("stats: at least 3, each with value and label", () => {
@@ -50,6 +58,8 @@ test("receipts: 6 items sorted by descending YTD with valid fields", () => {
   }
   // top 3 (podium) carry the dual-proof best-month line where known
   assert.ok(items[0].bestMonth && items[1].bestMonth && items[2].bestMonth, "podium items need bestMonth");
+  assert.ok(content.receipts.sub.includes("$1.1M in sales, Jan 1–Jun 8, 2026"), "receipts sub must use the closed June 8 window");
+  assert.ok(!/since January 1, 2026/i.test(content.receipts.sub), "receipts sub must not stay open-ended");
 });
 
 test("services has 3 steps with title and text", () => {

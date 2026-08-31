@@ -98,7 +98,7 @@ ${cardsArr.slice(0, 3).join("\n")}
     <div class="shelf" role="region" aria-label="Products 4 to 6" tabindex="0">
 ${cardsArr.slice(3).join("\n")}
     </div>
-    <a class="mail-cta" href="#contact">Your product could be next &mdash; check availability &rarr;</a>
+    <a class="mail-cta" href="#partner">Your product could be next &mdash; check availability &rarr;</a>
   </div>
 </section>`
   : "";
@@ -304,8 +304,8 @@ const followersTotalK = Math.round(
 );
 const marquee = [
   `<span><b>${esc(content.hero.gmvYtd)}</b> GMV Jan 1&ndash;Jun 8, 2026</span>`,
-  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views</span>`,
-  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold</span>`,
+  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views Jan 1&ndash;Jun 8, 2026</span>`,
+  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold Jan 1&ndash;Jun 8, 2026</span>`,
   `<span>${productNames}</span>`,
   `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
   `<span>TikTok Shop Summit &mdash; Health Creators of the Year, Short Video, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
