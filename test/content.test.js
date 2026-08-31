@@ -59,6 +59,6 @@ test("services has 3 steps with title and text", () => {
 });
 
 test("contact has valid primary email and FormSubmit destination", () => {
-  assert.ok(content.contact.email.includes("@"));
-  assert.ok(content.contact.formSubmitEmail.includes("@"));
+  assert.strictEqual(content.contact.email, "contact@hammadmedia.com");
+  assert.strictEqual(content.contact.formSubmitEmail, "contact@hammadmedia.com");
 });
