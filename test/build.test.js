@@ -403,3 +403,17 @@ test("commission-only 10k-units qualification branch is not required", () => {
   assert.ok(!html.includes('id="f-units-row"'), "retired qualification row must be gone");
   assert.ok(!html.includes("Has this product already sold 10,000+ units on TikTok Shop?"), "retired 10k-units question must be gone");
 });
+
+test("editor, first-video process, and international payment copy match authorized statements", () => {
+  assert.ok(html.includes("I write, film, and post every video. A dedicated editor finishes the cut."), "hero editor line missing");
+  assert.ok(html.includes("Both accounts are me. I plan, film, and post. A dedicated editor cuts to my spec."), "accounts editor line missing");
+  assert.ok(html.includes("A dedicated editor cuts to my spec. No agencies. No brand approval rounds."), "how-it-works editor line missing");
+  assert.ok(html.includes("Filming starts after your sample arrives and the package is paid. I post on both accounts."), "how-it-works process line missing");
+  assert.ok(html.includes("After your sample arrives and the package is paid, I film on the next production days and post on both accounts."), "FAQ first-video process missing");
+  assert.ok(html.includes("You pay the package upfront by invoice from Hammad Media LLC. TikTok Shop pays my affiliate commission automatically on attributed sales."), "international invoice line missing");
+  assert.ok(!html.includes("No editors."), "retired no-editors claim still present");
+  assert.ok(!html.includes("I plan, film, edit, and post everything myself."), "retired solo-edit claim still present");
+  assert.ok(!html.includes("I write, film, and post every video myself."), "retired hero solo-edit claim still present");
+  assert.ok(!html.includes("The first video is usually live within 48 hours"), "retired 48-hour first-video claim still present");
+  assert.ok(!html.includes("Commission-only deals need no payment setup at all."), "retired commission-only FAQ line still present");
+});
