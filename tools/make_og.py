@@ -69,13 +69,21 @@ d.text((M + x, 196), "bestsellers.", font=h_italic, fill=GREEN)
 # proof lines from content.json — never hand-typed
 stat = lambda kw: next(s["value"] for s in content["stats"] if kw in s["label"])
 line1 = (
-    f"{content['hero']['gmvYtd']} GMV in 2026   ·   "
+    f"{content['hero']['gmvYtd']} GMV, Jan 1–Jun 8, 2026   ·   "
     f"{stat('PRODUCT VIEWS')} product views   ·   {stat('UNITS SOLD')} units sold"
 )
-line2 = "#1 Health & Wellness Affiliate — TikTok Shop US, 2025"
+line2 = "TikTok Shop Summit — Health Creators of the Year, Short Video, 2025"
 
-m_semibold = load_font("manrope", 33, [600])
-m_medium = load_font("manrope", 29, [500])
+def fit_font(name, size, axes, text, max_width):
+    font = load_font(name, size, axes)
+    while size >= 20 and d.textlength(text, font=font) > max_width:
+        size -= 1
+        font = load_font(name, size, axes)
+    return font
+
+max_w = W - M * 2
+m_semibold = fit_font("manrope", 30, [600], line1, max_w)
+m_medium = fit_font("manrope", 26, [500], line2, max_w)
 d.text((M, 368), line1, font=m_semibold, fill=PAPER)
 d.text((M, 424), line2, font=m_medium, fill=GREEN)
 

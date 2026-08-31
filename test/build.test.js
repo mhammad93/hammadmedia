@@ -314,7 +314,53 @@ test("og/social meta present with absolute image URL", () => {
   assert.ok(html.includes('property="og:url" content="https://hammadmedia.com/"'), "og:url must include trailing slash");
   assert.ok(html.includes('property="og:image:width" content="1200"'), "og:image:width missing");
   assert.ok(html.includes('property="og:image:height" content="630"'), "og:image:height missing");
-  assert.ok(html.includes('property="og:image:alt"'), "og:image:alt missing");
+  const authorizedOgAlt =
+    "Creator-led TikTok Shop campaigns for supplement and wellness brands. Paid packages start at 5 videos for $5,000 upfront, plus TikTok Shop commission.";
+  assert.ok(
+    html.includes(`property="og:image:alt" content="${authorizedOgAlt}"`),
+    "og:image:alt must be the authorized description only",
+  );
+  assert.ok(
+    !/property="og:image:alt" content="I turn supplements into bestsellers/i.test(html),
+    "og:image:alt must not lead with the H1",
+  );
+  assert.ok(html.includes('name="twitter:image" content="https://hammadmedia.com/assets/og.jpg"'), "twitter:image must use og.jpg");
+});
+
+test("og.jpg is the corrected 1200x630 share image and its generator dropped the #1 title", () => {
+  const ogPath = path.join(ROOT, "assets", "og.jpg");
+  const distOg = path.join(ROOT, "dist", "assets", "og.jpg");
+  assert.ok(fs.existsSync(ogPath), "assets/og.jpg missing");
+  assert.ok(fs.existsSync(distOg), "dist/assets/og.jpg missing — share chrome would still ship the old file");
+  const buf = fs.readFileSync(ogPath);
+  assert.strictEqual(buf[0], 0xff);
+  assert.strictEqual(buf[1], 0xd8);
+  let w = 0;
+  let h = 0;
+  for (let i = 2; i < Math.min(buf.length, 65536); ) {
+    if (buf[i] !== 0xff) {
+      i += 1;
+      continue;
+    }
+    const marker = buf[i + 1];
+    if (marker === 0xd8 || marker === 0xd9 || (marker >= 0xd0 && marker <= 0xd7) || marker === 0x01) {
+      i += 2;
+      continue;
+    }
+    const seglen = buf.readUInt16BE(i + 2);
+    if (marker === 0xc0 || marker === 0xc1 || marker === 0xc2) {
+      h = buf.readUInt16BE(i + 5);
+      w = buf.readUInt16BE(i + 7);
+      break;
+    }
+    i += 2 + seglen;
+  }
+  assert.strictEqual(w, 1200);
+  assert.strictEqual(h, 630);
+  const generator = fs.readFileSync(path.join(ROOT, "tools", "make_og.py"), "utf8");
+  assert.ok(!generator.includes("#1 Health & Wellness Affiliate"), "make_og.py still paints the retired #1 title");
+  assert.ok(generator.includes("TikTok Shop Summit — Health Creators of the Year, Short Video, 2025"), "make_og.py must use Summit language");
+  assert.ok(generator.includes("GMV, Jan 1–Jun 8, 2026"), "make_og.py must date the GMV line");
 });
 
 test("no personal names on the page outside the authorized WhatsApp prefill", () => {
