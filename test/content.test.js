@@ -14,8 +14,9 @@ test("site block has required fields", () => {
 });
 
 test("hero has headline and subheadline", () => {
-  assert.ok(content.hero.headline.length > 10);
+  assert.strictEqual(content.hero.headline, "I turn supplements into bestsellers.");
   assert.ok(content.hero.subheadline.length > 10);
+  assert.ok(!/2026 so far/i.test(content.hero.subheadline), "hero must use the dated June 8 window");
 });
 
 test("stats: at least 3, each with value and label", () => {

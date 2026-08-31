@@ -21,7 +21,7 @@
 <meta property="og:image" content="{{site.ogImage}}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="I turn supplements into bestsellers. $2.79M+ GMV in 2026. 105M+ product views. 113K+ units sold. #1 Health &amp; Wellness Affiliate — TikTok Shop US, 2025. HAMMADMEDIA.COM">
+<meta property="og:image:alt" content="I turn supplements into bestsellers. Creator-led TikTok Shop campaigns for supplement and wellness brands. Paid packages start at 5 videos for $5,000 upfront, plus TikTok Shop commission. HAMMADMEDIA.COM">
 <meta property="og:site_name" content="Hammad Media">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
@@ -170,6 +170,10 @@
     transition: border-color .18s ease;
   }
   .hero .actions a.ghost:hover { border-color: var(--green); color: var(--green); }
+  .hero .price-note {
+    margin-top: 18px; font-size: 15px; color: var(--cream-dim); max-width: 46ch;
+    animation: rise-move .7s .28s ease both;
+  }
 
   /* ── Marquee ── */
   .marquee {
@@ -202,6 +206,9 @@
     color: var(--cream-dim); text-wrap: balance;
   }
   .stats .updated { margin-top: 44px; font-size: 13px; color: var(--cream-dim); opacity: .8; }
+  .brandwall-note {
+    margin-top: 16px; font-size: 12px; color: var(--cream-dim); opacity: .75; max-width: 90ch;
+  }
   .brandwall {
     margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line-dark);
     display: flex; flex-wrap: nowrap; justify-content: space-between;
@@ -636,13 +643,14 @@
 <div class="wrap">
   <header class="hero" id="top">
     <div class="hero-text">
-      <span class="kicker">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span>
+      <span class="kicker">TikTok Shop Summit &mdash; Health Creators of the Year, Short Video, 2025</span>
       <h1>I turn supplements into <em>bestsellers</em>.</h1>
       <p class="sub">{{hero.subheadline}}</p>
       <div class="actions">
-        <a class="primary" href="#contact">Let's make yours a bestseller &rarr;</a>
+        <a class="primary" href="#partner">View paid packages &rarr;</a>
         <a class="ghost" href="#results">See the proof</a>
       </div>
+      <p class="price-note">Paid video packages start at $5,000 upfront, plus TikTok Shop commission.</p>
     </div>
   </header>
 </div>
@@ -672,7 +680,7 @@
 <section id="accounts" class="light">
   <div class="wrap">
     <h2 class="section-title">Two accounts. One creator.</h2>
-    <p class="section-sub">Both accounts are me. I plan, film, and post everything myself. No middlemen, no account managers. Every number can be checked on TikTok.</p>
+    <p class="section-sub">Every campaign remains creator-led. I personally write, film, and appear in the content, while editing follows my direction and established production standards. You work directly with Hammad Media's creator-led team without agency account-manager layers. Every number can be checked on TikTok.</p>
     <div class="cards">
 {{accountCards}}
     </div>
@@ -681,7 +689,7 @@
         <img src="assets/award-summit.webp" alt="TikTok Shop Summit stage slide naming the Health Creators of the Year, with @drew.review1 listed first in the Short Video category" width="1100" height="854" loading="lazy">
       </a>
       <figcaption>
-        <b>TikTok Shop Summit &mdash; Health Creators of the Year, 2025.</b>
+        <b>TikTok Shop Summit &mdash; Health Creators of the Year, Short Video, 2025.</b>
         @drew.review1 &mdash; ranked first in the Short Video category by TikTok Shop itself, announced live on stage at its annual Summit.
       </figcaption>
     </figure>
@@ -694,7 +702,7 @@
 <section id="services" class="light">
   <div class="wrap">
     <h2 class="section-title">{{services.heading}}</h2>
-    <p class="section-sub">Three steps from sample to Seller-Center-verified sales.</p>
+    <p class="section-sub">{{services.sub}}</p>
     <div class="steps">
 {{serviceSteps}}
     </div>
@@ -704,12 +712,12 @@
 {{partnershipSection}}
 
 {{faqSection}}
-<a class="mobile-cta" href="#contact">Send your product &mdash; reply in 24 hours &rarr;</a>
+<a class="mobile-cta" href="#contact">Paid packages from $5,000 &middot; Check availability</a>
 </div>
 
 <section class="contact" id="contact">
   <div class="wrap">
-    <p class="kicker-row"><span class="kicker"><span class="kicker-line">#1 Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025</span><span class="kicker-line">$8M+ GMV all time</span></span></p>
+    <p class="kicker-row"><span class="kicker"><span class="kicker-line">TikTok Shop Summit &mdash; Health Creators of the Year, Short Video, 2025</span><span class="kicker-line">$8M+ GMV all time</span></span></p>
     <h2 class="section-title">{{contact.heading}}</h2>
     <p class="section-sub">{{contact.subheading}}</p>
 {{contactBlock}}
