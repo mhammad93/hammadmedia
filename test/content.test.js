@@ -14,8 +14,17 @@ test("site block has required fields", () => {
 });
 
 test("hero has headline and subheadline", () => {
-  assert.ok(content.hero.headline.length > 10);
+  assert.strictEqual(content.hero.headline, "I turn supplements into bestsellers.");
   assert.ok(content.hero.subheadline.length > 10);
+  assert.ok(!/2026 so far/i.test(content.hero.subheadline), "hero must use the dated June 8 window");
+  assert.ok(
+    content.hero.subheadline.includes("105M+ product views, Jan 1–Jun 8, 2026"),
+    "hero must date product views",
+  );
+  assert.ok(
+    content.hero.subheadline.includes("113K+ units sold, Jan 1–Jun 8, 2026"),
+    "hero must date units sold",
+  );
 });
 
 test("stats: at least 3, each with value and label", () => {
@@ -49,6 +58,8 @@ test("receipts: 6 items sorted by descending YTD with valid fields", () => {
   }
   // top 3 (podium) carry the dual-proof best-month line where known
   assert.ok(items[0].bestMonth && items[1].bestMonth && items[2].bestMonth, "podium items need bestMonth");
+  assert.ok(content.receipts.sub.includes("$1.1M in sales, Jan 1–Jun 8, 2026"), "receipts sub must use the closed June 8 window");
+  assert.ok(!/since January 1, 2026/i.test(content.receipts.sub), "receipts sub must not stay open-ended");
 });
 
 test("services has 3 steps with title and text", () => {
@@ -61,4 +72,14 @@ test("services has 3 steps with title and text", () => {
 test("contact has valid primary email and FormSubmit destination", () => {
   assert.strictEqual(content.contact.email, "contact@hammadmedia.com");
   assert.strictEqual(content.contact.formSubmitEmail, "contact@hammadmedia.com");
+});
+
+test("authorized package prices are unchanged", () => {
+  assert.ok(content.partnership.starter.price.includes("$5,000"));
+  const prices = content.partnership.volume.packages.map((p) => p.price);
+  assert.ok(prices[0].includes("$9,500") && prices[0].includes("Save $500"));
+  assert.ok(prices[1].includes("$13,500") && prices[1].includes("Save $1,500"));
+  assert.ok(prices[2].includes("$25,000") && prices[2].includes("Save $5,000"));
+  assert.ok(content.exclusivity.price.includes("$50,000"));
+  assert.strictEqual(content.partnership.volume.packages.length, 3);
 });

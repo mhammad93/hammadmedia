@@ -51,9 +51,9 @@ const accountCards = content.accounts
           </div>
         </div>
         <div class="pod-metrics">
-          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; 2026 so far</span></div>
-          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold &mdash; 2026 so far</span></div>
-          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views &mdash; 2026 so far</span></div>
+          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; Jan 1&ndash;Jun 8, 2026</span></div>
+          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold &mdash; Jan 1&ndash;Jun 8, 2026</span></div>
+          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views &mdash; Jan 1&ndash;Jun 8, 2026</span></div>
         </div>
       </div>`;
   })
@@ -76,9 +76,9 @@ function buildPodCard(c, i) {
   const metrics = cells.length ? `\n        <div class="pod-metrics">${cells.join("")}</div>` : "";
   return `      <div class="pod">
         <span class="pod-rank">0${i + 1}</span>
-        <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.alt || `${c.title} product`)}" width="800" height="800" loading="eager" fetchpriority="low"></div>
+        <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.alt || `${c.title} product`)}" width="480" height="480" loading="lazy" decoding="async" fetchpriority="low"></div>
         <h3>${esc(c.title)}</h3>
-        <div class="pod-kicker">Total sales &mdash; 2026 so far</div>
+        <div class="pod-kicker">Total sales &mdash; Jan 1&ndash;Jun 8, 2026</div>
         <div class="pod-ytd">${money(c.ytd)}</div>
         <div class="pod-ytd-lbl"><b>${c.units.toLocaleString("en-US")}</b> units sold</div>
         <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
@@ -98,7 +98,7 @@ ${cardsArr.slice(0, 3).join("\n")}
     <div class="shelf" role="region" aria-label="Products 4 to 6" tabindex="0">
 ${cardsArr.slice(3).join("\n")}
     </div>
-    <a class="mail-cta" href="#contact">Slot 07 is open &mdash; put your product on this wall &rarr;</a>
+    <a class="mail-cta" href="#partner">Your product could be next &mdash; check availability &rarr;</a>
   </div>
 </section>`
   : "";
@@ -136,35 +136,66 @@ const tierPrice = (price) => {
   return leadHtml + parts.map((p) => `<span class="tp-line">${esc(p)}</span>`).join("");
 };
 
-// Per-tier CTAs: data-tier preselects the #f-tier engagement select (inline JS in template); plain anchor is the no-JS fallback
-const tierCtas = [
-  { label: "Start with 5 videos &rarr;", value: "Starter (5 videos)" },
-  { label: "Book this month's videos &rarr;", value: "Retainer + Commission" },
-  { label: "Ask if your category is still open &rarr;", value: "Exclusive (own the category)" },
-];
+const whatsappHref = (packageLabel) => {
+  const digits = String(content.contact.whatsapp).replace(/[^0-9]/g, "");
+  const pkg = packageLabel || "[5 / 10 / 15 / 30 videos / Category Exclusivity]";
+  const text =
+    "Hi Alison, I'm interested in a paid Hammad Media campaign. Packages start at $5,000 upfront plus TikTok Shop commission. Brand: [BRAND]. Product: [PRODUCT]. Package being considered: " +
+    pkg +
+    ".";
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+};
+
+function packageCard(t, ctaLabel) {
+  return `      <div class="card tier">
+        ${t.tag ? `<div class="meta">${esc(t.tag)}</div>` : ""}
+        <h3>${esc(t.name)}</h3>
+        <div class="tier-price">${tierPrice(t.price)}</div>
+        ${t.text ? `<p>${esc(t.text)}</p>` : ""}
+        <a class="tier-cta" href="#contact" data-tier="${esc(t.formValue)}">${ctaLabel}</a>
+        <a class="tier-wa" href="${whatsappHref(t.whatsappPackage)}" target="_blank" rel="noopener">WhatsApp this package<span class="sr-only"> (opens in new tab)</span></a>
+      </div>`;
+}
 
 const partnershipSection = content.partnership
   ? `<section id="partner" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">${esc(content.partnership.heading)}</h2>
     <p class="section-sub">${esc(content.partnership.sub)}</p>
-    <div class="cards tiers">
-${content.partnership.tiers
-  .map(
-    (t, i) => `      <div class="card tier">
-        <div class="meta">${esc(t.tag)}</div>
-        <h3>${esc(t.name)}</h3>
-        <div class="tier-price">${tierPrice(t.price)}</div>
-        <p>${esc(t.text)}</p>
-        ${tierCtas[i] ? `<a class="tier-cta" href="#contact" data-tier="${esc(tierCtas[i].value)}">${tierCtas[i].label}</a>` : ""}
-      </div>`,
-  )
-  .join("\n")}
+    <div class="cards starter-row">
+${packageCard(content.partnership.starter, "Start with 5 videos &rarr;")}
     </div>
+    <div class="volume-block">
+      <div class="meta">${esc(content.partnership.volume.tag)}</div>
+      <h3 class="volume-heading">${esc(content.partnership.volume.name)}</h3>
+      <p class="volume-intro">${esc(content.partnership.volume.intro)}</p>
+      <div class="cards volume-cards">
+${content.partnership.volume.packages.map((p) => packageCard(p, `Ask about ${esc(p.name)} &rarr;`)).join("\n")}
+      </div>
+    </div>
+    <p class="pricing-policy">${esc(content.partnership.productionNote)}</p>
+    <p class="pricing-policy">${esc(content.partnership.invoiceNote)}</p>
+    ${
+      content.exclusivity
+        ? `<div class="exclusivity-module" id="exclusivity">
+      <div class="meta">${esc(content.exclusivity.tag)}</div>
+      <h3>${esc(content.exclusivity.name)}</h3>
+      <div class="tier-price">${tierPrice(content.exclusivity.price)}</div>
+      <ul class="excl-facts">
+${content.exclusivity.facts.map((f) => `        <li>${esc(f)}</li>`).join("\n")}
+      </ul>
+      <p>${esc(content.exclusivity.text)}</p>
+      <a class="tier-cta" href="#contact" data-tier="${esc(content.exclusivity.formValue)}">Check category availability &rarr;</a>
+      <a class="tier-wa" href="${whatsappHref(content.exclusivity.whatsappPackage)}" target="_blank" rel="noopener">WhatsApp about exclusivity<span class="sr-only"> (opens in new tab)</span></a>
+    </div>`
+        : ""
+    }
     <div class="note"><p>${esc(content.partnership.note)
-      .replace("four new products each month, no more", "<b>four new products each month, no more</b>")
-      .replace(" You could mail samples", "</p><p>You could mail samples")}</p></div>
-    <a class="mail-cta" href="#contact">Claim a slot &rarr;</a>
+      .replace(
+        "I accept a limited number of new paid campaigns each month.",
+        "<b>I accept a limited number of new paid campaigns each month.</b>",
+      )}</p></div>
+    <a class="mail-cta" href="#contact">Check availability &rarr;</a>
   </div>
 </section>`
   : "";
@@ -176,7 +207,8 @@ ${content.brands
     (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" width="${b.width}" height="28" loading="lazy">`,
   )
   .join("\n")}
-    </div>`
+    </div>
+    <p class="brandwall-note">${esc(content.legal.disclaimer)}</p>`
   : "";
 
 const faqSection = content.faq
@@ -207,7 +239,7 @@ const contactBlock = content.contact.formSubmitEmail
     <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
       <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
       <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_captcha" value="true">
       <input type="hidden" name="_next" value="https://hammadmedia.com/thanks.html">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-row">
@@ -215,14 +247,15 @@ const contactBlock = content.contact.formSubmitEmail
         <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@brand.com" aria-describedby="f-email-err"><p class="err" id="f-email-err" hidden>Enter a work email like you@brand.com</p></div>
       </div>
       <div class="form-row">
-        <div><label for="f-category">Product category <span class="optional">(optional)</span></label>
-          <select id="f-category" name="category">
+        <div><label for="f-category">Product category <span class="optional" id="f-category-optional">(optional)</span></label>
+          <select id="f-category" name="category" aria-describedby="f-category-err">
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Supplements</option>
             <option>Wellness</option>
             <option>Beauty &amp; personal care</option>
             <option>Other</option>
           </select>
+          <p class="err" id="f-category-err" hidden>Enter your product category</p>
         </div>
         <div><label for="f-commission">Commission you can offer</label>
           <select id="f-commission" name="commission" required aria-describedby="f-commission-err">
@@ -241,8 +274,10 @@ const contactBlock = content.contact.formSubmitEmail
           <select id="f-tier" name="engagement" required aria-describedby="f-tier-err">
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Starter (5 videos)</option>
-            <option>Retainer + Commission</option>
-            <option>Exclusive (own the category)</option>
+            <option>Volume (10 videos)</option>
+            <option>Volume (15 videos)</option>
+            <option>Volume (30 videos)</option>
+            <option>Category Exclusivity</option>
             <option>Not sure yet &mdash; recommend one</option>
           </select>
           <p class="err" id="f-tier-err" hidden>Choose how you want to work together</p>
@@ -252,12 +287,12 @@ const contactBlock = content.contact.formSubmitEmail
       <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="Your product, and anything you want me to know." aria-describedby="f-msg-err"></textarea><p class="err" id="f-msg-err" hidden>Tell me about your product</p></div>
       <div class="form-ctas">
         <button type="submit">Send inquiry &rarr;</button>
-        <a class="btn-secondary" href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}?text=Hi%20Hammad%20%E2%80%94%20I%20have%20a%20supplement%20brand%20on%20TikTok%20Shop%20and%20want%20to%20talk%20about%20a%20partnership" target="_blank" rel="noopener">Or message me on WhatsApp<span class="sr-only"> (opens in new tab)</span></a>
+        <a class="btn-secondary" href="${whatsappHref()}" target="_blank" rel="noopener">Or message me on WhatsApp<span class="sr-only"> (opens in new tab)</span></a>
       </div>
       <p class="form-hint">I reply within 24 hours.</p>
     </form>
-    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
-  : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
+    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=${encodeURIComponent("Brand campaign inquiry — HammadMedia.com")}">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
+  : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=${encodeURIComponent("Brand campaign inquiry — HammadMedia.com")}">Email me: ${esc(content.contact.email)}</a>`;
 
 // ── Marquee: generated from content.json so the numbers can never drift from their sources ──
 
@@ -268,13 +303,13 @@ const followersTotalK = Math.round(
   content.accounts.reduce((sum, a) => sum + parseFloat(String(a.followers).replace(/[^\d.]/g, "")), 0),
 );
 const marquee = [
-  `<span><b>${esc(content.hero.gmvYtd)}</b> GMV in 2026</span>`,
-  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views</span>`,
-  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold</span>`,
+  `<span><b>${esc(content.hero.gmvYtd)}</b> GMV Jan 1&ndash;Jun 8, 2026</span>`,
+  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views Jan 1&ndash;Jun 8, 2026</span>`,
+  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold Jan 1&ndash;Jun 8, 2026</span>`,
   `<span>${productNames}</span>`,
   `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
-  `<span><b>#1</b> Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
-  `<span>Video packages &middot; retainers &middot; exclusivity</span>`,
+  `<span>TikTok Shop Summit &mdash; Health Creators of the Year, Short Video, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
+  `<span>Paid video packages &middot; volume &middot; category exclusivity</span>`,
 ].join("");
 
 // ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
@@ -294,7 +329,7 @@ const jsonld = JSON.stringify({
       telephone: "+1-929-770-9434",
       areaServed: "United States",
       priceRange: "$5,000 - $50,000+",
-      award: "#1 Health & Wellness Affiliate — TikTok Shop US, 2025",
+      award: "TikTok Shop Summit — Health Creators of the Year, Short Video, 2025",
       sameAs: content.accounts.map((a) => a.url),
     },
     {
@@ -331,6 +366,7 @@ const tokens = {
   "hero.headline": esc(content.hero.headline),
   "hero.subheadline": esc(content.hero.subheadline),
   "services.heading": esc(content.services.heading),
+  "services.sub": esc(content.services.sub),
   "services.note": esc(content.services.note),
   "contact.heading": esc(content.contact.heading),
   "contact.subheading": esc(content.contact.subheading),
