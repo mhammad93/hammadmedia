@@ -76,7 +76,7 @@ function buildPodCard(c, i) {
   const metrics = cells.length ? `\n        <div class="pod-metrics">${cells.join("")}</div>` : "";
   return `      <div class="pod">
         <span class="pod-rank">0${i + 1}</span>
-        <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.alt || `${c.title} product`)}" width="800" height="800" loading="eager" fetchpriority="low"></div>
+        <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.alt || `${c.title} product`)}" width="480" height="480" loading="lazy" decoding="async" fetchpriority="low"></div>
         <h3>${esc(c.title)}</h3>
         <div class="pod-kicker">Total sales &mdash; Jan 1&ndash;Jun 8, 2026</div>
         <div class="pod-ytd">${money(c.ytd)}</div>
@@ -239,7 +239,7 @@ const contactBlock = content.contact.formSubmitEmail
     <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
       <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
       <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_captcha" value="true">
       <input type="hidden" name="_next" value="https://hammadmedia.com/thanks.html">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-row">

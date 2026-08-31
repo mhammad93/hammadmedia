@@ -78,6 +78,10 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   }
   assert.ok(html.includes('name="_honey"'), "honeypot missing");
   assert.ok(html.includes('name="_subject"'), "_subject missing");
+  assert.ok(html.includes('name="_captcha" value="true"'), "FormSubmit captcha must be enabled");
+  assert.ok(!html.includes('name="_captcha" value="false"'), "FormSubmit captcha must not stay disabled");
+  assert.ok(/FormSubmit processes/i.test(html), "privacy must disclose FormSubmit processing");
+  assert.ok(/Google Analytics/i.test(html), "Google Analytics disclosure missing");
   assert.ok(html.includes(`mailto:${content.contact.email}`), "secondary email option missing");
   assert.ok(
     html.includes('name="_next" value="https://hammadmedia.com/thanks.html"'),
@@ -217,6 +221,14 @@ test("logo image present in nav and footer with accessible labels", () => {
     "logo image must appear in nav and footer",
   );
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "assets", "logo-v2.webp")), "logo file missing from dist");
+});
+
+test("preview-only form checks do not post a live inquiry", () => {
+  assert.ok(html.includes('action="https://formsubmit.co/contact@hammadmedia.com"'), "preview must still target the production inbox path");
+  assert.ok(html.includes('id="f-tier"'), "engagement field missing");
+  assert.ok(html.includes('id="f-category"'), "category field missing");
+  assert.ok(html.includes("syncCategoryRequired"), "exclusivity category requirement is preview-tested in markup only");
+  assert.ok(!html.includes("formsubmit.co/ajax"), "must not auto-post inquiries from tests");
 });
 
 test("product images + avatars render with alts and exist in dist", () => {
@@ -384,6 +396,12 @@ test("optimized image formats with intrinsic dimensions", () => {
     assert.ok(/width="\d+"/.test(m[0]) && /height="28"/.test(m[0]), `brand logo missing width: ${m[0]}`);
   }
   assert.ok(html.includes('property="og:image" content="https://hammadmedia.com/assets/og.jpg"'), "og:image must stay JPG for social crawlers");
+  assert.ok((html.match(/width="480" height="480" loading="lazy" decoding="async"/g) || []).length >= 6, "packshots must be resized and lazy-loaded");
+  assert.ok(!html.includes('loading="eager"'), "non-critical packshots must not force eager load");
+  for (const item of content.receipts.items) {
+    const bytes = fs.statSync(path.join(ROOT, item.image)).size;
+    assert.ok(bytes < 50000, `${item.image} still oversized (${bytes} bytes)`);
+  }
 });
 
 test("production build is indexable (no robots meta on index)", () => {
