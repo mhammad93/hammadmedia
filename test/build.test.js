@@ -65,6 +65,14 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
     html.includes(`action="https://formsubmit.co/${content.contact.formSubmitEmail}"`),
     "FormSubmit action missing",
   );
+  assert.ok(
+    html.includes('action="https://formsubmit.co/contact@hammadmedia.com"'),
+    "FormSubmit must post to contact@hammadmedia.com",
+  );
+  assert.ok(
+    !html.includes("formsubmit.co/mohamed.hammad.reply@gmail.com"),
+    "old Gmail FormSubmit destination must not remain",
+  );
   for (const field of ['name="brand"', 'name="email"', 'name="category"', 'name="engagement"', 'name="message"']) {
     assert.ok(html.includes(field), `form field missing: ${field}`);
   }
