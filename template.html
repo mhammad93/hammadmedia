@@ -622,6 +622,11 @@
   /* sticky mobile CTA bar */
   .mobile-cta { display: none; }
   @media (max-width: 860px) {
+    html { scroll-padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)); }
+    .midflow { padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)); }
+    #results, #partner, #services, #faq, #accounts, #exclusivity, section.stats {
+      scroll-margin-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    }
     .mobile-cta {
       display: block; position: sticky;
       bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 5;
@@ -631,7 +636,23 @@
       padding: 15px 20px; border-radius: 100px;
       box-shadow: 0 10px 30px rgba(20,24,20,.45);
     }
+    .mobile-cta.is-occluded {
+      visibility: hidden; pointer-events: none;
+    }
   }
+  @media (max-width: 360px) {
+    .hero .actions { flex-direction: column; align-items: stretch; width: 100%; }
+    .hero .actions a.primary, .hero .actions a.ghost {
+      width: 100%; text-align: center; padding-left: 16px; padding-right: 16px;
+      white-space: normal;
+    }
+    nav a.cta { padding-left: 16px; padding-right: 16px; }
+    .form-ctas { flex-direction: column; align-items: stretch; }
+    .form-ctas button, .form-ctas .btn-secondary { width: 100%; }
+    .mobile-cta { font-size: 14px; padding: 14px 12px; margin-left: 10px; margin-right: 10px; }
+    .mail-cta { width: 100%; }
+  }
+  [tabindex="-1"]:focus { outline: none; }
 
   footer {
     padding: 44px 0; font-size: 14px; color: var(--cream-dim);
@@ -804,6 +825,37 @@
   if (tierSelect) {
     tierSelect.addEventListener("change", syncCategoryRequired);
     syncCategoryRequired();
+  }
+
+  function focusHashTarget(id) {
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+    if (typeof el.focus === "function") el.focus({ preventScroll: true });
+  }
+  document.addEventListener("click", function (e) {
+    var link = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!link) return;
+    var id = (link.getAttribute("href") || "").slice(1);
+    if (!id) return;
+    requestAnimationFrame(function () { focusHashTarget(id); });
+  });
+  if (location.hash) focusHashTarget(location.hash.slice(1));
+
+  var stickyBar = document.querySelector(".mobile-cta");
+  if (stickyBar && "IntersectionObserver" in window) {
+    var occluded = new Set();
+    var guard = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) occluded.add(entry.target);
+        else occluded.delete(entry.target);
+      });
+      stickyBar.classList.toggle("is-occluded", occluded.size > 0);
+    }, { root: null, rootMargin: "-82% 0px 0px 0px", threshold: 0 });
+    document.querySelectorAll(
+      "section.stats .grid, .pod-metrics, #partner .tier-price, #exclusivity, #contact form, #contact [type=submit]",
+    ).forEach(function (el) { guard.observe(el); });
   }
 
   // Persistent, non-color form error feedback

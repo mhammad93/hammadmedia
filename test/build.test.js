@@ -190,6 +190,11 @@ test("conversion path: CTAs at peak-proof moments + sticky mobile bar", () => {
   assert.ok(html.includes('class="mobile-cta"'), "sticky mobile CTA bar missing");
   const contactLinks = (html.match(/href="#contact"/g) || []).length;
   assert.ok(contactLinks >= 5, `expected ≥5 paths to #contact, got ${contactLinks}`);
+  assert.ok(html.includes("@media (max-width: 360px)"), "360px CTA wrapping rules missing");
+  assert.ok(html.includes(".mobile-cta.is-occluded"), "sticky occlusion hide-state missing");
+  assert.ok(html.includes("scroll-padding-bottom"), "sticky scroll padding missing");
+  assert.ok(html.includes("function focusHashTarget"), "anchor focus helper missing");
+  assert.ok(!html.includes("padding-bottom: 76px"), "old fixed-bar body padding still present");
 });
 
 test("design integrity: bg alternation, animation fill mode, 416M stat", () => {
