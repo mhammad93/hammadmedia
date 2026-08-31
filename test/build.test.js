@@ -411,7 +411,7 @@ test("public copy omits no-editors claim and commission-only invoice language", 
   assert.ok(html.includes("The first video is usually live within 48 hours after your sample arrives."), "how-it-works 48-hour line missing");
   assert.ok(html.includes("The first video is usually live within <b>48 hours</b> after that."), "FAQ 48-hour line missing");
   assert.ok(html.includes("No agencies. No waiting for approvals."), "how-it-works agency/approval line missing");
-  assert.ok(html.includes("You pay the package upfront by invoice from Hammad Media LLC. TikTok Shop pays my affiliate commission automatically on attributed sales."), "international invoice line missing");
+  assert.ok(html.includes("For paid campaigns, Hammad Media LLC invoices 100% upfront. TikTok Shop separately pays the agreed sales commission automatically."), "international invoice line missing");
   assert.ok(!html.includes("No editors."), "retired no-editors claim still present");
   assert.ok(!html.includes("I plan, film, edit, and post everything myself."), "retired personally-edits claim still present");
   assert.ok(!/dedicated editor|video editor|cuts to my spec|finishes the cut/i.test(html), "editor disclosure must not appear");
