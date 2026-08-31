@@ -138,7 +138,7 @@ const tierPrice = (price) => {
 
 // Per-tier CTAs: data-tier preselects the #f-tier engagement select (inline JS in template); plain anchor is the no-JS fallback
 const tierCtas = [
-  { label: "$0 upfront &mdash; start here &rarr;", value: "Boosted Commission (pay on sales only)" },
+  { label: "Start with 5 videos &rarr;", value: "Starter (5 videos)" },
   { label: "Book this month's videos &rarr;", value: "Retainer + Commission" },
   { label: "Ask if your category is still open &rarr;", value: "Exclusive (own the category)" },
 ];
@@ -240,7 +240,7 @@ const contactBlock = content.contact.formSubmitEmail
         <div><label for="f-tier">How do you want to work together?</label>
           <select id="f-tier" name="engagement" required aria-describedby="f-tier-err">
             <option value="" disabled selected>Choose one&hellip;</option>
-            <option>Boosted Commission (pay on sales only)</option>
+            <option>Starter (5 videos)</option>
             <option>Retainer + Commission</option>
             <option>Exclusive (own the category)</option>
             <option>Not sure yet &mdash; recommend one</option>
@@ -248,19 +248,6 @@ const contactBlock = content.contact.formSubmitEmail
           <p class="err" id="f-tier-err" hidden>Choose how you want to work together</p>
         </div>
         <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="https://shop.tiktok.com/&hellip;"></div>
-      </div>
-      <div id="f-units-row" hidden>
-        <label for="f-units">Has this product already sold 10,000+ units on TikTok Shop?</label>
-        <select id="f-units" name="boosted_10k_units" aria-describedby="f-units-err">
-          <option value="" disabled selected>Choose one&hellip;</option>
-          <option>Yes &mdash; 10,000+ units sold</option>
-          <option>No &mdash; not yet</option>
-        </select>
-        <p class="err" id="f-units-err" hidden>Choose yes or no</p>
-        <div class="qual-note" id="f-units-note" hidden>
-          <p>No problem. Boosted Commission needs <b>10,000+ units already sold</b>. For products below that, <b>Retainer + Commission</b> is the right way to start: a guaranteed number of videos, from $1,000 per video, plus commission.</p>
-          <button type="button" id="f-units-switch">Switch me to Retainer + Commission &rarr;</button>
-        </div>
       </div>
       <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="Your product, and anything you want me to know." aria-describedby="f-msg-err"></textarea><p class="err" id="f-msg-err" hidden>Tell me about your product</p></div>
       <div class="form-ctas">
@@ -287,7 +274,7 @@ const marquee = [
   `<span>${productNames}</span>`,
   `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
   `<span><b>#1</b> Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
-  `<span>Boosted commissions &middot; retainers &middot; exclusivity</span>`,
+  `<span>Video packages &middot; retainers &middot; exclusivity</span>`,
 ].join("");
 
 // ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
@@ -306,7 +293,7 @@ const jsonld = JSON.stringify({
       image: content.site.ogImage,
       telephone: "+1-929-770-9434",
       areaServed: "United States",
-      priceRange: "$1,000 - $50,000+",
+      priceRange: "$5,000 - $50,000+",
       award: "#1 Health & Wellness Affiliate — TikTok Shop US, 2025",
       sameAs: content.accounts.map((a) => a.url),
     },

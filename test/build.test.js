@@ -76,16 +76,15 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
     "_next redirect missing",
   );
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "thanks.html")), "thanks.html missing from dist");
-  assert.ok(html.includes("Boosted Commission (pay on sales only)"), "form options must match tier names");
+  assert.ok(html.includes("Starter (5 videos)"), "form options must match tier names");
   assert.ok(html.includes("Your product, and anything you want me to know."), "textarea single-ask placeholder missing");
   assert.ok(html.includes("I reply within 24 hours."), "24-hour reply microcopy missing");
-  assert.ok(html.includes("$1,000 per video"), "per-video retainer floor missing");
-  assert.ok(html.includes("$18,000"), "20-video package price missing");
-  assert.ok(html.includes("$9,000"), "10-video package price missing");
+  assert.ok(html.includes("$5,000"), "starter 5-video price missing");
+  assert.ok(html.includes("$9,500"), "10-video package price missing");
   assert.ok(html.includes("$13,500"), "15-video package price missing");
-  assert.ok(html.includes("$50,000 per month"), "niche-exclusivity floor missing");
+  assert.ok(html.includes("$25,000"), "30-video package price missing");
+  assert.ok(html.includes("$50,000 per 30-day period"), "category-reservation price missing");
   assert.ok(/bonuses move you to the top/i.test(html), "bonus-priority line missing");
-  assert.ok(/no fixed number of videos/i.test(html), "boosted no-guarantee line missing");
   assert.ok(/no long-term contract/i.test(html), "month-to-month line missing");
 });
 
@@ -140,7 +139,7 @@ test("summit award proof card renders with image and caption", () => {
 test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
   // tier prices are split into stacked spans, so compare against tag-stripped text
   const flatText = html.replace(/<[^>]+>/g, "");
-  for (const price of ["$0 upfront — commission only", "From $1,000 per video", "From $50,000 per month"]) {
+  for (const price of ["$5,000 for 5 videos", "$9,500 for 10 videos", "$50,000 per 30-day period"]) {
     assert.ok(flatText.includes(price), `tier price line missing: ${price}`);
   }
   assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
@@ -291,8 +290,13 @@ test("commission figures are never published", () => {
   }
 });
 
-test("Boosted Commission eligibility threshold is stated", () => {
-  assert.ok((html.match(/10,000\+ units/g) || []).length >= 2, "10K-units eligibility missing from tier card or FAQ");
+test("retired public prices and commission-only offer are gone", () => {
+  assert.ok(!html.includes("$0 upfront — commission only"), "retired $0 commission-only price still present");
+  assert.ok(!html.includes("10 for $9,000"), "retired 10-for-$9,000 package still present");
+  assert.ok(!html.includes("$18,000"), "retired 20-video $18,000 package still present");
+  assert.ok(!html.includes("complete health & wellness exclusivity"), "retired full-vertical exclusivity still present");
+  assert.ok(!html.includes("complete health and wellness exclusivity"), "retired full-vertical exclusivity still present");
+  assert.ok(!html.includes("Boosted Commission (pay on sales only)"), "retired commission-only form option still present");
 });
 
 test("Google tag present exactly once on every page", () => {
@@ -358,7 +362,7 @@ test("ProfessionalService declares service area and price range", () => {
   const graph = JSON.parse(m[1])["@graph"];
   const ps = graph.find((n) => n["@type"] === "ProfessionalService");
   assert.strictEqual(ps.areaServed, "United States");
-  assert.strictEqual(ps.priceRange, "$1,000 - $50,000+");
+  assert.strictEqual(ps.priceRange, "$5,000 - $50,000+");
 });
 
 test("vercel.json keeps the redirect and security headers", () => {
@@ -393,12 +397,9 @@ test("infra: marquee is generated from content.json sources (no drift)", () => {
   assert.strictEqual(dup, null, "marquee token unresolved");
 });
 
-test("boosted qualification branch: hidden 10k-units follow-up with reroute note", () => {
-  assert.ok(html.includes('id="f-units-row" hidden'), "qualification row must ship hidden");
-  assert.ok(html.includes('name="boosted_10k_units"'), "qualification select missing");
-  assert.ok(html.includes("Has this product already sold 10,000+ units on TikTok Shop?"), "qualification question missing");
-  assert.ok(html.includes('id="f-units-switch"'), "switch-to-retainer button missing");
-  assert.ok(/Retainer \+ Commission<\/b> is the right way to start/.test(html), "reroute note missing");
-  assert.ok(!html.includes('id="f-units" name="boosted_10k_units" required'), "must not be required while hidden (JS toggles it)");
-  assert.ok(html.includes("syncBoostedQual"), "qualification JS missing");
+test("commission-only 10k-units qualification branch is not required", () => {
+  assert.ok(!html.includes("syncBoostedQual"), "retired Boosted qualification JS must be gone");
+  assert.ok(!html.includes('name="boosted_10k_units"'), "retired 10k-units form field must be gone");
+  assert.ok(!html.includes('id="f-units-row"'), "retired qualification row must be gone");
+  assert.ok(!html.includes("Has this product already sold 10,000+ units on TikTok Shop?"), "retired 10k-units question must be gone");
 });
