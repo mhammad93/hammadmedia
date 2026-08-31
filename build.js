@@ -136,31 +136,60 @@ const tierPrice = (price) => {
   return leadHtml + parts.map((p) => `<span class="tp-line">${esc(p)}</span>`).join("");
 };
 
-// Per-tier CTAs: data-tier preselects the #f-tier engagement select (inline JS in template); plain anchor is the no-JS fallback
-const tierCtas = [
-  { label: "Start with 5 videos &rarr;", value: "Starter (5 videos)" },
-  { label: "Book this month's videos &rarr;", value: "Retainer + Commission" },
-  { label: "Ask if your category is still open &rarr;", value: "Exclusive (own the category)" },
-];
+const whatsappHref = (packageLabel) => {
+  const digits = String(content.contact.whatsapp).replace(/[^0-9]/g, "");
+  const pkg = packageLabel || "[5 / 10 / 15 / 30 videos / Category Exclusivity]";
+  const text =
+    "Hi Alison, I'm interested in a paid Hammad Media campaign. Packages start at $5,000 upfront plus TikTok Shop commission. Brand: [BRAND]. Product: [PRODUCT]. Package being considered: " +
+    pkg +
+    ".";
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+};
+
+function packageCard(t, ctaLabel) {
+  return `      <div class="card tier">
+        ${t.tag ? `<div class="meta">${esc(t.tag)}</div>` : ""}
+        <h3>${esc(t.name)}</h3>
+        <div class="tier-price">${tierPrice(t.price)}</div>
+        ${t.text ? `<p>${esc(t.text)}</p>` : ""}
+        <a class="tier-cta" href="#contact" data-tier="${esc(t.formValue)}">${ctaLabel}</a>
+        <a class="tier-wa" href="${whatsappHref(t.whatsappPackage)}" target="_blank" rel="noopener">WhatsApp this package<span class="sr-only"> (opens in new tab)</span></a>
+      </div>`;
+}
 
 const partnershipSection = content.partnership
   ? `<section id="partner" class="light light-alt">
   <div class="wrap">
     <h2 class="section-title">${esc(content.partnership.heading)}</h2>
     <p class="section-sub">${esc(content.partnership.sub)}</p>
-    <div class="cards tiers">
-${content.partnership.tiers
-  .map(
-    (t, i) => `      <div class="card tier">
-        <div class="meta">${esc(t.tag)}</div>
-        <h3>${esc(t.name)}</h3>
-        <div class="tier-price">${tierPrice(t.price)}</div>
-        <p>${esc(t.text)}</p>
-        ${tierCtas[i] ? `<a class="tier-cta" href="#contact" data-tier="${esc(tierCtas[i].value)}">${tierCtas[i].label}</a>` : ""}
-      </div>`,
-  )
-  .join("\n")}
+    <div class="cards starter-row">
+${packageCard(content.partnership.starter, "Start with 5 videos &rarr;")}
     </div>
+    <div class="volume-block">
+      <div class="meta">${esc(content.partnership.volume.tag)}</div>
+      <h3 class="volume-heading">${esc(content.partnership.volume.name)}</h3>
+      <p class="volume-intro">${esc(content.partnership.volume.intro)}</p>
+      <div class="cards volume-cards">
+${content.partnership.volume.packages.map((p) => packageCard(p, `Ask about ${esc(p.name)} &rarr;`)).join("\n")}
+      </div>
+    </div>
+    <p class="pricing-policy">${esc(content.partnership.productionNote)}</p>
+    <p class="pricing-policy">${esc(content.partnership.invoiceNote)}</p>
+    ${
+      content.exclusivity
+        ? `<div class="exclusivity-module" id="exclusivity">
+      <div class="meta">${esc(content.exclusivity.tag)}</div>
+      <h3>${esc(content.exclusivity.name)}</h3>
+      <div class="tier-price">${tierPrice(content.exclusivity.price)}</div>
+      <ul class="excl-facts">
+${content.exclusivity.facts.map((f) => `        <li>${esc(f)}</li>`).join("\n")}
+      </ul>
+      <p>${esc(content.exclusivity.text)}</p>
+      <a class="tier-cta" href="#contact" data-tier="${esc(content.exclusivity.formValue)}">Check category availability &rarr;</a>
+      <a class="tier-wa" href="${whatsappHref(content.exclusivity.whatsappPackage)}" target="_blank" rel="noopener">WhatsApp about exclusivity<span class="sr-only"> (opens in new tab)</span></a>
+    </div>`
+        : ""
+    }
     <div class="note"><p>${esc(content.partnership.note)
       .replace(
         "I accept a limited number of new paid campaigns each month.",
@@ -181,16 +210,6 @@ ${content.brands
     </div>
     <p class="brandwall-note">${esc(content.legal.disclaimer)}</p>`
   : "";
-
-const whatsappHref = (packageLabel) => {
-  const digits = String(content.contact.whatsapp).replace(/[^0-9]/g, "");
-  const pkg = packageLabel || "[5 / 10 / 15 / 30 videos / Category Exclusivity]";
-  const text =
-    "Hi Alison, I'm interested in a paid Hammad Media campaign. Packages start at $5,000 upfront plus TikTok Shop commission. Brand: [BRAND]. Product: [PRODUCT]. Package being considered: " +
-    pkg +
-    ".";
-  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
-};
 
 const faqSection = content.faq
   ? `<section id="faq" class="light">
@@ -228,14 +247,15 @@ const contactBlock = content.contact.formSubmitEmail
         <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@brand.com" aria-describedby="f-email-err"><p class="err" id="f-email-err" hidden>Enter a work email like you@brand.com</p></div>
       </div>
       <div class="form-row">
-        <div><label for="f-category">Product category <span class="optional">(optional)</span></label>
-          <select id="f-category" name="category">
+        <div><label for="f-category">Product category <span class="optional" id="f-category-optional">(optional)</span></label>
+          <select id="f-category" name="category" aria-describedby="f-category-err">
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Supplements</option>
             <option>Wellness</option>
             <option>Beauty &amp; personal care</option>
             <option>Other</option>
           </select>
+          <p class="err" id="f-category-err" hidden>Enter your product category</p>
         </div>
         <div><label for="f-commission">Commission you can offer</label>
           <select id="f-commission" name="commission" required aria-describedby="f-commission-err">
@@ -254,8 +274,10 @@ const contactBlock = content.contact.formSubmitEmail
           <select id="f-tier" name="engagement" required aria-describedby="f-tier-err">
             <option value="" disabled selected>Choose one&hellip;</option>
             <option>Starter (5 videos)</option>
-            <option>Retainer + Commission</option>
-            <option>Exclusive (own the category)</option>
+            <option>Volume (10 videos)</option>
+            <option>Volume (15 videos)</option>
+            <option>Volume (30 videos)</option>
+            <option>Category Exclusivity</option>
             <option>Not sure yet &mdash; recommend one</option>
           </select>
           <p class="err" id="f-tier-err" hidden>Choose how you want to work together</p>

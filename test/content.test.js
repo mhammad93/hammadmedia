@@ -63,3 +63,13 @@ test("contact has valid primary email and FormSubmit destination", () => {
   assert.strictEqual(content.contact.email, "contact@hammadmedia.com");
   assert.strictEqual(content.contact.formSubmitEmail, "contact@hammadmedia.com");
 });
+
+test("authorized package prices are unchanged", () => {
+  assert.ok(content.partnership.starter.price.includes("$5,000"));
+  const prices = content.partnership.volume.packages.map((p) => p.price);
+  assert.ok(prices[0].includes("$9,500") && prices[0].includes("Save $500"));
+  assert.ok(prices[1].includes("$13,500") && prices[1].includes("Save $1,500"));
+  assert.ok(prices[2].includes("$25,000") && prices[2].includes("Save $5,000"));
+  assert.ok(content.exclusivity.price.includes("$50,000"));
+  assert.strictEqual(content.partnership.volume.packages.length, 3);
+});

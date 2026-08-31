@@ -73,27 +73,59 @@
   "partnership": {
     "heading": "Ways to partner",
     "sub": "Paid video packages are 100% upfront, with TikTok Shop commission aligned to performance. I do not offer commission-only or gifted-only campaigns.",
-    "tiers": [
-      {
-        "name": "Starter",
-        "tag": "Start here",
-        "text": "Five review videos on both accounts. You pay $5,000 upfront. I also earn TikTok Shop commission on every sale. A fixed first package if you want a set number of videos without a larger volume commitment.",
-        "price": "$5,000 for 5 videos · upfront + TikTok Shop commission"
-      },
-      {
-        "name": "Volume",
-        "tag": "Most popular",
-        "text": "A set number of review videos on both accounts. 100% upfront plus TikTok Shop commission on every sale. Month to month. No long-term contract.",
-        "price": "$9,500 for 10 videos (Save $500) · 15 videos — $13,500 (Save $1,500) · 30 videos — $25,000 (Save $5,000)"
-      },
-      {
-        "name": "Exclusive",
-        "tag": "Own the category",
-        "text": "Category exclusivity reserves one precisely defined product category for a paid 30-day period. During that period, I do not publish new affiliate content for the specifically agreed competing products within the invoiced category. Prior content remains live, and TikTok's continued distribution of older videos is unchanged. Exact competitors, dates, posting restrictions, and usage terms are defined in the written agreement. Paid upfront. Includes no videos — video packages are purchased separately. Subject to category availability and a written agreement.",
-        "price": "$50,000 per 30-day period · per precisely defined product category · paid upfront · no videos included"
-      }
-    ],
+    "starter": {
+      "name": "Starter",
+      "tag": "Start here",
+      "text": "Five review videos on both accounts. You pay $5,000 upfront. I also earn TikTok Shop commission on every sale. A fixed first package if you want a set number of videos without a larger volume commitment.",
+      "price": "$5,000 for 5 videos · upfront + TikTok Shop commission",
+      "formValue": "Starter (5 videos)",
+      "whatsappPackage": "5 videos"
+    },
+    "volume": {
+      "name": "Volume",
+      "tag": "Most popular",
+      "intro": "A set number of review videos on both accounts. 100% upfront plus TikTok Shop commission on every sale. Month to month. No long-term contract.",
+      "packages": [
+        {
+          "name": "10 videos",
+          "price": "$9,500 for 10 videos · Save $500 · upfront + TikTok Shop commission",
+          "formValue": "Volume (10 videos)",
+          "whatsappPackage": "10 videos"
+        },
+        {
+          "name": "15 videos",
+          "price": "$13,500 for 15 videos · Save $1,500 · upfront + TikTok Shop commission",
+          "formValue": "Volume (15 videos)",
+          "whatsappPackage": "15 videos"
+        },
+        {
+          "name": "30 videos",
+          "price": "$25,000 for 30 videos · Save $5,000 · upfront + TikTok Shop commission",
+          "formValue": "Volume (30 videos)",
+          "whatsappPackage": "30 videos"
+        }
+      ]
+    },
+    "productionNote": "Creator-led production. No routine draft approvals, revision rounds, or reshoots unless expressly agreed in writing.",
+    "invoiceNote": "Invoices are issued by Hammad Media LLC and paid 100% upfront.",
     "note": "Paid video packages are 100% upfront, with TikTok Shop commission aligned to performance. I do not offer commission-only or gifted-only campaigns. I accept a limited number of new paid campaigns each month. Supplement and wellness brands always come first. Need more than 30 videos? Contact us for custom volume pricing."
+  },
+  "exclusivity": {
+    "name": "Category exclusivity",
+    "tag": "Category reservation",
+    "price": "$50,000 per 30-day period · per precisely defined product category · paid upfront · no videos included",
+    "formValue": "Category Exclusivity",
+    "whatsappPackage": "Category Exclusivity",
+    "facts": [
+      "$50,000",
+      "per precisely defined product category",
+      "per 30-day period",
+      "paid upfront",
+      "no videos included",
+      "video packages purchased separately",
+      "subject to category availability and a written agreement"
+    ],
+    "text": "Category exclusivity reserves one precisely defined product category for a paid 30-day period. During that period, I do not publish new affiliate content for the specifically agreed competing products within the invoiced category. Prior content remains live, and TikTok's continued distribution of older videos is unchanged. Exact competitors, dates, posting restrictions, and usage terms are defined in the written agreement."
   },
   "contact": {
     "heading": "Work with me",

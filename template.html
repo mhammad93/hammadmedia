@@ -480,21 +480,49 @@
     color: var(--green-deep); opacity: .85;
   }
 
-  .tiers .tier:nth-child(2) {
-    border: 2px solid var(--green-deep);
-    box-shadow: 0 14px 40px rgba(14,122,74,.14);
-    transform: translateY(-6px);
-  }
-  .tiers .tier:nth-child(2):hover { transform: translateY(-10px); }
-  @media (max-width: 1000px) {
-    .cards.tiers { grid-template-columns: 1fr; }
-    .cards.tiers .tier:nth-child(2) { transform: none; }
-  }
-  .light .mail-cta { margin-top: 40px; display: inline-block; }
-  .tiers .tier:nth-child(2) .meta {
+  .starter-row { max-width: 420px; }
+  .volume-block { margin-top: 40px; }
+  .volume-block > .meta {
     display: inline-block; background: var(--green-deep); color: #fffdf8;
     padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em;
+    font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px;
   }
+  .volume-heading {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: clamp(28px, 3.2vw, 36px); letter-spacing: -0.015em; margin-bottom: 8px;
+  }
+  .volume-intro { color: var(--ink-soft); font-size: 16px; max-width: 64ch; margin-bottom: 22px; }
+  .volume-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .volume-cards .tier { height: 100%; }
+  @media (max-width: 1000px) {
+    .volume-cards { grid-template-columns: 1fr; }
+    .starter-row { max-width: none; }
+  }
+  .pricing-policy { margin-top: 22px; font-size: 16px; color: var(--ink); max-width: 70ch; }
+  .pricing-policy + .pricing-policy { margin-top: 10px; }
+  .exclusivity-module {
+    margin-top: 48px; padding: 34px 32px; background: var(--card);
+    border: 2px solid var(--green-deep); border-radius: 18px;
+  }
+  .exclusivity-module .meta {
+    display: inline-block; background: var(--green-deep); color: #fffdf8;
+    padding: 5px 14px; border-radius: 100px; letter-spacing: 0.14em; margin-bottom: 14px;
+  }
+  .exclusivity-module h3 {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: clamp(28px, 3.2vw, 40px); letter-spacing: -0.015em; margin-bottom: 12px;
+  }
+  .exclusivity-module .tier-price { margin-bottom: 18px; }
+  .excl-facts { margin: 0 0 18px; padding-left: 22px; columns: 1; }
+  .excl-facts li { color: var(--ink); font-size: 16px; font-weight: 650; margin: 7px 0; }
+  .excl-facts li::marker { color: var(--green-deep); }
+  .exclusivity-module p { font-size: 16px; color: var(--ink-soft); max-width: 72ch; }
+  .tier-wa {
+    display: inline-block; margin-top: 10px; margin-left: 14px;
+    color: var(--ink-soft); font-weight: 700; font-size: 14px; text-decoration: none;
+  }
+  .tier-wa:hover { color: var(--green-deep); text-decoration: underline; text-underline-offset: 4px; }
+  .light .mail-cta { margin-top: 40px; display: inline-block; }
   /* transform-only so the resting state stays visible in print, PDF, and screenshot bots */
   @supports (animation-timeline: view()) {
     .light .card:not(.tier), .stat, .pod { animation: rise-move backwards; animation-timeline: view(); animation-range: entry 0% entry 35%; }
@@ -621,7 +649,6 @@
       left: 0; top: 0; transform: none; width: 100%; height: 100%;
       background: radial-gradient(120% 70% at 50% 0%, rgba(61,220,132,.13), transparent 70%);
     }
-    .tiers .tier:nth-child(2) { transform: none; }
     section { padding: 72px 0; }
     section.stats { padding: 72px 0 60px; }
   }
@@ -749,6 +776,20 @@
     });
   }
 
+  function syncCategoryRequired() {
+    var tier = document.getElementById("f-tier");
+    var cat = document.getElementById("f-category");
+    var optional = document.getElementById("f-category-optional");
+    if (!tier || !cat) return;
+    var exclusive = tier.value === "Category Exclusivity";
+    cat.required = exclusive;
+    if (optional) optional.hidden = exclusive;
+    if (!exclusive) {
+      var err = document.getElementById("f-category-err");
+      if (err) err.hidden = true;
+    }
+  }
+
   // Per-tier CTAs preselect the engagement field
   document.addEventListener("click", function (e) {
     var a = e.target && e.target.closest ? e.target.closest("a[data-tier]") : null;
@@ -759,6 +800,11 @@
       sel.dispatchEvent(new Event("change", { bubbles: true }));
     }
   });
+  var tierSelect = document.getElementById("f-tier");
+  if (tierSelect) {
+    tierSelect.addEventListener("change", syncCategoryRequired);
+    syncCategoryRequired();
+  }
 
   // Persistent, non-color form error feedback
   var form = document.querySelector(".contact form");

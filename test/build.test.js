@@ -85,6 +85,13 @@ test("contact: FormSubmit form with qualification fields, honeypot, and secondar
   );
   assert.ok(fs.existsSync(path.join(ROOT, "dist", "thanks.html")), "thanks.html missing from dist");
   assert.ok(html.includes("Starter (5 videos)"), "form options must match tier names");
+  assert.ok(html.includes("Volume (10 videos)"), "10-video form option missing");
+  assert.ok(html.includes("Volume (15 videos)"), "15-video form option missing");
+  assert.ok(html.includes("Volume (30 videos)"), "30-video form option missing");
+  assert.ok(html.includes("Category Exclusivity"), "exclusivity form option missing");
+  assert.ok(!html.includes("Retainer + Commission"), "retired retainer form option still present");
+  assert.ok(!html.includes("Exclusive (own the category)"), "retired exclusive form option still present");
+  assert.ok(html.includes("function syncCategoryRequired"), "category-required handler missing");
   assert.ok(html.includes("Your product, and anything you want me to know."), "textarea single-ask placeholder missing");
   assert.ok(html.includes("I reply within 24 hours."), "24-hour reply microcopy missing");
   assert.ok(html.includes("$5,000"), "starter 5-video price missing");
@@ -147,13 +154,19 @@ test("summit award proof card renders with image and caption", () => {
 test("panel synthesis: tier prices, commission select, new FAQs, WhatsApp, nav links", () => {
   // tier prices are split into stacked spans, so compare against tag-stripped text
   const flatText = html.replace(/<[^>]+>/g, "");
-  for (const price of ["$5,000 for 5 videos", "$9,500 for 10 videos", "$50,000 per 30-day period"]) {
+  for (const price of ["$5,000 for 5 videos", "$9,500 for 10 videos", "$13,500 for 15 videos", "$25,000 for 30 videos", "$50,000 per 30-day period"]) {
     assert.ok(flatText.includes(price), `tier price line missing: ${price}`);
   }
-  assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 3, "tier price lines");
-  assert.strictEqual((html.match(/class="tp-figure"/g) || []).length, 3, "lead price figures");
-  assert.strictEqual((html.match(/class="tier-cta"/g) || []).length, 3, "per-tier CTAs");
-  assert.strictEqual((html.match(/data-tier="/g) || []).length, 3, "tier preselect data attrs");
+  assert.strictEqual((html.match(/class="tier-price"/g) || []).length, 5, "starter + 3 volume + exclusivity price lines");
+  assert.strictEqual((html.match(/class="tp-figure"/g) || []).length, 5, "lead price figures");
+  assert.strictEqual((html.match(/class="tier-cta"/g) || []).length, 5, "per-package CTAs");
+  assert.strictEqual((html.match(/data-tier="/g) || []).length, 5, "tier preselect data attrs");
+  assert.ok(html.includes("volume-cards"), "volume packages must share one equal-prominence row");
+  assert.ok(html.includes('id="exclusivity"'), "exclusivity module missing");
+  assert.ok(html.indexOf("volume-cards") < html.indexOf('id="exclusivity"'), "exclusivity must come after video packages");
+  assert.ok(!html.includes('class="cards tiers"'), "exclusivity must not sit in the video-package row");
+  assert.ok(html.includes("Creator-led production. No routine draft approvals, revision rounds, or reshoots unless expressly agreed in writing."), "production policy missing");
+  assert.ok(html.includes("Invoices are issued by Hammad Media LLC and paid 100% upfront."), "invoice policy missing");
   assert.ok((html.match(/Total sales (&mdash;|—) Jan 1(&ndash;|–)Jun 8, 2026/g) || []).length >= 6, "dated Jan 1–Jun 8 sales kickers");
   assert.ok((html.match(/Views &mdash; all time|Views — all time/g) || []).length >= 5, "all-time views labels");
   assert.ok(html.includes('name="commission" required'), "commission select missing");
@@ -223,12 +236,16 @@ test("recalled product (Rosabella Moringa) is not showcased", () => {
   assert.ok(!/moringa/i.test(html), "Moringa still on page — FDA-recalled product must not be showcased");
 });
 
-test("partnership tiers render; commission-only positioning is gone", () => {
-  for (const t of content.partnership.tiers) {
-    assert.ok(html.includes(t.name), `tier missing: ${t.name}`);
+test("partnership packages render; commission-only positioning is gone", () => {
+  assert.ok(html.includes(content.partnership.starter.name), "starter package missing");
+  assert.ok(html.includes(content.partnership.volume.name), "volume heading missing");
+  for (const p of content.partnership.volume.packages) {
+    assert.ok(html.includes(p.name), `volume package missing: ${p.name}`);
+    assert.ok(html.includes(`data-tier="${p.formValue}"`), `volume CTA missing: ${p.formValue}`);
   }
+  assert.ok(html.includes(content.exclusivity.name), "exclusivity module title missing");
+  assert.ok(/no videos included/i.test(html), "exclusivity must say no videos included");
   assert.ok(!/no retainers/i.test(html), "old no-retainers copy still present");
-  assert.ok(/volume/i.test(html), "volume offering not mentioned");
   assert.ok(/I do not offer commission-only or gifted-only campaigns/i.test(html), "must state commission-only and gifted-only are not offered");
 });
 
