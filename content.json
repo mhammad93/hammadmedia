@@ -74,25 +74,25 @@
     "sub": "Three ways to work together. In every deal, I earn more when you sell more. Pick the priority level you want for your product.",
     "tiers": [
       {
-        "name": "Boosted Commission",
+        "name": "Starter",
         "tag": "Start here",
-        "text": "For products with 10,000+ units already sold on TikTok Shop. You raise my commission rate. I test your product in my videos. You pay only when your product sells. There is no fixed number of videos. I make more videos for products that sell well. Higher commission rates get priority.",
-        "price": "$0 upfront — commission only"
+        "text": "Five review videos on both accounts. You pay $5,000 upfront. I also earn TikTok Shop commission on every sale. A fixed first package if you want guaranteed videos without a larger volume commitment.",
+        "price": "$5,000 for 5 videos · upfront + TikTok Shop commission"
       },
       {
         "name": "Retainer + Commission",
         "tag": "Most popular",
-        "text": "You get a guaranteed number of review videos every month. I post them on both accounts. I also earn commission on every sale. You pay upfront, month to month. No long-term contract.",
-        "price": "From $1,000 per video · 10 for $9,000 (save $1,000) · 15 for $13,500 (save $1,500) · 20 for $18,000 (save $2,000)"
+        "text": "A guaranteed number of review videos on both accounts. 100% upfront plus TikTok Shop commission on every sale. Month to month. No long-term contract.",
+        "price": "$9,500 for 10 videos (Save $500) · 15 videos — $13,500 (Save $1,500) · 30 videos — $25,000 (Save $5,000)"
       },
       {
         "name": "Exclusive",
         "tag": "Own the category",
-        "text": "One brand per product category. I never promote your competitors. Your products get the whole category on both accounts. Pricing is retainer + commission + performance bonuses. Once your category is taken, it is closed.",
-        "price": "From $50,000 per month — complete health & wellness exclusivity"
+        "text": "Reserve one precisely defined product category for a 30-day period. I never promote competing products in that category. Paid upfront. Includes no videos — videos are purchased separately. Once your category is taken, it is closed.",
+        "price": "$50,000 per 30-day period · per precisely defined product category · paid upfront · no videos included"
       }
     ],
-    "note": "Every deal pays me the most when your product sells. I win only when you win. I am one person, not an agency. So I keep a strict limit: four new products each month, no more. You could mail samples to one hundred small creators. That gets you one hundred small tests. Or you could work with the #1 affiliate in your category. That gets you a clear result in the first week. When the month is full, the next spot goes to the product that fits best. Supplement and wellness brands always come first."
+    "note": "Every deal pays me the most when your product sells. I win only when you win. I am one person, not an agency. So I keep a strict limit: four new products each month, no more. You could mail samples to one hundred small creators. That gets you one hundred small tests. Or you could work with the #1 affiliate in your category. That gets you a clear result in the first week. When the month is full, the next spot goes to the product that fits best. Supplement and wellness brands always come first. Need more than 30 videos? Contact us for custom volume pricing."
   },
   "contact": {
     "heading": "Work with me",
@@ -155,19 +155,18 @@
       },
       {
         "q": "What if it doesn't sell?",
-        "a": "On commission deals, you risk only **one product sample**. I carry all the other risk. I do not stop after one video. I test different openings and styles. Some products need three videos before one becomes a top seller. My biggest winner took more than 200 videos across two years. If a product does not fit my audience, I will tell you directly. That saves time for both of us."
+        "a": "Every package is paid upfront and includes TikTok Shop commission, so I still earn more when you sell more. I do not stop after one video. I test different openings and styles. Some products need three videos before one becomes a top seller. My biggest winner took more than 200 videos across two years. If a product does not fit my audience, I will tell you directly. That saves time for both of us."
       },
       {
         "q": "What does a retainer cost?",
-        "a": "Pricing is per video, **paid upfront**. We agree on the video count before we start:",
+        "a": "Pricing is by package, **paid upfront**, plus TikTok Shop commission. We agree on the video count before we start:",
         "bullets": [
-          "**$1,000 per video** minimum",
-          "10 videos — **$9,000** (save $1,000)",
-          "15 videos — **$13,500** (save $1,500)",
-          "20 videos — **$18,000** (save $2,000)",
-          "Month to month — no long-term contract."
-        ],
-        "tail": "Smaller budget? If your product already has **10,000+ units sold** on TikTok Shop, start with Boosted Commission. You pay only when you get sales."
+          "5 videos — **$5,000**",
+          "10 videos — **$9,500** (Save $500)",
+          "15 videos — **$13,500** (Save $1,500)",
+          "30 videos — **$25,000** (Save $5,000)",
+          "100% upfront + TikTok Shop commission. Month to month — no long-term contract."
+        ]
       },
       {
         "q": "What does my retainer actually guarantee?",
@@ -180,11 +179,11 @@
       },
       {
         "q": "How does the Exclusive tier work?",
-        "a": "Exclusivity means I never promote your competitors. Complete health & wellness exclusivity starts at **$50,000 per month**, **paid upfront**:",
+        "a": "Exclusivity reserves one **precisely defined product category** for a **30-day period**. **$50,000** per 30-day period, **paid upfront**. No videos are included — videos are purchased separately.",
         "bullets": [
-          "**Category exclusivity** — retainer + commission + performance bonuses. Price depends on the category.",
-          "Example: you lock the collagen category. Then only your collagen appears on my accounts.",
-          "Month to month. One brand per category — once a category is taken, it is closed."
+          "**Per category, not the whole vertical** — you reserve a precisely defined product category, such as collagen. I never promote competing products in that category.",
+          "Includes **no videos**. Video packages are purchased separately.",
+          "Paid upfront. 30-day period. Once your category is taken, it is closed."
         ]
       },
       {

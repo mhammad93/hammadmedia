@@ -752,42 +752,6 @@
     }
   });
 
-  // Boosted Commission qualification branch: 10,000+ units gate
-  var tierSel = document.getElementById("f-tier");
-  var unitsRow = document.getElementById("f-units-row");
-  var unitsSel = document.getElementById("f-units");
-  var unitsNote = document.getElementById("f-units-note");
-  function syncBoostedQual() {
-    if (!tierSel || !unitsRow || !unitsSel) return;
-    var boosted = tierSel.value.indexOf("Boosted") === 0;
-    unitsRow.hidden = !boosted;
-    unitsSel.required = boosted;
-    if (!boosted) {
-      unitsSel.value = "";
-      if (unitsNote) unitsNote.hidden = true;
-      var err = document.getElementById("f-units-err");
-      if (err) err.hidden = true;
-    }
-  }
-  if (tierSel && unitsRow) {
-    tierSel.addEventListener("change", syncBoostedQual);
-    syncBoostedQual();
-  }
-  if (unitsSel) {
-    unitsSel.addEventListener("change", function () {
-      if (unitsNote) unitsNote.hidden = unitsSel.value.indexOf("No") !== 0;
-    });
-  }
-  var switchBtn = document.getElementById("f-units-switch");
-  if (switchBtn) {
-    switchBtn.addEventListener("click", function () {
-      if (!tierSel) return;
-      tierSel.value = "Retainer + Commission";
-      tierSel.dispatchEvent(new Event("change", { bubbles: true }));
-      tierSel.focus();
-    });
-  }
-
   // Persistent, non-color form error feedback
   var form = document.querySelector(".contact form");
   if (form) {
