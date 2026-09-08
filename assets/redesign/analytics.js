@@ -27,7 +27,7 @@
     return fields;
   }
   if(typeof module!=='undefined'&&module.exports){module.exports={campaignFields};return;}
-  if(!scope.document||scope.document.body.dataset.preview!=='false'||scope.hmAnalyticsConsent)return;
+  if(!scope.document||scope.document.body.dataset.preview!=='false'||!['hammadmedia.com','www.hammadmedia.com'].includes(scope.location.hostname)||scope.hmAnalyticsConsent)return;
   const document=scope.document, measurement='G-NEX74824JL', disableKey='ga-disable-'+measurement;
   const storageKey='hm-analytics-consent-v1', lifetime=180*86400000;
   const banner=document.getElementById('analytics-consent');

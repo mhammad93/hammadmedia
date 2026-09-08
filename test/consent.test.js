@@ -39,7 +39,7 @@ function browser(options = {}) {
   const scope = {
     document,
     location: {
-      origin: 'https://www.hammadmedia.com', hostname: 'www.hammadmedia.com', pathname: '/zh/privacy/',
+      origin: 'https://www.hammadmedia.com', hostname: options.hostname || 'www.hammadmedia.com', pathname: '/zh/privacy/',
       search: '?utm_source=tiktok&utm_campaign=creator_2026&email=private@example.com&utm_term=sensitive&gclid=opaque',
       reload() { reloads++; },
     },
@@ -175,4 +175,10 @@ test('withdrawal in another tab or expiry also stops an active tracker', () => {
   const expired = browser({ raw: saved('accepted') }); expired.expire();
   assert.equal(expired.scope.gtag, undefined);
   assert.equal(expired.reloads, 1);
+});
+
+test('production-marked Vercel aliases and local hosts cannot pollute the production property',()=>{
+  for(const hostname of ['localhost','127.0.0.1','hammadmedia-a92ju1wpx-mohammed-hammads-projects.vercel.app']){
+    const b=browser({hostname,raw:saved('accepted')});assert.equal(b.scripts.length,0);assert.equal(b.scope.gtag,undefined);assert.deepEqual(b.events(),[]);
+  }
 });
