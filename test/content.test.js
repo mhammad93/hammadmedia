@@ -24,11 +24,11 @@ test('public content contains only active portfolio metadata and stable performa
   assert.equal(new Set(keys).size, keys.length);
   assert.deepEqual(keys.slice().sort(), Object.keys(performance.products).sort());
   for (const product of content.receipts.items) {
-    assert.deepEqual(Object.keys(product).sort(), ['image', 'performanceKey', 'title', 'videoUrl']);
+    assert.deepEqual(Object.keys(product).sort(), ['image', ...(product.imageDark ? ['imageDark'] : []), 'performanceKey', 'title', 'videoUrl'].sort());
     assert.equal(product.title, performance.products[product.performanceKey].title);
-    assert.match(product.videoUrl, /^https:\/\/www\.tiktok\.com\/@drew\.review1?\/video\/\d+$/);
+    if (product.videoUrl !== null) assert.match(product.videoUrl, /^https:\/\/www\.tiktok\.com\/@drew\.review1?\/video\/\d+$/);
   }
-  for (const asset of [...content.brands.map(b => b.logo), ...content.accounts.map(a => a.avatar), ...content.receipts.items.map(p => p.image)]) {
+  for (const asset of [...content.brands.map(b => b.logo), ...content.accounts.map(a => a.avatar), ...content.receipts.items.flatMap(p => [p.image, p.imageDark].filter(Boolean))]) {
     assert.match(asset, /^assets\/(brands|products)\/[\w.-]+$/);
     assert.ok(fs.existsSync(path.join(ROOT, asset)), asset);
   }
@@ -57,14 +57,24 @@ test('all displayed metrics retain a bilingual period and a truthful estimate or
   assert.equal(performance.methodology.allTimeBaselineAssumedAsOf, '2026-06-08');
 });
 
-test('product rows keep incomplete extensions at June 8; two matched products advance to August', () => {
+test('product dates distinguish historical baselines, matched extensions and complete later-month windows', () => {
+  const periods = {
+    astaxanthin: ['2026-01-01', '2026-08-31', 'approximate_derived_update'],
+    nmn: ['2026-01-01', '2026-06-08', 'historic_not_updated'],
+    collagen: ['2026-01-01', '2026-08-31', 'approximate_derived_update'],
+    magnesium: ['2026-01-01', '2026-06-08', 'historic_not_updated'],
+    glutathione: ['2026-04-01', '2026-08-31', 'approximate_sum_of_complete_account_month_displays'],
+    testosterone: ['2026-05-01', '2026-08-31', 'approximate_sum_of_complete_account_month_displays']
+  };
+  assert.deepEqual(Object.keys(performance.products).sort(), Object.keys(periods).sort());
   for (const [key, p] of Object.entries(performance.products)) {
     bilingual(p.gmv); bilingual(p.units); bilingual(p.period);
-    const updated = ['astaxanthin', 'collagen'].includes(key);
-    assert.equal(p.end, updated ? '2026-08-31' : '2026-06-08');
-    assert.equal(p.status, updated ? 'approximate_derived_update' : 'historic_not_updated');
-    assert.equal(p.gmv.en.startsWith('About '), updated);
-    assert.equal(p.units.en.startsWith('About '), updated);
+    assert.deepEqual([p.start, p.end, p.status], periods[key]);
+    const approximate = p.status !== 'historic_not_updated';
+    assert.equal(p.gmv.en.startsWith('About '), approximate);
+    assert.equal(p.units.en.startsWith('About '), approximate);
+    assert.equal(p.gmv.zh.startsWith('约 '), approximate);
+    assert.equal(p.units.zh.startsWith('约 '), approximate);
   }
 });
 
@@ -89,9 +99,22 @@ test('public metric values match the approved evidence draft when that private a
   }
   for (const p of source.products_to_keep_at_prior_date) {
     const actual = Object.values(performance.products).find(v => v.title === p.title);
+    // The active portfolio intentionally replaces two historical examples.
+    if (!actual) continue;
     assert.equal(actual.gmv.en, '$' + p.gmv_claim.toLocaleString('en-US'));
     assert.equal(actual.units.en, p.units_claim.toLocaleString('en-US'));
     assert.equal(actual.end, p.as_of);
+  }
+});
+
+test('new period-scoped product values match the reviewed private draft when available', t => {
+  const file = path.join(ROOT, '../private/sales-evidence/product-card-public-values.json');
+  if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
+  const source = JSON.parse(fs.readFileSync(file, 'utf8'));
+  for (const key of ['glutathione', 'testosterone']) {
+    const actual = performance.products[key], approved = source.products[key];
+    for (const field of ['gmv', 'units', 'period', 'start', 'end', 'status']) assert.deepEqual(actual[field], approved[field], `${key}.${field}`);
+    assert.equal(content.receipts.items.find(p => p.performanceKey === key).videoUrl, null);
   }
 });
 

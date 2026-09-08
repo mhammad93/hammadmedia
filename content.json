@@ -49,37 +49,41 @@
         "performanceKey": "astaxanthin",
         "title": "Astaxanthin 12mg — Micro Ingredients",
         "image": "assets/products/astaxanthin.jpg",
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7592733868550114574"
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7592733868550114574",
+        "imageDark": "assets/products/astaxanthin-dark.webp"
       },
       {
         "performanceKey": "nmn",
         "title": "NMN Complex 1,000mg — Micro Ingredients",
         "image": "assets/products/nmn.jpg",
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7578355445631356174"
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7578355445631356174",
+        "imageDark": "assets/products/nmn-dark.webp"
       },
       {
         "performanceKey": "collagen",
         "title": "Collagen Bio-Peptides 20oz — NeoCell",
-        "image": "assets/products/collagen.jpg",
+        "image": "assets/products/neocell-collagen-20oz.webp",
         "videoUrl": "https://www.tiktok.com/@drew.review1/video/7492532292091612462"
       },
       {
         "performanceKey": "magnesium",
         "title": "Magnesium Complex 8-in-1 — Toplux",
         "image": "assets/products/magnesium.jpg",
-        "videoUrl": "https://www.tiktok.com/@drew.review/video/7569758846734961934"
+        "videoUrl": "https://www.tiktok.com/@drew.review/video/7569758846734961934",
+        "imageDark": "assets/products/magnesium-dark.webp"
       },
       {
-        "performanceKey": "nac",
-        "title": "NAC Capsules — Nutricost",
-        "image": "assets/products/nac.jpg",
-        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7594391735007055117"
+        "performanceKey": "glutathione",
+        "title": "Liposomal Glutathione — Cata-Kor",
+        "image": "assets/products/catakor-glutathione.webp",
+        "videoUrl": null
       },
       {
-        "performanceKey": "saffron",
-        "title": "Saffron Extract — Nutricost",
-        "image": "assets/products/saffron.jpg",
-        "videoUrl": "https://www.tiktok.com/@drew.review1/video/7532016569824693534"
+        "performanceKey": "testosterone",
+        "title": "Testosterone+ Advanced 15-in-1 — Micro Ingredients",
+        "image": "assets/products/microingredients-testosterone.webp",
+        "videoUrl": null,
+        "imageDark": "assets/products/testosterone-dark.webp"
       }
     ]
   }

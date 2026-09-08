@@ -204,41 +204,41 @@
       "end": "2026-06-08",
       "status": "historic_not_updated"
     },
-    "nac": {
-      "title": "NAC Capsules — Nutricost",
+    "glutathione": {
+      "title": "Liposomal Glutathione — Cata-Kor",
       "gmv": {
-        "en": "$85,308",
-        "zh": "$85,308"
+        "en": "About $142K",
+        "zh": "约 $142K"
       },
       "units": {
-        "en": "7,393",
-        "zh": "7,393"
+        "en": "About 6.3K",
+        "zh": "约 6.3K"
       },
       "period": {
-        "en": "Jan 1–Jun 8, 2026",
-        "zh": "2026年1月1日至6月8日"
+        "en": "Apr 1–Aug 31, 2026",
+        "zh": "2026年4月1日至8月31日"
       },
-      "start": "2026-01-01",
-      "end": "2026-06-08",
-      "status": "historic_not_updated"
+      "start": "2026-04-01",
+      "end": "2026-08-31",
+      "status": "approximate_sum_of_complete_account_month_displays"
     },
-    "saffron": {
-      "title": "Saffron Extract — Nutricost",
+    "testosterone": {
+      "title": "Testosterone+ Advanced 15-in-1 — Micro Ingredients",
       "gmv": {
-        "en": "$79,862",
-        "zh": "$79,862"
+        "en": "About $104K",
+        "zh": "约 $104K"
       },
       "units": {
-        "en": "3,723",
-        "zh": "3,723"
+        "en": "About 4.5K",
+        "zh": "约 4.5K"
       },
       "period": {
-        "en": "Jan 1–Jun 8, 2026",
-        "zh": "2026年1月1日至6月8日"
+        "en": "May 1–Aug 31, 2026",
+        "zh": "2026年5月1日至8月31日"
       },
-      "start": "2026-01-01",
-      "end": "2026-06-08",
-      "status": "historic_not_updated"
+      "start": "2026-05-01",
+      "end": "2026-08-31",
+      "status": "approximate_sum_of_complete_account_month_displays"
     }
   },
   "methodology": {
@@ -248,7 +248,8 @@
     "notes": [
       "Approximate totals through Aug 31, 2026 combine the previously reported Jan 1-Jun 8 baseline with non-overlapping Jun 9-Aug 31 TikTok Shop records for both accounts. Figures are rounded; prior GMV/units are treated as continuous with current attributed GMV/items.",
       "New screenshots display GMT-8. The earlier baseline timezone was not recorded; this extension assumes compatible date boundaries. The old combined and per-account rounded GMV displays differ by $1,000.",
-      "All-time video views and 2026 product views retain their June 8 historical reporting dates. Product impressions are not substituted for views. No lifetime units or product-view baseline is available."
+      "All-time video views and 2026 product views retain their June 8 historical reporting dates. Product impressions are not substituted for views. No lifetime units or product-view baseline is available.",
+      "Liposomal Glutathione combines complete April-August monthly records for both creator profiles; Testosterone+ combines complete May-August monthly records for both profiles. These product-only periods have no earlier baseline added. Rounded dashboard displays make their sums approximate. Product examples use the period printed on each card and remain subsets of overall attributed GMV."
     ],
     "productTotalsAreSubsets": true
   }

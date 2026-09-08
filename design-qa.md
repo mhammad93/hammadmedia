@@ -44,7 +44,7 @@ All image files are under `../private/design-qa/`:
 
 Primary interactions verified: package selection/preselection, required category for exclusivity, paid acknowledgment and backend field alignment, theme toggle/persistence, language navigation, form configuration fallback, direct confirmation state, consent decline/persistence, settings reopen, acceptance loader and withdrawal/removal. Browser DOM showed zero Google loaders before consent and after decline, one only after acceptance, then zero after withdrawal. External tracking was blocked by the local QA server; live collection is a separate deployment check.
 
-The combined website suite passes 59 tests with one optional PostgreSQL integration test skipped in the default run. The pinned actual PostgreSQL integration was separately run earlier and passed after the retention fix. Tests cover accepted/rejected receipt IDs, uncertain retry, refresh, same-reference replay, no false thank-you conversion, privacy-safe payloads, consent expiry/withdrawal and preview isolation. Browser error/warning log checks returned no application errors in the reviewed public pages.
+The combined website suite passes 65 tests with one optional PostgreSQL integration test skipped in the default run. The pinned actual PostgreSQL integration was separately run earlier and passed after the retention fix. Tests cover accepted/rejected receipt IDs, uncertain retry, refresh, same-reference replay, no false thank-you conversion, privacy-safe payloads, consent expiry/withdrawal and preview isolation. Browser error/warning log checks returned no application errors in the reviewed public pages.
 
 ## Remaining release gates and polish
 
@@ -53,3 +53,19 @@ The combined website suite passes 59 tests with one optional PostgreSQL integrat
 - Native Safari/iOS and Android Webview checks remain a launch acceptance item; desktop responsive emulation is not that device coverage.
 - The source concept does not specify light/mobile/Chinese/confirmation/consent states; these are reviewed extensions rather than pixel copies.
 - Small future spacing refinements are P3 only and should be driven by actual use, not by unproven conversion claims.
+
+## User-directed visual refinement — September 7 evening review
+
+The user's supplied screenshots supersede the concept's pale bands for dark mode. The requested corrections were reviewed against their screenshots, then checked in the browser at 1440 × 1100, 650 × 1000 and 390 × 844.
+
+- Dark pricing, results, exclusivity and preview-notice surfaces now use the forest palette. Green calls to action retain clear contrast.
+- Brand marks are larger, evenly spaced, and readable in both themes. The white strip is removed; light mode uses dark marks. Mobile uses a three-column brand grid.
+- The summit photograph keeps its native 1100 × 854 ratio. The circled @drew.review1 profile and entire award board remain visible at desktop and phone sizes; there is no object-fit crop.
+- Light mode has a separate ivory studio hero. At phone/narrow-tablet widths both hero scenes retain their full 4:5 framing, including the pouch and pedestal.
+- Product photography blends into each theme with no white image tiles. NeoCell and Cata-Kor use verified official transparent originals. Other dark variants are AI background edits with near-black backdrops, composited by the browser over the forest surface. Light variants retain original packshots with a subtle multiply blend. Failed fake-alpha/checkerboard outputs were rejected and are not public assets. These edits are presentation images, not evidence; major packaging identity was inspected, and tiny generated label text is not claimed pixel-identical.
+- Seven new product assets are exported at up to 1200 pixels in WebP, about 658 KB combined; full-quality originals are archived privately. Active images load; inactive theme alternatives are display:none and excluded from the accessibility tree.
+- Glutathione (about $142K / 6.3K units, April–August) and Testosterone+ (about $104K / 4.5K units, May–August) replace the smaller NAC/Saffron examples. Each combines both profiles over its stated complete period. No unverified video CTA is added.
+
+Evidence in `../private/design-qa/`: desktop-dark-refined.png; desktop-dark-brands-refined.png; desktop-summit-refined.png; desktop-packages-dark-refined.png; narrow-tablet-dark-hero-refined.png; narrow-tablet-light-hero-refined.png; mobile-summit-refined.png; mobile-light-brands-refined.png; mobile-dark-products-refined.png; mobile-zh-products-refined.png.
+
+The checked phone/desktop views had no horizontal overflow or broken active images. Browser error logs were empty; preview Google-script count remained zero. Independent review found no code blocker; the flagged 550–650 pixel hero crop was corrected and verified at 650 pixels. Final result remains passed for this review-preview scope.

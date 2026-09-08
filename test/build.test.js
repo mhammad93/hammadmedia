@@ -59,14 +59,16 @@ test('both languages render canonical metrics with per-product dates and correct
       assert.ok(html.includes(esc(m.label[locale])), m.label[locale]);
       if (m.note) assert.ok(html.includes(esc(m.note[locale])), m.note[locale]);
     }
-    const products = [...html.matchAll(/<article class="product-card">([\s\S]*?)<\/article>/g)].map(m => m[1]);
+    const products = [...html.matchAll(/<article class="product-card" data-product-key="([^"]+)">([\s\S]*?)<\/article>/g)];
     assert.equal(products.length, content.receipts.items.length);
     for (const product of content.receipts.items) {
-      const card = products.find(card => card.includes(esc(product.videoUrl)));
+      const card = products.find(card => card[1] === product.performanceKey)[2];
       const data = performance.products[product.performanceKey];
       assert.ok(card.includes(esc(data.gmv[locale])));
       assert.ok(card.includes(esc(data.units[locale])));
       assert.ok(card.includes(esc(data.period[locale])));
+      if (product.videoUrl) assert.ok(card.includes(`href="${esc(product.videoUrl)}"`));
+      else assert.doesNotMatch(card, /<a\b|data-product=|href=|Watch a creator review|观看达人测评/);
     }
     for (const [handle, data] of Object.entries(performance.accounts)) {
       const begin = html.indexOf(`<a href="https://www.tiktok.com/@${handle}"`, html.indexOf('class="accounts"'));
@@ -87,13 +89,75 @@ test('reordering source products and accounts cannot silently attach another row
   fs.writeFileSync(path.join(fixture, 'content.json'), JSON.stringify(reordered));
   build('reordered', {}, fixture);
   const html = read('reordered');
-  const cards = [...html.matchAll(/<article class="product-card">([\s\S]*?)<\/article>/g)].map(m => m[1]);
+  const cards = [...html.matchAll(/<article class="product-card" data-product-key="([^"]+)">([\s\S]*?)<\/article>/g)];
   for (const p of reordered.receipts.items) {
-    const card = cards.find(c => c.includes(esc(p.videoUrl)));
+    const card = cards.find(c => c[1] === p.performanceKey)[2];
     assert.ok(card.includes(esc(performance.products[p.performanceKey].gmv.en)));
     assert.ok(card.includes(esc(performance.products[p.performanceKey].period.en)));
   }
   assert.ok(html.indexOf('About $2.53M') < html.indexOf('About $1.41M'));
+});
+
+test('a product review link cannot point to another creator or an unverified destination', () => {
+  const fixture = path.join(temp, 'unverified-review-source'); fs.mkdirSync(fixture);
+  for (const file of ['build.js', 'performance.json']) fs.copyFileSync(path.join(ROOT, file), path.join(fixture, file));
+  fs.symlinkSync(path.join(ROOT, 'assets'), path.join(fixture, 'assets'), 'dir');
+  for (const videoUrl of ['https://www.tiktok.com/@another.creator/video/12345', 'https://example.com/product', '']) {
+    const invalid = structuredClone(content);
+    invalid.receipts.items.find(p => p.performanceKey === 'glutathione').videoUrl = videoUrl;
+    fs.writeFileSync(path.join(fixture, 'content.json'), JSON.stringify(invalid));
+    assert.throws(() => build('unverified-review', {}, fixture), /Unverified product review URL: glutathione/);
+  }
+});
+
+test('both locales contain the matching light and dark hero assets with intrinsic dimensions', () => {
+  for (const file of ['index.html', 'zh/index.html']) {
+    const html = read('preview', file);
+    for (const [theme, asset] of [['dark', 'astaxanthin-hero.webp'], ['light', 'hero-atelier-light.webp']]) {
+      const tag = attrs(html.match(new RegExp(`<img class="hero-image-${theme}"[^>]*>`))[0]);
+      assert.equal(tag.src, `/assets/redesign/${asset}`);
+      assert.equal(tag.width, '1000'); assert.equal(tag.height, '1250');
+    }
+  }
+});
+
+test('theme-specific product images stay attached to the right card and are copied unchanged into both builds', () => {
+  for (const mode of ['preview', 'production']) {
+    for (const file of ['index.html', 'zh/index.html']) {
+      const html = read(mode, file);
+      const cards = [...html.matchAll(/<article class="product-card" data-product-key="([^"]+)">([\s\S]*?)<\/article>/g)];
+      for (const product of content.receipts.items) {
+        const card = cards.find(c => c[1] === product.performanceKey)[2];
+        const images = [...card.matchAll(/<img\b[^>]*>/g)].map(m => attrs(m[0]));
+        assert.equal(images.length, product.imageDark ? 2 : 1, product.performanceKey);
+        assert.deepEqual(images.map(img => img.src), [product.image, product.imageDark].filter(Boolean).map(src => '/' + src));
+        assert.equal(card.includes('class="product-photo has-dark-image"'), Boolean(product.imageDark));
+        for (const [index, img] of images.entries()) {
+          assert.equal(img.class, index ? 'product-image-dark' : 'product-image-light');
+          assert.equal(img.alt, esc(product.title.replace(' — ', ' ')));
+          assert.equal(img.width, '800'); assert.equal(img.height, '800');
+          assert.equal(img.loading, 'lazy');
+          // Visibility follows the theme in CSS; neither usable variant is permanently hidden from assistive technology.
+          assert.notEqual(img['aria-hidden'], 'true');
+          assert.equal(img.tabindex, undefined);
+          const asset = img.src.slice(1);
+          assert.deepEqual(fs.readFileSync(path.join(outputs[mode], asset)), fs.readFileSync(path.join(ROOT, asset)), asset);
+        }
+      }
+    }
+  }
+});
+
+test('optional dark-image references cannot escape the public asset boundary', () => {
+  const fixture = path.join(temp, 'private-dark-image-source'); fs.mkdirSync(fixture);
+  for (const file of ['build.js', 'performance.json']) fs.copyFileSync(path.join(ROOT, file), path.join(fixture, file));
+  fs.symlinkSync(path.join(ROOT, 'assets'), path.join(fixture, 'assets'), 'dir');
+  for (const imageDark of ['../private/evidence.png', 'assets/../private/evidence.png', 'assets/raw/evidence.png']) {
+    const invalid = structuredClone(content);
+    invalid.receipts.items[0].imageDark = imageDark;
+    fs.writeFileSync(path.join(fixture, 'content.json'), JSON.stringify(invalid));
+    assert.throws(() => build('private-dark-image', {}, fixture), /Invalid public asset path/);
+  }
 });
 
 test('localized routes, navigation fragments and referenced local assets resolve', () => {
@@ -121,9 +185,9 @@ test('localized routes, navigation fragments and referenced local assets resolve
 test('distribution contains only named public files and no raw evidence, source data, credentials or inquiry records', () => {
   const publicFiles = files(outputs.preview);
   const allowed = new Set(['index.html','zh/index.html','privacy/index.html','zh/privacy/index.html','404.html','thanks.html','thanks/index.html','zh/thanks/index.html','robots.txt','sitemap.xml','favicon.ico',
-    'assets/award-summit.webp','assets/og.jpg','assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/thanks.js','assets/redesign/attribution.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp',
+    'assets/award-summit.webp','assets/og.jpg','assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/thanks.js','assets/redesign/attribution.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp','assets/redesign/hero-atelier-light.webp',
     'assets/fonts/manrope.woff2','assets/fonts/fraunces-roman.woff2','assets/fonts/fraunces-italic.woff2',
-    ...content.brands.map(b=>b.logo),...content.accounts.map(a=>a.avatar),...content.receipts.items.map(p=>p.image)]);
+    ...content.brands.map(b=>b.logo),...content.accounts.map(a=>a.avatar),...content.receipts.items.flatMap(p=>[p.image,p.imageDark].filter(Boolean))]);
   for (const file of publicFiles) {
     assert.ok(allowed.has(file), `Unexpected deployed file: ${file}`);
     assert.doesNotMatch(file, /private|raw|evidence|extract|\.env|\.heic|\.json$|node_modules/i);
