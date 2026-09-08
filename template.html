@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NEX74824JL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-NEX74824JL');
-</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/analytics-consent-v1.css">
+<script src="/assets/analytics-consent-v1.js" defer></script>
 <title>{{site.title}}</title>
 <link rel="icon" type="image/svg+xml" href="/assets/brand-v3/favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="/assets/brand-v3/favicon-64.png">
@@ -724,6 +717,7 @@
   </div>
   <div class="wrap legal">
     <p id="privacy">{{legal.privacy}}</p>
+    <p id="analytics-privacy">Optional Analytics stays off until you accept. Google Analytics then uses cookies to measure visits and basic interactions. We do not send your form answers or contact details to Analytics. Your choice is saved for 180 days and can be changed here. Approved public campaign labels may be kept in this tab so they survive navigation. A timestamp may relate a form handoff to a return within 30 minutes; neither record contains inquiry details or a visitor ID, and both remain only until this tab closes. <button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></p>
     <p>{{legal.disclaimer}}</p>
   </div>
 </footer>
@@ -769,5 +763,9 @@
 })();
 </script>
 
+<aside id="analytics-consent" class="analytics-consent" hidden aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-description">
+  <div><h2 id="analytics-consent-title">Optional analytics</h2><p id="analytics-consent-description">Allow Google Analytics cookies to measure visits and basic interactions? We do not send your form answers. Your choice lasts 180 days. <a href="/#analytics-privacy">Privacy details</a></p></div>
+  <div class="analytics-consent-actions"><button id="analytics-decline" type="button">Decline</button><button id="analytics-accept" type="button">Accept analytics</button></div>
+</aside>
 </body>
 </html>

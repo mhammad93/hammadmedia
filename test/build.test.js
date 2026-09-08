@@ -307,13 +307,27 @@ test("retired public prices and commission-only offer are gone", () => {
   assert.ok(!html.includes("Boosted Commission (pay on sales only)"), "retired commission-only form option still present");
 });
 
-test("Google tag present exactly once on every page", () => {
-  // Google: one gtag per page, immediately after <head>. Never zero, never two.
+test("every measured page includes one local consent module and no eager Google request", () => {
   const thanks = fs.readFileSync(path.join(ROOT, "dist", "thanks.html"), "utf8");
   for (const [name, page] of [["index", html], ["thanks", thanks]]) {
-    assert.strictEqual((page.match(/googletagmanager\.com\/gtag\/js\?id=G-NEX74824JL/g) || []).length, 1, `${name}: gtag loader count wrong`);
-    assert.strictEqual((page.match(/gtag\('config', 'G-NEX74824JL'\)/g) || []).length, 1, `${name}: gtag config count wrong`);
+    assert.strictEqual((page.match(/<script src="\/assets\/analytics-consent-v1\.js" defer><\/script>/g) || []).length, 1, `${name}: consent module must load once`);
+    assert.ok(!page.includes('googletagmanager.com'), `${name}: Google must not load before consent`);
+    assert.ok(!/gtag\s*\(/.test(page), `${name}: no inline duplicate initialization`);
+    assert.ok(page.includes('id="analytics-consent"') && /id="analytics-consent"[^>]*hidden/.test(page), `${name}: choices start hidden until the host gate runs`);
+    for (const id of ['analytics-consent-title', 'analytics-consent-description', 'analytics-accept', 'analytics-decline']) assert.ok(page.includes(`id="${id}"`), `${name}: missing accessible consent control ${id}`);
+    assert.ok(page.includes('data-analytics-settings'), `${name}: visitors can revisit their choice`);
+    assert.ok(!page.includes('/assets/redesign/'), `${name}: no redesign assets in this patch`);
   }
+  for (const file of ['analytics-consent-v1.js', 'analytics-consent-v1.css']) assert.ok(fs.existsSync(path.join(ROOT, 'dist', 'assets', file)), `${file} ships with the current design`);
+});
+
+test("thank-you rendering binds its two honest states and defaults to unverified without JavaScript", () => {
+  const thanks = fs.readFileSync(path.join(ROOT, 'dist', 'thanks.html'), 'utf8');
+  assert.ok(thanks.includes('<div id="inquiry-unverified">'));
+  assert.ok(thanks.includes('<div id="inquiry-recent-handoff" hidden>'));
+  assert.ok(thanks.includes('Opening this page alone does not confirm delivery.'));
+  assert.ok(!thanks.includes('Your inquiry is now in my inbox.'));
+  assert.ok(!thanks.includes('<title>Inquiry received'));
 });
 
 test("fonts are self-hosted with preload", () => {

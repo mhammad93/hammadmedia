@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NEX74824JL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-NEX74824JL');
-</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inquiry received — Hammad Media</title>
+<link rel="stylesheet" href="/assets/analytics-consent-v1.css">
+<script src="/assets/analytics-consent-v1.js" defer></script>
+<title>Your inquiry — Hammad Media</title>
 <link rel="icon" type="image/svg+xml" href="/assets/brand-v3/favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="/assets/brand-v3/favicon-64.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand-v3/favicon-180.png">
@@ -54,12 +47,23 @@
 <body>
 <main>
   <img src="assets/logo-v2.webp" alt="Hammad Media" style="height:40px;width:auto">
-  <h1>Thank you — I will reply <em>within 24 hours</em>.</h1>
-  <p>Your inquiry is now in my inbox. The person who reads it is the person who makes the videos. Be ready to talk about your product, commission, and launch timing.</p>
-  <p>Do one thing now: add contact@hammadmedia.com to your contacts. Then my reply will not go to your spam folder.</p>
-  <a class="back" href="https://wa.me/19297709434?text=Hi%20Hammad%20%E2%80%94%20I%20just%20sent%20an%20inquiry%20through%20your%20site." target="_blank" rel="noopener">Faster? Message me on WhatsApp &rarr;<span class="sr-only"> (opens in new tab)</span></a>
+  <div id="inquiry-unverified">
+    <h1>Let’s check <em>your inquiry.</em></h1>
+    <p>There is no recent form submission recorded in this tab. Opening this page alone does not confirm delivery. If you already submitted, contact me to check before sending it again.</p>
+  </div>
+  <div id="inquiry-recent-handoff" hidden>
+    <h1>Thank you for <em>your inquiry.</em></h1>
+    <p>This tab recognizes a recent attempt to send your form. This page cannot confirm that it reached the inbox. If you need to check or add details, contact me below.</p>
+  </div>
+  <p>If you expect a reply, add contact@hammadmedia.com to your contacts and check your spam folder.</p>
+  <a class="back" href="https://wa.me/19297709434?text=Hi%20Hammad%20%E2%80%94%20I%20would%20like%20to%20check%20a%20website%20inquiry." target="_blank" rel="noopener">Check with me on WhatsApp &rarr;<span class="sr-only"> (opens in new tab)</span></a>
   <p><a class="results-link" href="/#results">Back to the results &rarr;</a></p>
   <p style="margin-top: 22px; font-size: 14px;">Need to add something? <a href="mailto:contact@hammadmedia.com" style="color: #3ddc84;">contact@hammadmedia.com</a></p>
+  <p class="analytics-privacy-note">Recent form activity is recognized only in this tab, for up to 30 minutes. Approved public campaign labels may also remain until this tab closes. Neither record contains inquiry details or a visitor ID. Optional Analytics stays off until you accept. <button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button> · <a href="/#analytics-privacy">Privacy details</a></p>
 </main>
+<aside id="analytics-consent" class="analytics-consent" hidden aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-description">
+  <div><h2 id="analytics-consent-title">Optional analytics</h2><p id="analytics-consent-description">Allow Google Analytics cookies to measure visits and basic interactions? We do not send your form answers. Your choice lasts 180 days. <a href="/#analytics-privacy">Privacy details</a></p></div>
+  <div class="analytics-consent-actions"><button id="analytics-decline" type="button">Decline</button><button id="analytics-accept" type="button">Accept analytics</button></div>
+</aside>
 </body>
 </html>
