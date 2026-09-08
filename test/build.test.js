@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const vm = require('node:vm');
+const { createHash } = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { validate, ENGAGEMENTS } = require('../lib/intake-validation');
 const content = require('../content.json');
@@ -15,6 +16,10 @@ const outputs = {};
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const read = (mode, file = 'index.html') => fs.readFileSync(path.join(outputs[mode], file), 'utf8');
 const attrs = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]));
+const codeAssets = html => [...html.matchAll(/<(?:script|link)\b[^>]*>/g)]
+  .map(m => attrs(m[0])).map(a => a.src || a.href).filter(Boolean)
+  .map(url => new URL(url, 'https://hammadmedia.com'))
+  .filter(url => url.origin === 'https://hammadmedia.com' && /\.(?:css|js)$/.test(url.pathname));
 function build(name, env = {}, root = ROOT) {
   const out = path.join(temp, name);
   execFileSync(process.execPath, [path.join(root, 'build.js')], { cwd: root, env: {...process.env, VERCEL_ENV: '', PUBLIC_LAUNCH_APPROVED: '', ...env, HM_BUILD_OUTPUT_DIR: out}, stdio: 'pipe' });
@@ -44,10 +49,51 @@ test('preview indexing and Analytics remain off unless both production gates are
     const html = read('production', file);
     assert.doesNotMatch(html, /noindex|class="preview-banner"/);
     assert.match(html, /data-preview="false"/);
-    assert.match(html, /src="\/assets\/redesign\/analytics.js"/);
+    assert.match(html, /src="\/assets\/redesign\/analytics\.js\?v=[a-f0-9]{16}"/);
     assert.doesNotMatch(html, /<script[^>]+src="https:\/\/www.googletagmanager/);
   }
   assert.match(read('production', 'robots.txt'), /Allow: \/\nSitemap:/);
+});
+
+test('every generated page versions local CSS and scripts by the exact deployed bytes', () => {
+  for (const mode of ['preview', 'unapproved', 'production']) {
+    for (const file of files(outputs[mode]).filter(file => file.endsWith('.html'))) {
+      const references = codeAssets(read(mode, file));
+      assert.ok(references.some(url => url.pathname.endsWith('/site.css')), file);
+      for (const url of references) {
+        const bytes = fs.readFileSync(path.join(outputs[mode], url.pathname.slice(1)));
+        const digest = createHash('sha256').update(bytes).digest('hex').slice(0, 16);
+        assert.deepEqual([...url.searchParams], [['v', digest]], `${mode}: ${file} -> ${url.pathname}`);
+      }
+      const analytics = references.filter(url => url.pathname.endsWith('/analytics.js'));
+      assert.equal(analytics.length, mode === 'production' && file !== '404.html' ? 1 : 0, `${mode}: ${file}`);
+    }
+  }
+});
+
+test('changing one stylesheet or script changes only that asset URL across localized pages and confirmations', () => {
+  const fixture = path.join(temp, 'cache-version-source'); fs.mkdirSync(fixture);
+  for (const file of ['build.js', 'content.json', 'performance.json']) fs.copyFileSync(path.join(ROOT, file), path.join(fixture, file));
+  fs.cpSync(path.join(outputs.preview, 'assets'), path.join(fixture, 'assets'), {recursive:true});
+  const production = {VERCEL_ENV:'production', PUBLIC_LAUNCH_APPROVED:'true'};
+  build('cache-before', production, fixture);
+  build('cache-identical', production, fixture);
+  fs.appendFileSync(path.join(fixture, 'assets/redesign/site.css'), '\n/* Changed stylesheet revision. */\n');
+  build('cache-css', production, fixture);
+  fs.appendFileSync(path.join(fixture, 'assets/redesign/attribution.js'), '\n/* Changed attribution revision. */\n');
+  build('cache-script', production, fixture);
+  for (const file of ['index.html', 'zh/index.html', 'privacy/index.html', 'zh/privacy/index.html', 'thanks/index.html', 'zh/thanks/index.html', 'thanks.html', '404.html']) {
+    const refs = mode => Object.fromEntries(codeAssets(read(mode, file)).map(url => [url.pathname, url.href]));
+    const before = refs('cache-before'), same = refs('cache-identical'), css = refs('cache-css'), script = refs('cache-script');
+    assert.deepEqual(same, before, file);
+    assert.deepEqual(Object.keys(css), Object.keys(before));
+    for (const asset of Object.keys(before)) {
+      if (asset.endsWith('/site.css')) assert.notEqual(css[asset], before[asset], file);
+      else assert.equal(css[asset], before[asset], `${file}: ${asset}`);
+      if (asset.endsWith('/attribution.js')) assert.notEqual(script[asset], css[asset], file);
+      else assert.equal(script[asset], css[asset], `${file}: ${asset}`);
+    }
+  }
 });
 
 test('both languages render canonical metrics with per-product dates and correct account assignment', () => {
@@ -377,7 +423,7 @@ test('thank-you pages track production page views but are always noindex and nev
     assert.match(page,/noindex/);assert.match(page,/assets\/redesign\/analytics.js/);
     assert.match(page,/id="confirmation-received" hidden/);
     assert.match(page,/id="confirmation-missing"/);
-    assert.match(page,/src="\/assets\/redesign\/thanks.js"/);
+    assert.match(page,/src="\/assets\/redesign\/thanks\.js\?v=[a-f0-9]{16}"/);
     assert.doesNotMatch(page,/<form|name="email"/);
     assert.doesNotMatch(read('preview',file),/googletagmanager/);
   }
