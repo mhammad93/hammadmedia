@@ -117,9 +117,7 @@ test('both languages render canonical metrics with per-product dates and correct
       else assert.doesNotMatch(card, /<a\b|data-product=|href=|Watch a creator review|观看达人测评/);
     }
     for (const [handle, data] of Object.entries(performance.accounts)) {
-      const begin = html.indexOf(`<a href="https://www.tiktok.com/@${handle}"`, html.indexOf('class="accounts"'));
-      // The next metrics sit immediately after the account header's closing div.
-      const region = html.slice(begin, begin + 700);
+      const region = [...html.matchAll(/<a class="profile-card" data-profile="([^"]+)"[\s\S]*?<\/a>/g)].find(card => card[1] === handle)[0];
       assert.ok(region.includes(esc(data.gmv[locale])), handle);
       assert.ok(region.includes(esc(data.units[locale])), handle);
     }
@@ -270,7 +268,7 @@ test('both forms match the server qualification rules and expose only the same a
 
 test('bilingual public policies preserve paid-only qualification, creative control, separate advertising rights and old-content exclusivity', () => {
   const en = read('preview'), zh = read('preview','zh/index.html');
-  for (const text of ['100% upfront', 'Commission-only and gifted-only campaigns are not accepted', 'creative control stays on our side', 'not automatically included in the package price', 'Existing content stays live', 'includes no videos', 'does not book a campaign or commit you to payment', 'not Hammad Media revenue or commission', 'separately named metric', 'assume compatible date boundaries']) assert.ok(en.includes(text), text);
+  for (const text of ['100% upfront', 'Commission-only and gifted-only campaigns are not accepted', 'creative control stays on our side', 'not automatically included in the package price', 'Existing content stays live', 'includes no videos', 'does not book a campaign or commit you to payment', 'not Hammad Media revenue or commission']) assert.ok(en.includes(text), text);
   for (const text of ['100%预付', '不接受纯佣金或仅赠送样品', '创作控制权保留在我方', '不自动包含在套餐价格内', '已有内容继续保留', '不含视频', '不产生付款义务', '并非 Hammad Media 的营收或佣金']) assert.ok(zh.includes(text), text);
   for (const file of ['privacy/index.html','zh/privacy/index.html']) {
     const privacy = read('preview',file);

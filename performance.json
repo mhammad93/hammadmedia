@@ -111,7 +111,26 @@
       },
       "start": "2026-01-01",
       "end": "2026-08-31",
-      "status": "approximate_derived_update"
+      "status": "approximate_derived_update",
+      "social": {
+        "followers": {
+          "en": "190.1K",
+          "zh": "190.1K"
+        },
+        "likes": {
+          "en": "2.5M",
+          "zh": "2.5M"
+        },
+        "asOf": "2026-09-07",
+        "observedAt": "2026-09-08T02:55:12Z",
+        "timezone": "America/New_York",
+        "status": "verified_public_profile",
+        "source": "Official public TikTok profile",
+        "note": {
+          "en": "Profile snapshot · Sep 7, 2026 (EDT)",
+          "zh": "账号数据快照 · 2026年9月7日（美东时间）"
+        }
+      }
     },
     "drew.review1": {
       "gmv": {
@@ -128,7 +147,21 @@
       },
       "start": "2026-01-01",
       "end": "2026-08-31",
-      "status": "approximate_derived_update"
+      "status": "approximate_derived_update",
+      "social": {
+        "followers": {
+          "en": "155K",
+          "zh": "155K"
+        },
+        "asOf": "2026-06-08",
+        "status": "historic_not_updated",
+        "refreshStatus": "public_profile_restricted",
+        "source": "Historical website baseline dated June 8, 2026",
+        "note": {
+          "en": "Followers last reported · Jun 8, 2026",
+          "zh": "粉丝数上次报告日期 · 2026年6月8日"
+        }
+      }
     }
   },
   "products": {

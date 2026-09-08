@@ -127,7 +127,7 @@ test('public metric source contains no earnings, contact details, private eviden
   const walk = value => {
     if (Array.isArray(value)) return value.forEach(walk);
     if (value && typeof value === 'object') for (const [key, item] of Object.entries(value)) {
-      assert.doesNotMatch(key, /commission|earnings|payout|email|phone|followers|approximate_value/i);
+      assert.doesNotMatch(key, /commission|earnings|payout|email|phone|approximate_value/i);
       walk(item);
     }
   };

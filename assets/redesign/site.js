@@ -7,7 +7,9 @@ const themeButton=document.querySelector('.theme-toggle');
 function updateThemeButton(){if(!themeButton)return;const dark=root.dataset.theme!=='light';themeButton.textContent=dark?t('Light','浅色'):t('Dark','深色');themeButton.setAttribute('aria-label',dark?t('Switch to light theme','切换浅色模式'):t('Switch to dark theme','切换深色模式'));themeButton.setAttribute('aria-pressed',String(!dark));}
 updateThemeButton();themeButton?.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='light'?'dark':'light';try{localStorage.setItem('hm-theme',root.dataset.theme)}catch{}updateThemeButton();});
 document.querySelector('[data-language-switch]')?.addEventListener('click',()=>track('language_select',{selected_language:zh?'en':'zh'}));
-document.querySelectorAll('a[href^="mailto:"],a[href^="https://wa.me/"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{contact_method:a.href.startsWith('mailto:')?'email':'whatsapp',cta_location:a.closest('.site-footer')?'footer':'contact'})));
+document.querySelectorAll('a[href^="mailto:"],a[href^="https://wa.me/"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{contact_method:a.href.startsWith('mailto:')?'email':'whatsapp',cta_location:a.closest('.conversion-dock')?'sticky':a.closest('.site-footer')?'footer':'contact'})));
+document.querySelectorAll('[data-inquiry-cta]').forEach(a=>a.addEventListener('click',()=>track('inquiry_cta_click',{cta_location:a.closest('.site-header')?'header':'sticky'})));
+document.querySelectorAll('[data-profile]').forEach(a=>a.addEventListener('click',()=>{const key=a.dataset.profile;if(['drew.review','drew.review1'].includes(key))track('profile_click',{profile_key:key,cta_location:'creator'});}));
 document.querySelectorAll('[data-product]').forEach(a=>a.addEventListener('click',()=>track('proof_video_click',{product_key:a.dataset.product})));
 const form=document.getElementById('inquiry-form');if(!form)return;
 const select=form.elements.engagement, category=document.getElementById('category-field'), submit=document.getElementById('inquiry-submit'), status=document.getElementById('form-status');
