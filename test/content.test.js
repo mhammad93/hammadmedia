@@ -45,15 +45,19 @@ test('all displayed metrics retain a bilingual period and a truthful estimate or
   }
   assert.equal(performance.metrics.allTimeGmv.status, 'estimated_rollforward');
   assert.match(performance.metrics.allTimeGmv.note.en, /Estimated/);
-  assert.equal(performance.metrics.allTimeVideoViews.asOf, '2026-06-08');
-  assert.equal(performance.metrics.historicalProductViews.end, '2026-06-08');
+  assert.equal(performance.metrics.allTimeVideoViews.asOf, '2026-08-31');
+  assert.equal(performance.metrics.allTimeVideoViews.status, 'estimated_rollforward');
+  assert.match(performance.metrics.allTimeVideoViews.value.en, /^About /);
+  assert.match(performance.metrics.allTimeVideoViews.label.en, /video views/i);
+  assert.equal(performance.metrics.historicalProductViews.end, '2026-08-31');
+  assert.equal(performance.metrics.historicalProductViews.status, 'approximate_derived_update');
+  assert.match(performance.metrics.historicalProductViews.value.en, /^About /);
   assert.equal(performance.metrics.janAugUnits.start, '2026-01-01');
   assert.equal(performance.metrics.janAugUnits.end, '2026-08-31');
   assert.match(performance.metrics.janAugUnits.value.en, /^About /);
   assert.match(performance.metrics.janAugGmv.value.en, /^About /);
   assert.equal(performance.methodology.productTotalsAreSubsets, true);
   assert.match(performance.methodology.notes.join(' '), /timezone.*not recorded/);
-  assert.match(performance.methodology.notes.join(' '), /impressions are not substituted for views/);
   assert.equal(performance.methodology.allTimeBaselineAssumedAsOf, '2026-06-08');
 });
 
@@ -83,11 +87,14 @@ test('public metric values match the approved evidence draft when that private a
   const file = path.join(ROOT, '../private/sales-evidence/public-performance-draft.json');
   if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
   const source = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.ok(source.jan_aug_product_views, 'Owner-approved product-view update must have a separate dated audit; preserve its historic baseline.');
   assert.equal(performance.metrics.allTimeGmv.value.en, source.all_time_gmv.display);
-  assert.equal(performance.metrics.allTimeVideoViews.value.en, source.historic_all_time_video_views.display);
+  assert.ok(source.all_time_video_views, 'The active lifetime estimate must use audited video exports, separately from the superseded mixed series.');
+  assert.equal(performance.metrics.allTimeVideoViews.value.en, source.all_time_video_views.display);
   assert.equal(performance.metrics.janAugGmv.value.en, source.hero_gmv.display);
   assert.equal(performance.metrics.janAugUnits.value.en, source.items.display);
-  assert.equal(performance.metrics.historicalProductViews.value.en, source.historic_2026_product_views.display);
+  assert.equal(performance.metrics.historicalProductViews.value.en, source.jan_aug_product_views.display);
+  assert.equal(performance.metrics.historicalProductViews.end, source.jan_aug_product_views.end);
   for (const a of source.accounts) {
     const actual = performance.accounts[a.handle.slice(1)];
     assert.equal(actual.gmv.en, a.gmv); assert.equal(actual.units.en, a.items);
@@ -104,6 +111,114 @@ test('public metric values match the approved evidence draft when that private a
     assert.equal(actual.gmv.en, '$' + p.gmv_claim.toLocaleString('en-US'));
     assert.equal(actual.units.en, p.units_claim.toLocaleString('en-US'));
     assert.equal(actual.end, p.as_of);
+  }
+});
+
+test('product-view extension reconciles only the six nonoverlapping source periods', t => {
+  const file = path.join(ROOT, '../private/sales-evidence/product-views-owner-mapping-2026-09-08.json');
+  if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
+  const audit = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const master = JSON.parse(fs.readFileSync(path.join(ROOT, '../private/sales-evidence/monthly-overview-master.json'), 'utf8'));
+  const expectedPeriods = [['2026-06-09', '2026-06-30'], ['2026-07-01', '2026-07-31'], ['2026-08-01', '2026-08-31']];
+  const expectedKeys = ['@drew.review', '@drew.review1'].flatMap(account => expectedPeriods.map(([start, end]) => `${account}|${start}|${end}`)).sort();
+  const actualKeys = audit.extension_cells.map(row => `${row.account}|${row.start}|${row.end}`).sort();
+  assert.deepEqual(actualKeys, expectedKeys, 'No full June, duplicate period, missing account or account/product double count.');
+  for (const cell of audit.extension_cells) {
+    const matches = [...master.bridge_overviews, ...master.monthly_overviews].filter(row => row.account === cell.account && row.start === cell.start && row.end === cell.end);
+    assert.equal(matches.length, 1);
+    const metric = matches[0].metrics.find(m => m.label === 'Product impressions');
+    assert.equal(cell.source_label, metric.label);
+    assert.equal(cell.source_display, metric.display);
+    assert.equal(cell.display_expansion, metric.approximate_display_expansion);
+    assert.equal(cell.source_png_sha256, matches[0].source_png_sha256);
+  }
+  const increment = audit.extension_cells.reduce((sum, row) => sum + row.display_expansion, 0);
+  assert.equal(increment, 42000000);
+  assert.equal(audit.calculation.combined_display_basis_expansion, 105000000);
+  assert.equal(audit.calculation.account_baseline_display_sum, 105800000);
+  assert.equal(audit.calculation.conservative_combined_display_expansion, 105000000 + increment);
+  assert.equal(audit.calculation.account_display_basis_total, 105800000 + increment);
+  assert.equal(audit.mapping.official_metric_equivalence_verified, false);
+  assert.equal(audit.mapping.authorization_quote, 'Yes just use product impressions as views');
+  assert.equal(performance.metrics.historicalProductViews.value.en, audit.public_metric.value.en);
+  assert.deepEqual(performance.metrics.historicalProductViews, audit.public_metric);
+});
+
+test('all-time video views add only post-June8 video rows and preserve the rounded baseline', t => {
+  const file = path.join(ROOT, '../private/sales-evidence/video-views-export-rollforward-2026-09-08.json');
+  if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
+  const audit = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const draft = JSON.parse(fs.readFileSync(path.join(ROOT, '../private/sales-evidence/public-performance-draft.json'), 'utf8'));
+  assert.equal(draft.historic_all_time_video_views.display, '416M+');
+  assert.equal(draft.historic_all_time_video_views.as_of, '2026-06-08');
+  assert.equal(audit.baseline.source_label, 'All-time video views');
+  assert.equal(audit.baseline.display, draft.historic_all_time_video_views.display);
+  assert.equal(audit.baseline.scope_status, 'confirmed_legacy_website_both_accounts');
+  let increment = 0;
+  for (const handle of ['drew.review', 'drew.review1']) {
+    const source = JSON.parse(fs.readFileSync(path.join(ROOT, `../private/sales-evidence/tiktok-studio-exports-2026-09-08/${handle}-overview-2026-01-01-to-2026-08-31.audit.json`), 'utf8'));
+    const rows = source.daily.filter(row => row.date >= '2026-06-09' && row.date <= '2026-08-31');
+    assert.equal(rows.length, 84);
+    const count = rows.reduce((sum, row) => sum + row['Video Views'], 0);
+    assert.equal(audit.calculation.account_increments[handle], count);
+    increment += count;
+  }
+  assert.equal(increment, 38953750, 'Use the video export column, never the 42M product-impressions extension.');
+  assert.equal(audit.calculation.video_increment, increment);
+  assert.equal(audit.calculation.baseline_display_plus_increment, 416000000 + increment);
+  assert.equal(audit.supersedes, 'all-time-views-owner-mapping-2026-09-08.json');
+  assert.deepEqual(performance.metrics.allTimeVideoViews, audit.public_metric);
+  assert.match(performance.metrics.allTimeVideoViews.label.en, /video views/i);
+  assert.match(performance.metrics.allTimeVideoViews.note.en, /Estimated through Aug 31, 2026/);
+});
+
+test('dated engagement totals remain separate from current rounded public profile snapshots', () => {
+  const keys = ['videoViews', 'profileViews', 'likes', 'comments', 'shares'];
+  for (const handle of ['drew.review', 'drew.review1']) {
+    const account = performance.accounts[handle], engagement = account.engagement;
+    assert.ok(engagement, `${handle} needs its selected-period export totals`);
+    assert.equal(engagement.start, '2026-01-01');
+    assert.equal(engagement.end, '2026-08-31');
+    assert.equal(engagement.status, 'verified_export_totals');
+    assert.equal(engagement.timezone, null, 'CSV does not state the source bucketing timezone.');
+    bilingual(engagement.period);
+    for (const key of keys) {
+      const metric = engagement[key];
+      assert.ok(Number.isSafeInteger(metric.count));
+      bilingual(metric.value); bilingual(metric.label);
+      for (const value of Object.values(metric.value)) assert.equal(value.replaceAll(',', ''), String(metric.count));
+    }
+    assert.equal(account.social.asOf, '2026-09-07');
+    assert.equal(account.social.status, 'verified_public_profile');
+    assert.notEqual(engagement.likes.value.en, account.social.likes.en);
+  }
+  for (const key of keys) {
+    const metric = performance.engagement[key];
+    assert.equal(metric.count, performance.accounts['drew.review'].engagement[key].count + performance.accounts['drew.review1'].engagement[key].count);
+    bilingual(metric.value); bilingual(metric.label);
+    for (const value of Object.values(metric.value)) assert.equal(value.replaceAll(',', ''), String(metric.count));
+  }
+  assert.equal(performance.engagement.start, '2026-01-01');
+  assert.equal(performance.engagement.end, '2026-08-31');
+});
+
+test('all five engagement metrics reconcile to every signed daily export value for each account', t => {
+  const dir = path.join(ROOT, '../private/sales-evidence/tiktok-studio-exports-2026-09-08');
+  if (!fs.existsSync(dir)) return t.skip('Private evidence is intentionally outside the deployment project.');
+  const fields = { videoViews: 'Video Views', profileViews: 'Profile Views', likes: 'Likes', comments: 'Comments', shares: 'Shares' };
+  for (const handle of ['drew.review', 'drew.review1']) {
+    const source = JSON.parse(fs.readFileSync(path.join(dir, `${handle}-overview-2026-01-01-to-2026-08-31.audit.json`), 'utf8'));
+    assert.equal(source.daily.length, 243);
+    assert.equal(new Set(source.daily.map(row => row.date)).size, 243);
+    assert.equal(source.daily[0].date, '2026-01-01');
+    assert.equal(source.daily.at(-1).date, '2026-08-31');
+    source.daily.forEach((row, index) => assert.equal(row.date, new Date(Date.UTC(2026, 0, 1 + index)).toISOString().slice(0, 10), 'Every calendar day appears exactly once in order.'));
+    for (const [key, label] of Object.entries(fields)) {
+      const total = source.daily.reduce((sum, row) => sum + row[label], 0);
+      assert.equal(total, source.exactExportTotals[label]);
+      assert.equal(performance.accounts[handle].engagement[key].count, total, `${handle}.${key}`);
+    }
+    assert.ok(source.daily.some(row => row.Comments < 0), 'Signed source adjustments must not be clipped.');
   }
 });
 

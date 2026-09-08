@@ -9,7 +9,7 @@ updateThemeButton();themeButton?.addEventListener('click',()=>{root.dataset.them
 document.querySelector('[data-language-switch]')?.addEventListener('click',()=>track('language_select',{selected_language:zh?'en':'zh'}));
 document.querySelectorAll('a[href^="mailto:"],a[href^="https://wa.me/"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{contact_method:a.href.startsWith('mailto:')?'email':'whatsapp',cta_location:a.closest('.conversion-dock')?'sticky':a.closest('.site-footer')?'footer':'contact'})));
 document.querySelectorAll('[data-inquiry-cta]').forEach(a=>a.addEventListener('click',()=>track('inquiry_cta_click',{cta_location:a.closest('.site-header')?'header':'sticky'})));
-document.querySelectorAll('[data-profile]').forEach(a=>a.addEventListener('click',()=>{const key=a.dataset.profile;if(['drew.review','drew.review1'].includes(key))track('profile_click',{profile_key:key,cta_location:'creator'});}));
+document.querySelectorAll('[data-profile]').forEach(a=>a.addEventListener('click',()=>{const key=a.dataset.profile;if(['drew.review','drew.review1'].includes(key))track('profile_click',{profile_key:key,cta_location:a.closest('.hero-label')?'hero':'creator'});}));
 document.querySelectorAll('[data-product]').forEach(a=>a.addEventListener('click',()=>track('proof_video_click',{product_key:a.dataset.product})));
 const form=document.getElementById('inquiry-form');if(!form)return;
 const select=form.elements.engagement, category=document.getElementById('category-field'), submit=document.getElementById('inquiry-submit'), status=document.getElementById('form-status');

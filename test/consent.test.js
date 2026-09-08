@@ -86,8 +86,8 @@ test('declining persists the choice without tracking and settings can reopen it'
   assert.equal(b.banner.hidden, false);
 });
 
-test('a saved acceptance initializes one sanitized page view with advertising disabled', () => {
-  const b = browser({ raw: saved('accepted'), attribution: { page_path: '/', referrer: 'https://partner.example', utm_source: 'agency_outreach', utm_medium: 'email', utm_campaign: 'paid_partnerships', email: 'private@example.com' } });
+test('a saved acceptance initializes one sanitized page view with a fixed design label and advertising disabled', () => {
+  const b = browser({ raw: saved('accepted'), attribution: { page_path: '/', referrer: 'https://partner.example', utm_source: 'agency_outreach', utm_medium: 'email', utm_campaign: 'paid_partnerships', email: 'private@example.com', site_version: 'private@example.com' } });
   assert.equal(b.scripts.length, 1);
   assert.equal(b.scripts[0].src, 'https://www.googletagmanager.com/gtag/js?id=G-NEX74824JL');
   assert.equal(b.scripts[0].referrerPolicy, 'no-referrer');
@@ -97,10 +97,12 @@ test('a saved acceptance initializes one sanitized page view with advertising di
   assert.equal(config.allow_google_signals, false);
   assert.equal(config.allow_ad_personalization_signals, false);
   assert.equal(config.campaign_source, 'agency_outreach');
+  assert.equal(config.site_version, 'partnership_redesign');
   const page = events.filter(e => e[0] === 'event' && e[1] === 'page_view');
   assert.equal(page.length, 1);
   assert.equal(page[0][2].page_location, 'https://www.hammadmedia.com/zh/privacy/');
   assert.equal(page[0][2].page_referrer, 'https://partner.example');
+  assert.equal(page[0][2].site_version, 'partnership_redesign');
   assert.doesNotMatch(JSON.stringify(events), /private@example|sensitive|opaque|"(?:user_id|user_data)":/);
   const consent = events.filter(e => e[0] === 'consent');
   assert.equal(consent[0][2].analytics_storage, 'denied');

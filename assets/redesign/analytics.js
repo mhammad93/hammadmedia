@@ -113,7 +113,7 @@
     const query=attribution?new URLSearchParams(Object.entries(attribution).filter(([key])=>['utm_source','utm_medium','utm_campaign','utm_content'].includes(key))).toString():scope.location.search;
     const paths=new Set(['/','/zh/','/privacy/','/zh/privacy/','/thanks/','/zh/thanks/','/thanks.html','/zh/thanks.html','/404.html']);
     const path=paths.has(scope.location.pathname)?scope.location.pathname:'/404.html';
-    const page={page_location:scope.location.origin+path,page_referrer:origin(attribution?.referrer||document.referrer)};
+    const page={page_location:scope.location.origin+path,page_referrer:origin(attribution?.referrer||document.referrer),site_version:'partnership_redesign'};
     scope.gtag('config',measurement,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,...page,...campaignFields(query)});
     scope.gtag('event','page_view',{...page,page_title:document.title});
     tracker=document.createElement('script');tracker.async=true;tracker.referrerPolicy='no-referrer';
