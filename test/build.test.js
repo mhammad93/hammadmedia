@@ -171,7 +171,7 @@ test('reordering source products and accounts cannot silently attach another row
   assert.ok(html.indexOf(performance.accounts['drew.review1'].gmv.en) < html.indexOf(performance.accounts['drew.review'].gmv.en));
 });
 
-test('clean GMV thresholds appear across hero, totals and cards without altering exact offer prices', () => {
+test('clean GMV displays appear across hero, totals and cards without altering exact offer prices', () => {
   for (const file of ['index.html', 'zh/index.html']) {
     const html = read('preview', file);
     assert.doesNotMatch(html, /(?:About|约)\s*\$/);
@@ -180,7 +180,7 @@ test('clean GMV thresholds appear across hero, totals and cards without altering
     assert.match(hero, /Estimated|估算/);
     const ytd = html.match(/<div class="ytd-strip">([\s\S]*?)<div class="brand-strip">/)[1];
     assert.ok(ytd.includes(performance.metrics.janAugGmv.value.en));
-    assert.match(ytd, /Estimated|估算/);
+    assert.match(ytd, /Estimated|估算/i);
     for (const price of ['$5,000', '$9,500', '$13,500', '$25,000']) {
       assert.ok(html.includes(`<strong>${price}</strong>`));
       assert.ok(html.includes(`<div class="package-price">${price}</div>`));
@@ -204,6 +204,26 @@ test('documented partial products use matching GMV and unit labels without imply
       assert.match(card, /partial coverage|部分时段数据/);
       assert.doesNotMatch(card, /Jan 1–Aug 31|2026年1月1日至8月31日/);
     }
+  }
+});
+
+test('large unit and view numbers omit approximation prefixes while adjacent labels preserve estimate and partial status', () => {
+  for(const [locale,file] of [['en','index.html'],['zh','zh/index.html']]){
+    const html=read('preview',file);
+    for(const key of ['allTimeVideoViews','janAugUnits','historicalProductViews']){
+      const metric=performance.metrics[key];
+      assert.doesNotMatch(metric.value[locale],/^(About|约)\s|\+/);
+      const block=[...html.matchAll(/<div class="metric">([\s\S]*?)<\/div>/g)].find(match=>match[1].includes(metric.label[locale]))[1];
+      assert.ok(block.includes(`<strong>${metric.value[locale]}</strong>`));
+      assert.match(block,/Estimated|估算/);
+      assert.ok(block.includes(metric.note[locale]));
+    }
+    for(const product of Object.values(performance.products))assert.doesNotMatch(product.units[locale],/^(About|约)\s|\+/);
+    for(const account of Object.values(performance.accounts))assert.doesNotMatch(account.units[locale],/^(About|约)\s|\+/);
+    assert.doesNotMatch(html, /<span class="(?:product|profile)-qualifier">/);
+    assert.match(html, /Estimated units sold|估算售出件数/);
+    assert.match(html, /Documented units sold|已记录售出件数/);
+    assert.match(html, /partial coverage|部分时段数据/);
   }
 });
 
@@ -296,7 +316,7 @@ test('distribution contains only named public files and no raw evidence, source 
   const allowed = new Set(['assets/brand-v3/favicon-16.png','assets/brand-v3/favicon-180.png','assets/brand-v3/favicon-192.png','assets/brand-v3/favicon-32.png','assets/brand-v3/favicon-48.png','assets/brand-v3/favicon-512.png','assets/brand-v3/favicon-64.png','assets/brand-v3/favicon.ico','assets/brand-v3/favicon.svg','assets/brand-v3/signature-logo-dark.png','assets/brand-v3/signature-logo-dark.svg','assets/brand-v3/signature-logo-light.png','assets/brand-v3/signature-logo-light.svg','index.html','zh/index.html','privacy/index.html','zh/privacy/index.html','404.html','thanks.html','thanks/index.html','zh/thanks/index.html','robots.txt','sitemap.xml','favicon.ico',
     'assets/brands/cata-kor.svg', 'assets/award-summit.webp','assets/og-partnership-gmv-20260908.jpg','assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/thanks.js','assets/redesign/attribution.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp','assets/redesign/hero-atelier-light.webp',
     'assets/fonts/manrope.woff2','assets/fonts/fraunces-roman.woff2','assets/fonts/fraunces-italic.woff2',
-    ...content.brands.map(b=>b.logo),...content.accounts.map(a=>a.avatar),...content.receipts.items.flatMap(p=>[p.image,p.imageDark].filter(Boolean))]);
+    ...content.brands.flatMap(b=>[b.logo,b.logo.replace('.png','-original-20260908.png')]),...content.accounts.map(a=>a.avatar),...content.receipts.items.flatMap(p=>[p.image,p.imageDark].filter(Boolean))]);
   for (const file of publicFiles) {
     assert.ok(allowed.has(file), `Unexpected deployed file: ${file}`);
     assert.doesNotMatch(file, /private|raw|evidence|extract|\.env|\.heic|\.json$|node_modules/i);
@@ -316,7 +336,8 @@ test('both forms match the server qualification rules and expose only the same a
     assert.match(html, /name="paid_partnership_ack" type="checkbox" required/);
     assert.match(html, /id="inquiry-submit"[^>]*disabled/);
     const choices = [...html.matchAll(/<option value="([^"]+)"/g)].map(m=>m[1]);
-    assert.deepEqual(choices, ENGAGEMENTS);
+    assert.deepEqual(choices.slice().sort(), ENGAGEMENTS.slice().sort());
+    assert.deepEqual(choices.slice(0,4), ['15 videos','30 videos','5 videos','10 videos']);
     const tags = [...html.matchAll(/<(?:input|textarea)\b[^>]*>/g)].map(m=>[attrs(m[0]),m[0]]);
     const base = {submission_id:'fce4ae44-a499-4c0e-a149-4ceda4a2992f',brand:'Acme',email:'brand@example.com',product:'Product',engagement:'Exclusivity',exact_category:'Collagen powder',paid_partnership_ack:true,locale};
     for (const name of ['brand','name','product','exact_category','commission','timing','message']) {
@@ -490,4 +511,58 @@ test('thank-you pages track production page views but are always noindex and nev
     assert.doesNotMatch(page,/<form|name="email"/);
     assert.doesNotMatch(read('preview',file),/googletagmanager/);
   }
+});
+
+
+test('15 and 30 lead bilingual package cards and selectors with unchanged fees and engagements', () => {
+  for (const file of ['index.html','zh/index.html']) {
+    const html=read('preview',file), zh=file.startsWith('zh/');
+    const primary=html.match(/<div class="package-grid package-grid-primary">([\s\S]*?)<div class="smaller-packages">/)[1];
+    const secondary=html.match(/<div class="package-grid package-grid-secondary">([\s\S]*?)<p class="package-terms">/)[1];
+    const cards=section=>[...section.matchAll(/<article[^>]*data-package-videos="(\d+)"/g)].map(m=>Number(m[1]));
+    assert.deepEqual(cards(primary),[15,30]);assert.deepEqual(cards(secondary),[5,10]);
+    for(const label of zh?['最受欢迎','全面推广方案']:['MOST POPULAR','FULL-SCALE CAMPAIGN'])assert.ok(primary.includes(label));
+    assert.doesNotMatch(html,/BREAKOUT CAMPAIGN|突破增长方案|Start with a focused test/);
+    assert.ok(html.includes(zh?'根据我们的经验':'In our experience'));
+    assert.ok(html.includes(zh?'并非销量或广告回报保证':'not a sales or ROAS guarantee'));
+    for(const ad of ['GMV Max','Spark Ads'])assert.ok(html.includes(ad));
+    assert.deepEqual([...html.matchAll(/data-faq-key="([^"]+)"/g)].map(m=>m[1]),['paid_partnership','profile_allocation','creative_control','sales_expectations','advertising_rights','timing','commission','international_teams','exclusivity']);
+    const select=html.match(/<select[^>]*name="engagement"[^>]*>([\s\S]*?)<\/select>/)[1];
+    assert.doesNotMatch(select,/\bselected\b/);
+    assert.deepEqual([...select.matchAll(/value="(\d+ videos)"/g)].map(m=>m[1]),['15 videos','30 videos','5 videos','10 videos']);
+  }
+});
+
+test('YTD strip draws dated GMV, profile views and shares from their distinct central evidence', () => {
+  for(const file of ['index.html','zh/index.html']){
+    const locale=file.startsWith('zh/')?'zh':'en',html=read('preview',file);
+    const strip=html.match(/<div class="ytd-strip">([\s\S]*?)<div class="brand-strip">/)[1];
+    assert.deepEqual([...strip.matchAll(/<strong>([^<]+)<\/strong>/g)].map(m=>m[1]),[performance.metrics.janAugGmv.value[locale],performance.engagement.profileViews.value[locale],performance.engagement.shares.value[locale]]);
+    assert.ok(strip.includes(performance.engagement.period[locale]));
+    for(const key of ['profileViews','shares'])assert.ok(strip.includes(performance.engagement[key].label[locale]));
+    assert.ok(strip.includes(locale==='en'?'GMV is estimated from documented sales records.':'GMV 根据已记录的销售数据估算。'));
+    assert.doesNotMatch(strip,/not unique people|purchase conversion rates|并非独立人数|购买转化率/);
+  }
+});
+
+test('public authored text assets contain no em dash in either build mode', () => {
+  for(const mode of ['preview','production'])for(const file of files(outputs[mode]).filter(f=>/\.(html|js|css|svg|xml|txt)$/.test(f)))assert.ok(!read(mode,file).includes(String.fromCharCode(8212)),`${mode}/${file}`);
+});
+
+test('brand hover has one accessible brand name, decorative original artwork and no fake interactive controls', () => {
+  for(const file of ['index.html','zh/index.html']){
+    const html=read('preview',file),items=[...html.matchAll(/<span class="brand-logo-item">([\s\S]*?)<\/span>/g)];
+    assert.equal(items.length,content.brands.length);
+    items.forEach((item,i)=>{
+      assert.doesNotMatch(item[0],/tabindex|role="button"|<a\b/);
+      const images=[...item[1].matchAll(/<img\b[^>]*>/g)].map(m=>attrs(m[0]));
+      assert.equal(images[0].alt,esc(content.brands[i].name));
+      assert.equal(images[1].alt,'');assert.equal(images[1]['aria-hidden'],'true');
+      assert.equal(images[1].src,'/'+content.brands[i].logo.replace('.png','-original-20260908.png'));
+      assert.ok(fs.existsSync(path.join(outputs.preview,images[1].src)));
+    });
+  }
+  const css=read('preview','assets/redesign/site.css');
+  assert.match(css,/@media\(hover:hover\) and \(pointer:fine\)/);
+  assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{\.brand-logos/);
 });

@@ -257,3 +257,54 @@
 .profile-sales{margin-top:0}
 @media(max-width:400px){.profile-engagement-grid{gap:21px 14px}.profile-engagement-stat dt{font-size:12px;gap:6px}.profile-engagement-stat.is-primary{padding:17px 14px}.profile-stats dt{font-size:12px}.profile-period>span:first-child{font-size:13px}}
 @container(max-width:250px){.profile-sales .profile-stats dt{min-height:3em;align-items:flex-start}.profile-sales .profile-stat-icon{margin-top:2px}}
+/* Lead with the two main campaigns. Only package marketing labels gain emphasis. */
+.package-grid-primary{grid-template-columns:repeat(2,minmax(0,1fr));border:0;gap:24px}
+.package-grid-primary .package{padding:28px;border:1px solid var(--accent);border-radius:16px;background:var(--paper);min-width:0}
+.package-grid-primary .package-kicker{color:var(--accent);font-weight:750}
+.package-grid-primary .package+.package{padding-left:28px}
+.smaller-packages{margin-top:36px;max-width:800px}
+.smaller-packages>p{margin-bottom:12px}
+.package-grid-secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mini-price-primary{background:var(--paper);box-shadow:inset 0 -2px var(--accent)}
+.mini-price .mini-package-label{display:block;color:var(--accent);font-weight:750;margin-top:6px;line-height:1.4}
+@media(max-width:650px){.package-grid-primary{grid-template-columns:minmax(0,1fr);gap:20px}.package-grid-primary .package,.package-grid-primary .package+.package{padding:24px}.smaller-packages{margin-top:28px}.package-grid-secondary .package{min-width:0}.mini-price .mini-package-label{overflow-wrap:anywhere}}
+
+.package-kicker{font-size:14px;line-height:1.4;letter-spacing:.065em;font-weight:750;color:var(--cream-ink);overflow-wrap:normal}
+.package-grid-primary .package-kicker{font-size:21px;line-height:1.3;letter-spacing:.055em}
+.mini-price .mini-package-label{font-size:12px;letter-spacing:.02em;line-height:1.35}
+@media(max-width:650px){.package-grid-primary .package-kicker{font-size:18px}.package-grid-secondary .package-kicker{font-size:13px;letter-spacing:.025em}.price-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0}.price-grid h2{margin-bottom:10px}.mini-price{padding:12px 10px}.mini-price:nth-child(4){border-left:0}.mini-price .mini-package-label{font-size:11px;overflow-wrap:normal}}
+
+/* Verified original artwork appears on pointer hover without creating fake links. */
+.brand-logo-item{position:relative;display:grid;place-items:center;min-width:0;isolation:isolate}
+.brand-logos .brand-logo-item img{grid-area:1/1;width:100%;max-width:160px;transition:opacity .22s ease,transform .22s ease,filter .22s ease}
+.brand-logos .brand-logo-item img.brand-logo-color{opacity:0;filter:none}
+@media(hover:hover) and (pointer:fine){
+.brand-logos .brand-logo-item:hover .brand-logo-base{opacity:0;transform:translateY(-3px)}
+.brand-logos .brand-logo-item:hover img.brand-logo-color{opacity:1;transform:translateY(-3px);filter:drop-shadow(0 0 1px rgba(246,244,238,.95)) drop-shadow(0 7px 7px rgba(0,0,0,.16))}
+:root[data-theme=light] .brand-logos .brand-logo-item:hover .brand-logo-color{filter:drop-shadow(0 7px 7px rgba(16,44,27,.16))}
+}
+@media(prefers-reduced-motion:reduce){.brand-logos .brand-logo-item img{transition:none!important;transform:none!important}}
+
+.ytd-strip{display:block;padding:32px;margin-top:28px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.ytd-heading{display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin-bottom:24px}
+.ytd-heading h3{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:-.025em;line-height:1.3}
+.ytd-strip .ytd-heading p{font-size:12px;max-width:none;margin:0}
+.ytd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0}
+.ytd-stat{min-width:0;padding-right:24px}
+.ytd-stat+.ytd-stat{border-left:1px solid var(--line);padding-left:28px}
+.ytd-stat dt{font-size:14px;font-weight:650;line-height:1.5;color:var(--muted)}
+.ytd-stat dd{margin:10px 0 0}
+.ytd-strip strong{font-family:var(--serif);font-size:clamp(38px,4.3vw,58px);font-weight:500;line-height:1.15;letter-spacing:-.04em;white-space:nowrap}
+.ytd-strip .ytd-note{font-size:11px;max-width:920px;margin:24px 0 0;line-height:1.7}
+@media(max-width:900px){.ytd-heading{display:block}.ytd-strip .ytd-heading p{margin-top:10px}.ytd-stat{padding-right:14px}.ytd-stat+.ytd-stat{padding-left:18px}.ytd-stat dt{font-size:12px}}
+@media(max-width:650px){.ytd-strip{padding:26px 24px}.ytd-heading h3{font-size:25px}.ytd-grid{grid-template-columns:minmax(0,1fr);gap:22px}.ytd-stat{padding:0}.ytd-stat+.ytd-stat{border-left:0;border-top:1px solid var(--line);padding:21px 0 0}.ytd-stat dt{font-size:14px}.ytd-strip strong{font-size:49px}.ytd-strip .ytd-note{font-size:10px}}
+@media(hover:hover) and (pointer:fine){:root[data-theme=light] .brand-logos .brand-logo-item:hover .brand-logo-color[src*="toplux"]{filter:drop-shadow(0 0 1px #102c1b) drop-shadow(0 7px 7px rgba(16,44,27,.16))}}
+/* Local contrast backing preserves original dark and reversed artwork on hover. */
+.brand-logo-item:before{content:"";position:absolute;z-index:-1;inset:-12px -9px;border-radius:12px;background:rgba(246,244,238,.94);box-shadow:0 8px 24px rgba(0,0,0,.12);opacity:0;transition:opacity .22s ease;pointer-events:none}
+@media(hover:hover) and (pointer:fine){
+:root:not([data-theme=light]) .brand-logo-item:hover:before{opacity:1}
+:root:not([data-theme=light]) .brand-logo-item:has(img[src*="toplux"]):hover:before{opacity:0}
+:root[data-theme=light] .brand-logo-item:has(img[src*="toplux"]):before{background:rgba(16,44,27,.94)}
+:root[data-theme=light] .brand-logo-item:has(img[src*="toplux"]):hover:before{opacity:1}
+.brand-logos .brand-logo-item:hover img.brand-logo-color,:root[data-theme=light] .brand-logos .brand-logo-item:hover .brand-logo-color[src*="toplux"]{filter:drop-shadow(0 5px 6px rgba(0,0,0,.12))}
+}

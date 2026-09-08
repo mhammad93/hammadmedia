@@ -21,8 +21,8 @@
     },
     "allTimeVideoViews": {
       "value": {
-        "en": "About 455M",
-        "zh": "约 455M"
+        "en": "455M",
+        "zh": "455M"
       },
       "label": {
         "en": "All-time video views",
@@ -37,16 +37,16 @@
     },
     "janAugUnits": {
       "value": {
-        "en": "About 159K",
-        "zh": "约 159K"
+        "en": "159K",
+        "zh": "159K"
       },
       "label": {
         "en": "Units sold · 2026",
         "zh": "2026年售出件数"
       },
       "note": {
-        "en": "Jan 1–Aug 31 · both profiles",
-        "zh": "1月1日至8月31日 · 双账号合计"
+        "en": "Estimated · Jan 1–Aug 31 · both profiles",
+        "zh": "估算 · 1月1日至8月31日 · 双账号合计"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026",
@@ -58,16 +58,16 @@
     },
     "historicalProductViews": {
       "value": {
-        "en": "About 147M",
-        "zh": "约 147M"
+        "en": "147M",
+        "zh": "147M"
       },
       "label": {
         "en": "Product views · 2026",
         "zh": "2026年商品浏览量"
       },
       "note": {
-        "en": "Jan 1–Aug 31 · both profiles",
-        "zh": "1月1日至8月31日 · 双账号合计"
+        "en": "Estimated · Jan 1–Aug 31 · both profiles",
+        "zh": "估算 · 1月1日至8月31日 · 双账号合计"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026",
@@ -102,8 +102,8 @@
         "zh": "$1.4M+"
       },
       "units": {
-        "en": "About 57.7K",
-        "zh": "约 57.7K"
+        "en": "57.7K",
+        "zh": "57.7K"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026",
@@ -204,8 +204,8 @@
         "zh": "$2.5M+"
       },
       "units": {
-        "en": "About 101.8K",
-        "zh": "约 101.8K"
+        "en": "101.8K",
+        "zh": "101.8K"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026",
@@ -309,8 +309,8 @@
         "zh": "$400K+"
       },
       "units": {
-        "en": "About 13.4K",
-        "zh": "约 13.4K"
+        "en": "13.4K",
+        "zh": "13.4K"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026 (approx.)",
@@ -353,8 +353,8 @@
         "zh": "$250K+"
       },
       "units": {
-        "en": "About 10.3K",
-        "zh": "约 10.3K"
+        "en": "10.3K",
+        "zh": "10.3K"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026 (approx.)",
@@ -397,8 +397,8 @@
         "zh": "$140K+"
       },
       "units": {
-        "en": "About 6.3K",
-        "zh": "约 6.3K"
+        "en": "6.3K",
+        "zh": "6.3K"
       },
       "period": {
         "en": "Apr 1–Aug 31, 2026",
@@ -415,8 +415,8 @@
         "zh": "$100K+"
       },
       "units": {
-        "en": "About 4.5K",
-        "zh": "约 4.5K"
+        "en": "4.5K",
+        "zh": "4.5K"
       },
       "period": {
         "en": "May 1–Aug 31, 2026",
@@ -439,7 +439,8 @@
       "Liposomal Glutathione combines complete April-August monthly records for both creator profiles; Testosterone+ combines complete May-August monthly records for both profiles. These product-only periods have no earlier baseline added. Rounded dashboard displays make their sums approximate. Product examples use the period printed on each card and remain subsets of overall attributed GMV.",
       "Selected-period video views, profile views, likes, comments and shares are exact sums of the reported Jan 1-Aug 31, 2026 TikTok Studio export integers, including signed comment adjustments. Both profiles have all 243 daily rows. CSV timezone is not stated. Cross-account totals are events, not deduplicated people. Period likes remain separate from dated public-profile total likes and followers.",
       "Dollar values ending in + are clean rounded presentations of source-based estimates, not exact totals or certified raw-platform minimums. In particular, the rounded Astaxanthin display uses the central source-display sum; its rounding uncertainty can cross the displayed threshold. Visible estimate labels and period qualifications remain. Existing lifetime GMV retains its separately disclosed historical-baseline assumption. Package prices are exact and unchanged.",
-      "NMN and Magnesium show documented partial subtotals from the historical Jan 1-Jun 8 baseline plus only the matched, non-overlapping records available through Aug 31. Their unit subtotals use the same included records. Missing account/month cells remain unknown, not zero, and these cards do not claim complete Jan-Aug results. Source definitions, prior timezone assumptions and potential reporting adjustments remain limitations."
+      "NMN and Magnesium show documented partial subtotals from the historical Jan 1-Jun 8 baseline plus only the matched, non-overlapping records available through Aug 31. Their unit subtotals use the same included records. Missing account/month cells remain unknown, not zero, and these cards do not claim complete Jan-Aug results. Source definitions, prior timezone assumptions and potential reporting adjustments remain limitations.",
+      "Approximation prefixes are omitted from large unit and view figures for the selected presentation. Estimate wording remains in the adjacent metric note or label. Numeric magnitudes, underlying status, dates, source assumptions and documented partial-coverage distinctions are unchanged; no plus sign is added to non-currency values."
     ],
     "productTotalsAreSubsets": true
   },

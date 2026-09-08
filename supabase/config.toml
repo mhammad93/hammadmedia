@@ -1,0 +1,4 @@
+# A private machine-to-machine header is verified in core.mjs before any work.
+# JWT verification must be off for this non-JWT credential; this is not an anonymous endpoint.
+[functions.intake-watchdog]
+verify_jwt = false

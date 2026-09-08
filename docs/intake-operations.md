@@ -70,7 +70,9 @@ Never add `--debug`, `--verbose` or `--trace` to a credential-bearing test. Read
 
 **Current status: staged, not configured or delivery-verified.** Returning 503 or writing a count-only log does not notify an operator by itself. Do not describe alerting as live until the selected channel receives a controlled test and the operator acknowledges it.
 
-Before intake activation, the release record must name the primary operator, backup, alert destination, response expectation and escalation path, and include evidence for:
+Primary operator: **Mohammed**. Authorized private alert destination: **contact@hammadmedia.com**. Backup: **unassigned**; no round-the-clock response commitment is implied. The source-only minimum is specified in [the watchdog setup and activation checklist](intake-watchdog-setup.md). It uses an independent Supabase schedule, a persisted production-worker completion heartbeat and deduplicated count-only Resend notices. It is default-off and has not been deployed or delivery-verified.
+
+Before intake activation, the release record must name the primary operator, backup (or explicitly unassigned coverage), alert destination, response expectation and escalation path, and include evidence for:
 
 - any manual-review item or unresolved item older than 15 minutes;
 - intake/worker/database failures and rejected provider credentials;

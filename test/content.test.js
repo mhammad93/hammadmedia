@@ -7,6 +7,8 @@ const {createHash} = require('node:crypto');
 const content = require('../content.json');
 const performance = require('../performance.json');
 const ROOT = path.resolve(__dirname, '..');
+const numericDisplay = value => value.replace(/^(?:About|约)\s+/, '');
+const numericPair = value => Object.fromEntries(Object.entries(value).map(([locale, text]) => [locale, numericDisplay(text)]));
 
 function bilingual(value) {
   assert.deepEqual(Object.keys(value).sort(), ['en', 'zh']);
@@ -48,14 +50,17 @@ test('all displayed metrics retain a bilingual period and a truthful estimate or
   assert.match(performance.metrics.allTimeGmv.note.en, /Estimated/);
   assert.equal(performance.metrics.allTimeVideoViews.asOf, '2026-08-31');
   assert.equal(performance.metrics.allTimeVideoViews.status, 'estimated_rollforward');
-  assert.match(performance.metrics.allTimeVideoViews.value.en, /^About /);
+  assert.equal(performance.metrics.allTimeVideoViews.value.en, '455M');
+  assert.match(performance.metrics.allTimeVideoViews.note.en, /Estimated/);
   assert.match(performance.metrics.allTimeVideoViews.label.en, /video views/i);
   assert.equal(performance.metrics.historicalProductViews.end, '2026-08-31');
   assert.equal(performance.metrics.historicalProductViews.status, 'approximate_derived_update');
-  assert.match(performance.metrics.historicalProductViews.value.en, /^About /);
+  assert.equal(performance.metrics.historicalProductViews.value.en, '147M');
+  assert.match(performance.metrics.historicalProductViews.note.en, /Estimated/);
   assert.equal(performance.metrics.janAugUnits.start, '2026-01-01');
   assert.equal(performance.metrics.janAugUnits.end, '2026-08-31');
-  assert.match(performance.metrics.janAugUnits.value.en, /^About /);
+  assert.equal(performance.metrics.janAugUnits.value.en, '159K');
+  assert.match(performance.metrics.janAugUnits.note.en, /Estimated/);
   assert.match(performance.metrics.janAugGmv.value.en, /^\$\d+(?:\.\d+)?[KM]\+$/);
   assert.equal(performance.methodology.productTotalsAreSubsets, true);
   assert.match(performance.methodology.notes.join(' '), /timezone.*not recorded/);
@@ -75,11 +80,10 @@ test('product dates distinguish historical baselines, matched extensions and com
   for (const [key, p] of Object.entries(performance.products)) {
     bilingual(p.gmv); bilingual(p.units); bilingual(p.period);
     assert.deepEqual([p.start, p.end, p.status], periods[key]);
-    const approximate = p.status !== 'documented_partial_subtotal_not_complete_period';
     assert.match(p.gmv.en, /^\$\d+(?:\.\d+)?[KM]\+$/);
-    assert.equal(p.units.en.startsWith('About '), approximate);
+    assert.match(p.units.en, /^\d[\d,.]*[KM]?$/);
     assert.equal(p.gmv.zh, p.gmv.en);
-    assert.equal(p.units.zh.startsWith('约 '), approximate);
+    assert.equal(p.units.zh, p.units.en);
   }
 });
 
@@ -90,17 +94,17 @@ test('non-monetary values and scopes preserve the approved evidence draft after 
   const source = JSON.parse(fs.readFileSync(file, 'utf8'));
   assert.ok(source.jan_aug_product_views, 'Owner-approved product-view update must have a separate dated audit; preserve its historic baseline.');
   assert.ok(source.all_time_video_views, 'The active lifetime estimate must use audited video exports, separately from the superseded mixed series.');
-  assert.equal(performance.metrics.allTimeVideoViews.value.en, source.all_time_video_views.display);
-  assert.equal(performance.metrics.janAugUnits.value.en, source.items.display);
-  assert.equal(performance.metrics.historicalProductViews.value.en, source.jan_aug_product_views.display);
+  assert.equal(performance.metrics.allTimeVideoViews.value.en, numericDisplay(source.all_time_video_views.display));
+  assert.equal(performance.metrics.janAugUnits.value.en, numericDisplay(source.items.display));
+  assert.equal(performance.metrics.historicalProductViews.value.en, numericDisplay(source.jan_aug_product_views.display));
   assert.equal(performance.metrics.historicalProductViews.end, source.jan_aug_product_views.end);
   for (const a of source.accounts) {
     const actual = performance.accounts[a.handle.slice(1)];
-    assert.equal(actual.units.en, a.items);
+    assert.equal(actual.units.en, numericDisplay(a.items));
   }
   for (const p of source.updated_products) {
     const actual = Object.values(performance.products).find(v => v.title === p.title);
-    assert.equal(actual.units.en, p.items);
+    assert.equal(actual.units.en, numericDisplay(p.items));
     assert.equal(actual.end, p.as_of);
   }
   for (const p of source.products_to_keep_at_prior_date) {
@@ -229,8 +233,8 @@ test('product-view extension reconciles only the six nonoverlapping source perio
   assert.equal(audit.calculation.account_display_basis_total, 105800000 + increment);
   assert.equal(audit.mapping.official_metric_equivalence_verified, false);
   assert.equal(audit.mapping.authorization_quote, 'Yes just use product impressions as views');
-  assert.equal(performance.metrics.historicalProductViews.value.en, audit.public_metric.value.en);
-  assert.deepEqual(performance.metrics.historicalProductViews, audit.public_metric);
+  assert.deepEqual(performance.metrics.historicalProductViews, {...audit.public_metric,
+    value:numericPair(audit.public_metric.value),note:{en:'Estimated · Jan 1–Aug 31 · both profiles',zh:'估算 · 1月1日至8月31日 · 双账号合计'}});
 });
 
 test('all-time video views add only post-June8 video rows and preserve the rounded baseline', t => {
@@ -256,7 +260,7 @@ test('all-time video views add only post-June8 video rows and preserve the round
   assert.equal(audit.calculation.video_increment, increment);
   assert.equal(audit.calculation.baseline_display_plus_increment, 416000000 + increment);
   assert.equal(audit.supersedes, 'all-time-views-owner-mapping-2026-09-08.json');
-  assert.deepEqual(performance.metrics.allTimeVideoViews, audit.public_metric);
+  assert.deepEqual(performance.metrics.allTimeVideoViews, {...audit.public_metric,value:numericPair(audit.public_metric.value)});
   assert.match(performance.metrics.allTimeVideoViews.label.en, /video views/i);
   assert.match(performance.metrics.allTimeVideoViews.note.en, /Estimated through Aug 31, 2026/);
 });
@@ -317,7 +321,8 @@ test('new period-scoped product values match the reviewed private draft when ava
   const source = JSON.parse(fs.readFileSync(file, 'utf8'));
   for (const key of ['glutathione', 'testosterone']) {
     const actual = performance.products[key], approved = source.products[key];
-    for (const field of ['units', 'period', 'start', 'end', 'status']) assert.deepEqual(actual[field], approved[field], `${key}.${field}`);
+    assert.deepEqual(actual.units, numericPair(approved.units));
+    for (const field of ['period', 'start', 'end', 'status']) assert.deepEqual(actual[field], approved[field], `${key}.${field}`);
     assert.equal(content.receipts.items.find(p => p.performanceKey === key).videoUrl, null);
   }
 });

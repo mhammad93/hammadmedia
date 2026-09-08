@@ -1,6 +1,6 @@
 # Website intake: setup and operations
 
-This is local, reviewable code. Writing these files has not provisioned a service, changed production, created a CRM record, or sent an email. The existing production FormSubmit form is unaffected until the reviewed website deployment is promoted.
+As of September 8, 2026, the providers are provisioned and one explicitly authorized, clearly labeled preview inquiry has passed the real browser-to-Notion-and-inbox test, including the thank-you receipt and duplicate replay. The exact test opportunity was closed with No chase and no financial value. The signed Resend webhook is enabled on the existing production backend at revision `fe8ddafdf4eb64847648e345eeb5d706b122c953`. New production intake remains disabled (`INTAKE_ENABLED=false`) pending the approved full website launch; the existing production FormSubmit form remains in place. Production scheduling, alert delivery and subsequent provider verification are tracked separately in the dated release records.
 
 The website functions can run in the existing Vercel project and Pro team. Supabase, Resend and Cloudflare are separate services with their own quotas and any applicable charges; a Vercel integration listing does not prove that a project or credentials exist.
 
@@ -12,6 +12,8 @@ The website functions can run in the existing Vercel project and Pro team. Supab
 4. Partial failures retry with backoff. Uncertain Notion creates are reconciled by exact Deal ID and held for human review when necessary. They are never blindly created again. Email retries reuse the frozen request and key within a conservative 23-hour window.
 
 Notion is the sole business CRM. Supabase stores delivery state and a temporary copy needed to recover failed delivery; it is not a second pipeline.
+
+Notification emails carry `Submission: HM-WEB-{UUID}`. The website service has already created that Notion opportunity; inbox and CRM desks must look up the exact Deal ID before acting and must not create another opportunity from the notification email. Preserve sticky ownership and human approval for subsequent CRM changes and outbound messages.
 
 ## Provision before enabling
 
@@ -34,7 +36,7 @@ Keep `INTAKE_ENABLED=false` and `INTAKE_PROVISIONED=false` while doing the follo
 
 | Notion property | Type | Website intake value |
 |---|---|---|
-| Name | title | Brand — Website inquiry |
+| Name | title | Brand: Website inquiry |
 | Company | rich_text | Submitted brand |
 | Contact name | rich_text | Optional contact name |
 | Email | email | Submitted email |
@@ -56,7 +58,7 @@ Package, proposed commission and timing are inquiry details in Notes, not accept
 - Preserve the existing inbox's root-domain MX records and mail routing. A sending subdomain does not require migrating `contact@hammadmedia.com` to Resend. Add only the records required for the selected sending subdomain; inspect SPF/DKIM/DMARC alignment before enabling.
 - Set `RESEND_API_KEY` to a key restricted to sending from that verified domain when supported. Set `RESEND_FROM_EMAIL=intake@notifications.hammadmedia.com` (or another verified sender under hammadmedia.com).
 - Recipient is fixed in server code as `contact@hammadmedia.com`; visitors cannot supply To, Cc, Bcc, From or arbitrary email headers. All email content is plain text. Reply-To is the validated visitor email. A reply is a human action in the inbox; no reply is sent automatically.
-- Confirm Resend account/domain readiness. A provider `id` means **accepted**, not delivered. This implementation deliberately has no unsigned webhook and makes no inbox-delivery claim. Use Resend's delivery/bounce events and account alerts operationally. A signed webhook can be added separately if automatic delivery-state tracking is needed.
+- Confirm Resend account/domain readiness. A provider `id` means **accepted**, not delivered. The signed Resend delivery webhook is enabled on the existing production backend, independently of new inquiry intake. It records authenticated delivery/bounce evidence with exact provider-message matching and no automatic resend or CRM mutation. Provider-reported delivery and independently verified inbox arrival remain distinct. See [the signed webhook runbook](intake-resend-webhook.md) for its controls and verification records.
 
 ### 4. Turnstile and origin controls
 
