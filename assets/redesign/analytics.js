@@ -18,11 +18,13 @@
   'use strict';
   function campaignFields(search){
     const query=new URLSearchParams(search), fields={};
-    const mapping={utm_id:'campaign_id',utm_source:'campaign_source',utm_medium:'campaign_medium',utm_campaign:'campaign_name',utm_content:'campaign_content'};
+    // Exact public labels, not a permissive syntax check. Extend only through
+    // the reviewed controlled-campaign-links.md convention and matching tests.
+    const allowed={utm_source:['tiktok','brand_kit','agency_outreach'],utm_medium:['organic_social','referral','email'],utm_campaign:['paid_partnerships'],utm_content:['drew_review_bio','drew_review1_bio','en_overview','zh_overview','agency_overview']};
+    const mapping={utm_source:'campaign_source',utm_medium:'campaign_medium',utm_campaign:'campaign_name',utm_content:'campaign_content'};
     for(const [key,target] of Object.entries(mapping)){
-      const value=query.get(key);
-      // Campaign labels only: no email address, URL, free-text search query or arbitrary URL parameter.
-      if(value&&/^[a-z0-9][a-z0-9._-]{0,99}$/i.test(value))fields[target]=value;
+      const values=query.getAll(key);
+      if(values.length===1&&allowed[key].includes(values[0]))fields[target]=values[0];
     }
     return fields;
   }

@@ -57,3 +57,7 @@
 @media(max-width:650px){.hero-photo{height:auto;aspect-ratio:4/5}.hero-photo>img{object-position:center;object-fit:contain}}
 
 @media(max-width:650px){.product-numbers strong{font-size:clamp(20px,5.6vw,28px);white-space:nowrap}}
+
+@media(max-width:650px){.price-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.price-grid h2{min-width:0}.price-grid h2 br{display:initial}.mini-price{min-width:0}.mini-price strong{font-size:clamp(16px,5.2vw,23px);white-space:nowrap}.sticky-mobile .btn{white-space:nowrap}}
+
+@media(max-width:380px){.hero-case{left:12px;padding:10px 12px;max-width:168px}.hero-case strong{font-size:22px}.hero-case span{font-size:8px}.hero-label{right:12px;width:112px;font-size:7px;letter-spacing:.08em}.hero-label a{font-size:8px;padding:4px 6px}}

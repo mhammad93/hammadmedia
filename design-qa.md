@@ -44,7 +44,7 @@ All image files are under `../private/design-qa/`:
 
 Primary interactions verified: package selection/preselection, required category for exclusivity, paid acknowledgment and backend field alignment, theme toggle/persistence, language navigation, form configuration fallback, direct confirmation state, consent decline/persistence, settings reopen, acceptance loader and withdrawal/removal. Browser DOM showed zero Google loaders before consent and after decline, one only after acceptance, then zero after withdrawal. External tracking was blocked by the local QA server; live collection is a separate deployment check.
 
-The combined website suite passes 67 tests with one optional PostgreSQL integration test skipped in the default run. The pinned actual PostgreSQL integration was separately run earlier and passed after the retention fix. Tests cover accepted/rejected receipt IDs, uncertain retry, refresh, same-reference replay, no false thank-you conversion, privacy-safe payloads, consent expiry/withdrawal and preview isolation. Browser error/warning log checks returned no application errors in the reviewed public pages.
+The combined website suite passes 71 tests with one optional PostgreSQL integration test skipped in the default run. The pinned actual PostgreSQL integration was separately run earlier and passed after the retention fix. Tests cover accepted/rejected receipt IDs, uncertain retry, refresh, same-reference replay, no false thank-you conversion, privacy-safe payloads, consent expiry/withdrawal and preview isolation. Browser error/warning log checks returned no application errors in the reviewed public pages.
 
 ## Remaining release gates and polish
 
@@ -71,3 +71,5 @@ Evidence in `../private/design-qa/`: desktop-dark-refined.png; desktop-dark-bran
 The checked phone/desktop views had no horizontal overflow or broken active images. Browser error logs were empty; preview Google-script count remained zero. Independent review found no code blocker; the flagged 550–650 pixel hero crop was corrected and verified at 650 pixels. Final result remains passed for this review-preview scope.
 
 Generated CSS and JavaScript URLs now include content hashes. This prevents an existing review session from retaining a previous visual or tracking script after a new deployment; changed/stable byte regression checks pass across every generated route.
+
+The hosted review exposed a narrower349-pixel viewport than the initial phone check. The mini-price grid now permits tracks to shrink, keeps the heading on two clean lines and scales prices within their columns. At320 and349 pixels, page width equals viewport width and the hero proof/profile labels do not overlap. Evidence: narrow-phone-pricing-refined.png; final DOM geometry checks after the label refinement. Campaign attribution also uses a reviewed public-value registry; unregistered labels and IDs are excluded.

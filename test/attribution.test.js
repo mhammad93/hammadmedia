@@ -16,8 +16,8 @@ function page(url, {store = new Map(), referrer = '', unavailable = false} = {})
 
 test('earliest landing and campaign survive language and privacy hops in the same tab', () => {
   const store = new Map();
-  const first = page('https://hammadmedia.com/?utm_source=tiktok&utm_medium=creator_bio&utm_campaign=wellness_2026&utm_content=drew-review', {store, referrer:'https://www.tiktok.com/@drew.review?email=private@example.com#secret'});
-  const expected = {page_path:'/',referrer:'https://www.tiktok.com',utm_source:'tiktok',utm_medium:'creator_bio',utm_campaign:'wellness_2026',utm_content:'drew-review'};
+  const first = page('https://hammadmedia.com/?utm_source=tiktok&utm_medium=organic_social&utm_campaign=paid_partnerships&utm_content=drew_review_bio', {store, referrer:'https://www.tiktok.com/@drew.review?email=private@example.com#secret'});
+  const expected = {page_path:'/',referrer:'https://www.tiktok.com',utm_source:'tiktok',utm_medium:'organic_social',utm_campaign:'paid_partnerships',utm_content:'drew_review_bio'};
   assert.deepEqual(first.current(),expected);
   assert.deepEqual(page('https://hammadmedia.com/zh/',{store,referrer:'https://hammadmedia.com/?utm_source=tiktok'}).current(),expected);
   assert.deepEqual(page('https://hammadmedia.com/zh/privacy/',{store,referrer:'https://hammadmedia.com/zh/'}).current(),expected);
@@ -26,11 +26,11 @@ test('earliest landing and campaign survive language and privacy hops in the sam
 
 test('the latest valid campaign replaces rather than merges campaign fields while keeping the first landing', () => {
   const store=new Map();
-  page('https://hammadmedia.com/zh/?utm_source=tiktok&utm_medium=bio&utm_campaign=old&utm_content=old-card',{store,referrer:'https://first.example/path'});
-  const later=page('https://hammadmedia.com/?utm_source=email&utm_campaign=launch',{store,referrer:'https://later.example/path'});
-  assert.deepEqual(later.current(),{page_path:'/zh/',referrer:'https://first.example',utm_source:'email',utm_campaign:'launch'});
-  later.scope.location.search='?utm_source=partner&utm_medium=referral';
-  assert.deepEqual(later.current(),{page_path:'/zh/',referrer:'https://first.example',utm_source:'partner',utm_medium:'referral'});
+  page('https://hammadmedia.com/zh/?utm_source=tiktok&utm_medium=organic_social&utm_campaign=paid_partnerships&utm_content=drew_review_bio',{store,referrer:'https://first.example/path'});
+  const later=page('https://hammadmedia.com/?utm_source=agency_outreach&utm_campaign=paid_partnerships',{store,referrer:'https://later.example/path'});
+  assert.deepEqual(later.current(),{page_path:'/zh/',referrer:'https://first.example',utm_source:'agency_outreach',utm_campaign:'paid_partnerships'});
+  later.scope.location.search='?utm_source=brand_kit&utm_medium=referral';
+  assert.deepEqual(later.current(),{page_path:'/zh/',referrer:'https://first.example',utm_source:'brand_kit',utm_medium:'referral'});
 });
 
 test('form values, free-text terms, ad IDs, arbitrary parameters and raw referrer paths never enter storage or payload', () => {
@@ -63,8 +63,23 @@ test('storage restrictions, internal/non-HTTPS referrers and caller mutation do 
 });
 
 test('returned attribution conforms to the existing backend without adding fields or changing the submission identity', () => {
-  const app=page('https://hammadmedia.com/zh/?utm_source=tiktok&utm_medium=bio&utm_campaign=launch&utm_content=profile',{referrer:'https://partner.example/path'});
+  const app=page('https://hammadmedia.com/zh/?utm_source=tiktok&utm_medium=organic_social&utm_campaign=paid_partnerships&utm_content=drew_review1_bio',{referrer:'https://partner.example/path'});
   const result=validate({submission_id:'fce4ae44-a499-4c0e-a149-4ceda4a2992f',brand:'Example',email:'brand@example.com',product:'Product',engagement:'5 videos',locale:'zh',paid_partnership_ack:true,attribution:app.current()});
   assert.equal(result.payload.attribution.page_path,'/zh/');assert.equal(result.payload.attribution.utm_source,'tiktok');
   assert.equal(result.payload.locale,'zh');assert.equal(result.payload.submission_id,'fce4ae44-a499-4c0e-a149-4ceda4a2992f');
+});
+
+test('unregistered names, phone-shaped values and IDs cannot enter new or restored campaign attribution', () => {
+  const url='https://hammadmedia.com/?utm_source=jane.doe&utm_medium=12125550123&utm_campaign=customer-938475&utm_content=receipt_123&utm_id=public_or_private_id';
+  const fresh=page(url);
+  assert.deepEqual(fresh.current(),{page_path:'/'});
+  assert.doesNotMatch(JSON.stringify([...fresh.store.values()]),/jane|12125550123|customer|receipt_123|utm_id/);
+  const store=new Map([['hm-attribution-v1',JSON.stringify({version:1,landing:{page_path:'/'},campaign:{utm_source:'jane.doe',utm_medium:'12125550123',utm_campaign:'customer-938475',utm_content:'receipt_123'}})]]);
+  assert.deepEqual(page('https://hammadmedia.com/zh/',{store}).current(),{page_path:'/'});
+  assert.doesNotMatch(store.get('hm-attribution-v1'),/jane|12125550123|customer|receipt_123/);
+});
+
+test('registry values stay field-specific and ambiguous repeated query values are rejected', () => {
+  const app=page('https://hammadmedia.com/?utm_source=tiktok&utm_source=jane.doe&utm_medium=tiktok&utm_campaign=paid_partnerships&utm_content=drew_review1_bio');
+  assert.deepEqual(app.current(),{page_path:'/',utm_campaign:'paid_partnerships',utm_content:'drew_review1_bio'});
 });

@@ -300,7 +300,7 @@ test('production Analytics configuration strips query strings and fragments from
 });
 
 // A small DOM substitute exercises the actual client state machine without contacting any service.
-function clientHarness({store = new Map(), post, locale = 'en', preview = false, enabled = true, query='?utm_source=campaign&email=private@example.com'} = {}) {
+function clientHarness({store = new Map(), post, locale = 'en', preview = false, enabled = true, query='?utm_source=tiktok&email=private@example.com'} = {}) {
   const calls = [], analytics = [], scripts = [];
   class Element {
     constructor(value='') {this.value=value;this.checked=false;this.disabled=false;this.required=false;this.hidden=false;this.textContent='';this.dataset={};this.handlers={};this.children=[];this.classList={toggle(){}};}
@@ -351,7 +351,7 @@ test('uncertain delivery survives refresh with the same reference and frozen att
   await restored.submit();
   const withoutToken=({turnstile_token,...body})=>body;
   assert.deepEqual(withoutToken(restored.calls[0]),withoutToken(first.calls[0]));
-  assert.equal(restored.calls[0].attribution.utm_source,'campaign');
+  assert.equal(restored.calls[0].attribution.utm_source,'tiktok');
   assert.equal(store.has('hm-pending-inquiry-v1'),false);
   assert.match(restored.status.textContent,/inquiry has been received/);
   assert.equal(restored.button.disabled,true);

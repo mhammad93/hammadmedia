@@ -40,7 +40,7 @@ function browser(options = {}) {
     document,
     location: {
       origin: 'https://www.hammadmedia.com', hostname: options.hostname || 'www.hammadmedia.com', pathname: '/zh/privacy/',
-      search: '?utm_source=tiktok&utm_campaign=creator_2026&email=private@example.com&utm_term=sensitive&gclid=opaque',
+      search: '?utm_source=tiktok&utm_campaign=paid_partnerships&email=private@example.com&utm_term=sensitive&gclid=opaque',
       reload() { reloads++; },
     },
     localStorage: {
@@ -87,7 +87,7 @@ test('declining persists the choice without tracking and settings can reopen it'
 });
 
 test('a saved acceptance initializes one sanitized page view with advertising disabled', () => {
-  const b = browser({ raw: saved('accepted'), attribution: { page_path: '/', referrer: 'https://partner.example', utm_source: 'newsletter', utm_medium: 'email', utm_campaign: 'launch', email: 'private@example.com' } });
+  const b = browser({ raw: saved('accepted'), attribution: { page_path: '/', referrer: 'https://partner.example', utm_source: 'agency_outreach', utm_medium: 'email', utm_campaign: 'paid_partnerships', email: 'private@example.com' } });
   assert.equal(b.scripts.length, 1);
   assert.equal(b.scripts[0].src, 'https://www.googletagmanager.com/gtag/js?id=G-NEX74824JL');
   assert.equal(b.scripts[0].referrerPolicy, 'no-referrer');
@@ -96,7 +96,7 @@ test('a saved acceptance initializes one sanitized page view with advertising di
   assert.equal(config.send_page_view, false);
   assert.equal(config.allow_google_signals, false);
   assert.equal(config.allow_ad_personalization_signals, false);
-  assert.equal(config.campaign_source, 'newsletter');
+  assert.equal(config.campaign_source, 'agency_outreach');
   const page = events.filter(e => e[0] === 'event' && e[1] === 'page_view');
   assert.equal(page.length, 1);
   assert.equal(page[0][2].page_location, 'https://www.hammadmedia.com/zh/privacy/');
