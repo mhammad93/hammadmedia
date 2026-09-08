@@ -6,6 +6,15 @@ const track=(event,params={})=>{if(document.body.dataset.preview==='false'&&type
 const themeButton=document.querySelector('.theme-toggle');
 function updateThemeButton(){if(!themeButton)return;const dark=root.dataset.theme!=='light';themeButton.textContent=dark?t('Light','浅色'):t('Dark','深色');themeButton.setAttribute('aria-label',dark?t('Switch to light theme','切换浅色模式'):t('Switch to dark theme','切换深色模式'));themeButton.setAttribute('aria-pressed',String(!dark));}
 updateThemeButton();themeButton?.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='light'?'dark':'light';try{localStorage.setItem('hm-theme',root.dataset.theme)}catch{}updateThemeButton();});
+const header=document.querySelector('.site-header');
+if(header){
+  const measureHeader=()=>root.style.setProperty('--header-height',`${Math.ceil(header.getBoundingClientRect().height)}px`);
+  const updateHeader=()=>header.classList.toggle('is-scrolled',window.scrollY>24);
+  measureHeader();updateHeader();
+  window.addEventListener('scroll',updateHeader,{passive:true});
+  window.addEventListener('resize',measureHeader,{passive:true});
+  if(typeof ResizeObserver==='function')new ResizeObserver(measureHeader).observe(header);
+}
 document.querySelector('[data-language-switch]')?.addEventListener('click',()=>track('language_select',{selected_language:zh?'en':'zh'}));
 document.querySelectorAll('a[href^="mailto:"],a[href^="https://wa.me/"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{contact_method:a.href.startsWith('mailto:')?'email':'whatsapp',cta_location:a.closest('.conversion-dock')?'sticky':a.closest('.site-footer')?'footer':'contact'})));
 document.querySelectorAll('[data-inquiry-cta]').forEach(a=>a.addEventListener('click',()=>track('inquiry_cta_click',{cta_location:a.closest('.site-header')?'header':'sticky'})));

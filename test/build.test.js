@@ -352,10 +352,10 @@ test('both forms match the server qualification rules and expose only the same a
   }
 });
 
-test('bilingual public policies preserve paid-only qualification, creative control, separate advertising rights and old-content exclusivity', () => {
+test('bilingual public policies preserve paid-only qualification, creative control, included Spark authorization and old-content exclusivity', () => {
   const en = read('preview'), zh = read('preview','zh/index.html');
-  for (const text of ['100% upfront', 'Commission-only and gifted-only campaigns are not accepted', 'creative control stays on our side', 'not automatically included in the package price', 'Existing content stays live', 'includes no videos', 'does not book a campaign or commit you to payment', 'not Hammad Media revenue or commission']) assert.ok(en.includes(text), text);
-  for (const text of ['100%预付', '不接受纯佣金或仅赠送样品', '创作控制权保留在我方', '不自动包含在套餐价格内', '已有内容继续保留', '不含视频', '不产生付款义务', '并非 Hammad Media 的营收或佣金']) assert.ok(zh.includes(text), text);
+  for (const text of ['100% upfront', 'Commission-only and gifted-only campaigns are not accepted', 'creative control stays on our side', '365 days of Spark Ads authorization', 'Ad spend and campaign management are not included', 'Existing content stays live', 'includes no videos', 'does not book a campaign or commit you to payment', 'not Hammad Media revenue or commission']) assert.ok(en.includes(text), text);
+  for (const text of ['100%预付', '不接受纯佣金或仅赠送样品', '创作控制权保留在我方', '365天 Spark Ads 广告授权', '不含广告预算与投放管理', '已有内容继续保留', '不含视频', '不产生付款义务', '并非 Hammad Media 的营收或佣金']) assert.ok(zh.includes(text), text);
   for (const file of ['privacy/index.html','zh/privacy/index.html']) {
     const privacy = read('preview',file);
     for (const provider of ['Vercel','Turnstile','Supabase','Notion','Resend','Google Analytics']) assert.ok(privacy.includes(provider));
@@ -363,6 +363,39 @@ test('bilingual public policies preserve paid-only qualification, creative contr
   for (const file of ['404.html']) {
     assert.match(read('preview',file), /does not confirm an inquiry was received/);
     assert.match(read('preview',file), /noindex/);
+  }
+});
+
+test('all four video packages consistently include 365-day Spark authorization without granting unrestricted advertising services', () => {
+  for (const mode of ['preview','production']) for (const locale of ['en','zh']) {
+    const html=read(mode,locale==='en'?'index.html':'zh/index.html');
+    const included=locale==='en'?'365-day Spark Ads authorization included':'含365天 Spark Ads 广告授权';
+    const cards=[...html.matchAll(/<article class="package[^"]*" data-package-videos="(\d+)">([\s\S]*?)<\/article>/g)];
+    assert.deepEqual(cards.map(m=>Number(m[1])),[15,30,5,10]);
+    for (const [,quantity,card] of cards) assert.ok(card.includes(included),`${locale}: ${quantity} videos`);
+    for (const marker of ['hero','price-ribbon','packages section-space']) {
+      const section=[...html.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/g)].find(m=>m[0].includes(`class="${marker}`))?.[0];
+      assert.ok(section?.includes('365'),`${locale}: ${marker}`);
+    }
+    for (const marker of ['form-intro','contact-facts','package-terms']) {
+      const block=html.match(new RegExp(`<[^>]+class="${marker}"[^>]*>([\\s\\S]*?)<\\/(?:p|ul)>`))?.[1];
+      assert.ok(block?.includes('365'),`${locale}: ${marker}`);
+    }
+    const answer=html.match(/<details data-faq-key="advertising_rights">([\s\S]*?)<\/details>/)?.[1];
+    assert.ok(answer?.includes('365'));
+    for (const text of locale==='en'?[
+      'Ad spend and campaign management are not included',
+      'Other usage rights require separate agreement',
+      'GMV Max use still depends on TikTok eligibility and the necessary account permissions',
+      'posts, accounts and authorization dates'
+    ]:[
+      '费用不含广告预算与投放管理', '其他使用权须另行约定',
+      'GMV Max 使用仍须满足 TikTok 的适用条件并具备所需账号权限', '视频、账号与授权起止日期'
+    ]) assert.ok(answer.includes(text),`${locale}: ${text}`);
+    const exclusivity=html.match(/<div class="exclusive">([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(exclusivity.includes(locale==='en'?'No videos included':'费用不含视频'));
+    assert.ok(!exclusivity.includes('365'));
+    assert.doesNotMatch(html,/Advertising use requires separate agreement\.|广告使用须另行约定。|not automatically included in the package price|不自动包含在套餐价格内/);
   }
 });
 
@@ -533,15 +566,53 @@ test('15 and 30 lead bilingual package cards and selectors with unchanged fees a
   }
 });
 
-test('YTD strip draws dated GMV, profile views and shares from their distinct central evidence', () => {
-  for(const file of ['index.html','zh/index.html']){
-    const locale=file.startsWith('zh/')?'zh':'en',html=read('preview',file);
+test('shopping performance keeps its April-August denominator separate from January-August GMV', () => {
+  for(const mode of ['preview','production']) for(const file of ['index.html','zh/index.html']){
+    const locale=file.startsWith('zh/')?'zh':'en',html=read(mode,file);
     const strip=html.match(/<div class="ytd-strip">([\s\S]*?)<div class="brand-strip">/)[1];
-    assert.deepEqual([...strip.matchAll(/<strong>([^<]+)<\/strong>/g)].map(m=>m[1]),[performance.metrics.janAugGmv.value[locale],performance.engagement.profileViews.value[locale],performance.engagement.shares.value[locale]]);
-    assert.ok(strip.includes(performance.engagement.period[locale]));
-    for(const key of ['profileViews','shares'])assert.ok(strip.includes(performance.engagement[key].label[locale]));
-    assert.ok(strip.includes(locale==='en'?'GMV is estimated from documented sales records.':'GMV 根据已记录的销售数据估算。'));
-    assert.doesNotMatch(strip,/not unique people|purchase conversion rates|并非独立人数|购买转化率/);
+    const feature=strip.match(/<div class="ytd-feature">([\s\S]*?)<div class="ytd-heading">/)[1];
+    const shopping=strip.slice(strip.indexOf('<div class="ytd-heading">'));
+    assert.ok(feature.includes(performance.metrics.janAugGmv.value[locale]));
+    assert.ok(feature.includes(performance.metrics.janAugGmv.period[locale]));
+    assert.ok(feature.includes(performance.metrics.janAugGmv.label[locale]));
+    assert.ok(shopping.includes(performance.shoppingPerformance.period[locale]));
+    assert.ok(shopping.includes('GMT-8'));
+    assert.ok(shopping.includes(locale==='en'?'Estimated':'估算'));
+    assert.ok(!shopping.includes(performance.metrics.janAugGmv.period[locale]));
+    const keys=['productClicks','productCtr','gmvPerThousandImpressions','unitsPerHundredClicks'];
+    assert.deepEqual([...shopping.matchAll(/data-shopping-metric="([^"]+)"/g)].map(m=>m[1]),keys);
+    for(const key of keys){
+      const metric=performance.shoppingPerformance.metrics[key];
+      const card=shopping.match(new RegExp(`data-shopping-metric="${key}">([\\s\\S]*?)<\\/dd>`))[1];
+      assert.ok(card.includes(metric.value[locale]));assert.ok(card.includes(metric.label[locale]));
+    }
+    assert.ok(shopping.includes(performance.shoppingPerformance.note[locale]));
+    assert.doesNotMatch(strip,/402,574|235,289|Profile views|Shares|主页浏览量|分享数|3\.81%|ROAS|conversion rate|转化率/);
+  }
+});
+
+test('buyer FAQs clarify execution and commercial steps without changing the form contract or inventing client endorsements', () => {
+  for(const file of ['index.html','zh/index.html']){
+    const zh=file.startsWith('zh/'),html=read('preview',file);
+    const answers=Object.fromEntries([...html.matchAll(/<details data-faq-key="([^"]+)">([\s\S]*?)<\/details>/g)].map(m=>[m[1],m[2]]));
+    for(const [key,text] of zh?[
+      ['creative_control','自主选择适合的表达、场景和服装'],
+      ['creative_control','标准合作不包含品牌审批、修改或重拍'],
+      ['timing','书面协议和账单'],['timing','签约主体与产品品牌不同'],
+      ['timing','按约收到款项与样品后开始制作'],['timing','更换产品或商品链接'],
+      ['commission','自然流量订单与广告订单的佣金比例'],['commission','定向合作邀请'],
+      ['advertising_rights','发布后由我们手动提供授权码'],['advertising_rights','包括 Meta 广告及转载'],
+      ['international_teams','官方 TikTok 账号']
+    ]:[
+      ['creative_control','choosing the delivery, setting and wardrobe'],
+      ['creative_control','Standard campaigns do not include brand approval, revisions or re-filming'],
+      ['timing','written agreement and invoice'],['timing','legal entity for the agreement'],
+      ['timing','payment and samples are received'],['timing','product substitution or Shop link change'],
+      ['commission','organic and ads commission rates separately'],['commission','targeted collaboration invitation'],
+      ['advertising_rights','manual authorization codes after publication'],['advertising_rights','including Meta advertising or reposting'],
+      ['international_teams','official TikTok profiles']
+    ])assert.ok(answers[key].includes(text),text);
+    assert.doesNotMatch(html,/48 hours|48小时|guaranteed ROAS|unlimited revisions|无限修改/);
   }
 });
 

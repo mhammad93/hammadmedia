@@ -509,5 +509,65 @@
         "zh": "分享数"
       }
     }
+  },
+  "shoppingPerformance": {
+    "start": "2026-04-01",
+    "end": "2026-08-31",
+    "timezone": "GMT-8",
+    "status": "approximate_derived_from_rounded_monthly_overviews",
+    "period": {
+      "en": "Apr 1–Aug 31, 2026",
+      "zh": "2026年4月1日至8月31日"
+    },
+    "scope": {
+      "en": "Both creator profiles",
+      "zh": "双账号合计"
+    },
+    "metrics": {
+      "productClicks": {
+        "value": {
+          "en": "2.29M",
+          "zh": "2.29M"
+        },
+        "label": {
+          "en": "Product clicks",
+          "zh": "商品点击量"
+        }
+      },
+      "productCtr": {
+        "value": {
+          "en": "2.95%",
+          "zh": "2.95%"
+        },
+        "label": {
+          "en": "Product CTR",
+          "zh": "商品点击率（CTR）"
+        }
+      },
+      "gmvPerThousandImpressions": {
+        "value": {
+          "en": "$28.08",
+          "zh": "$28.08"
+        },
+        "label": {
+          "en": "Attributed GMV per 1,000 product impressions",
+          "zh": "每1,000次商品曝光的归因 GMV"
+        }
+      },
+      "unitsPerHundredClicks": {
+        "value": {
+          "en": "3.81",
+          "zh": "3.81"
+        },
+        "label": {
+          "en": "Attributed units per 100 product clicks",
+          "zh": "每100次商品点击的归因售出件数"
+        }
+      }
+    },
+    "note": {
+      "en": "Calculated from rounded TikTok Shop totals. Unit ratios count items, not orders.",
+      "zh": "根据 TikTok Shop 简写汇总数据估算。件数比率统计商品件数，并非订单数。"
+    }
   }
 }

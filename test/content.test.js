@@ -342,3 +342,26 @@ test('public metric source contains no earnings, contact details, private eviden
   };
   walk(performance);
 });
+
+
+test('shopping ratios reconcile to the independently audited ten monthly totals without inventing order conversions', t => {
+  const shopping=performance.shoppingPerformance;
+  assert.deepEqual([shopping.start,shopping.end,shopping.timezone],['2026-04-01','2026-08-31','GMT-8']);
+  assert.equal(shopping.status,'approximate_derived_from_rounded_monthly_overviews');
+  bilingual(shopping.period);bilingual(shopping.scope);bilingual(shopping.note);
+  for(const metric of Object.values(shopping.metrics)){bilingual(metric.value);bilingual(metric.label);}
+  assert.ok(!shopping.metrics.unitsPerHundredClicks.value.en.includes('%'));
+  assert.match(shopping.note.en,/rounded.*items, not orders/);
+  const source=path.join(ROOT,'../private/buyer-performance-metrics-20260908.json');
+  if(!fs.existsSync(source))return t.skip('Private source evidence is intentionally outside the deployment project.');
+  const audit=JSON.parse(fs.readFileSync(source,'utf8'));
+  assert.equal(audit.rows.length,10);
+  assert.equal(new Set(audit.rows.map(r=>`${r.account}/${r.month}`)).size,10);
+  assert.ok(audit.rows.every(r=>r.timezoneDisplay===shopping.timezone && r.start>=shopping.start && r.end<=shopping.end));
+  const sum=key=>audit.rows.reduce((total,r)=>total+r.metrics[key].approximateExpansion,0);
+  const clicks=sum('Product clicks'),impressions=sum('Product impressions'),gmv=sum('Attr. GMV'),units=sum('Attr. items sold');
+  const expected={productClicks:`${(clicks/1e6).toFixed(2)}M`,productCtr:`${(100*clicks/impressions).toFixed(2)}%`,gmvPerThousandImpressions:`$${(1000*gmv/impressions).toFixed(2)}`,unitsPerHundredClicks:(100*units/clicks).toFixed(2)};
+  for(const [key,value] of Object.entries(expected))assert.deepEqual(shopping.metrics[key].value,{en:value,zh:value});
+  assert.equal(audit.conversionAvailability.actualOrderCount,null);
+  assert.equal(audit.conversionAvailability.clickToOrderConversionRate,null);
+});
