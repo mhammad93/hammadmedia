@@ -311,6 +311,29 @@ test('localized routes, navigation fragments and referenced local assets resolve
   }
 });
 
+test('header sections preserve tagged landing URLs and return secondary pages to the localized home', () => {
+  const sections = ['#results', '#packages', '#process', '#faq', '#contact'];
+  const campaign = '?utm_source=tiktok&utm_medium=organic_social&utm_campaign=paid_partnerships&utm_content=creator_bio';
+  for (const mode of ['preview', 'production']) for (const [home, other] of [['/', '/zh/'], ['/zh/', '/']]) {
+    for (const page of ['', 'privacy/', 'thanks/']) {
+      const html = read(mode, home.slice(1) + page + 'index.html');
+      const header = html.match(/<header class="site-header">[\s\S]*?<\/header>/)[0];
+      const navigation = header.match(/<nav class="main-nav"[\s\S]*?<\/nav>/)[0];
+      const current = new URL(home + page + campaign, 'https://hammadmedia.com');
+      const destinations = [...navigation.matchAll(/<a\b[^>]*>/g)].map(match => new URL(attrs(match[0]).href, current));
+      assert.deepEqual(destinations.map(url => url.hash), sections);
+      for (const destination of destinations) {
+        assert.equal(destination.pathname, home);
+        assert.equal(destination.search, page ? '' : campaign, `${mode}: ${home}${page} -> ${destination.hash}`);
+        assert.ok(read(mode, home.slice(1) + 'index.html').includes(`id="${destination.hash.slice(1)}"`));
+      }
+      assert.match(navigation, /data-inquiry-cta/);
+      const language = attrs(header.match(/<a\b[^>]*data-language-switch[^>]*>/)[0]);
+      assert.equal(language.href, other + page);
+    }
+  }
+});
+
 test('distribution contains only named public files and no raw evidence, source data, credentials or inquiry records', () => {
   const publicFiles = files(outputs.preview);
   const allowed = new Set(['assets/brand-v3/favicon-16.png','assets/brand-v3/favicon-180.png','assets/brand-v3/favicon-192.png','assets/brand-v3/favicon-32.png','assets/brand-v3/favicon-48.png','assets/brand-v3/favicon-512.png','assets/brand-v3/favicon-64.png','assets/brand-v3/favicon.ico','assets/brand-v3/favicon.svg','assets/brand-v3/signature-logo-dark.png','assets/brand-v3/signature-logo-dark.svg','assets/brand-v3/signature-logo-light.png','assets/brand-v3/signature-logo-light.svg','index.html','zh/index.html','privacy/index.html','zh/privacy/index.html','404.html','thanks.html','thanks/index.html','zh/thanks/index.html','robots.txt','sitemap.xml','favicon.ico',

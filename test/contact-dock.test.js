@@ -49,11 +49,11 @@ test('each localized landing page has one persistent two-action dock and a separ
 });
 
 test('the header keeps FAQ and an explicit inquiry action alongside the main sections in both languages', () => {
-  for (const [file, home, inquiry] of [['index.html','/','Start a Partnership'], ['zh/index.html','/zh/','洽谈合作']]) {
+  for (const [file, inquiry] of [['index.html','Start a Partnership'], ['zh/index.html','洽谈合作']]) {
     const html = fs.readFileSync(path.join(output, file), 'utf8');
     const header = html.match(/<header class="site-header">[\s\S]*?<\/header>/)[0];
     const navigation = header.match(/<nav class="main-nav"[\s\S]*?<\/nav>/)[0];
-    for (const section of ['results','packages','process','faq','contact']) assert.ok(navigation.includes(`href="${home}#${section}"`), section);
+    for (const section of ['results','packages','process','faq','contact']) assert.ok(navigation.includes(`href="#${section}"`), section);
     assert.ok(navigation.includes(inquiry));
     assert.match(navigation, /data-inquiry-cta/);
     assert.match(header, /data-language-switch/);
@@ -72,7 +72,7 @@ function clickHarness({preview = false, locale = 'en', analytics = true} = {}) {
   const sticky = anchor('https://wa.me/19297709434?text=private-should-not-enter-analytics', 'sticky');
   const contact = anchor('https://wa.me/19297709434?text=private-should-not-enter-analytics', 'contact');
   const inquiry = anchor('#contact', 'sticky');
-  const header = anchor('/#contact', 'header');
+  const header = anchor('#contact', 'header');
   const context = {
     document: {documentElement: {lang:locale}, body:{dataset:{preview:String(preview)}},
       querySelector: () => null, getElementById: () => null,
