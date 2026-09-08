@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "status": "Reviewable public metrics; estimates retain source rounding and assumptions.",
+  "source": "User-confirmed historical website baseline plus non-overlapping TikTok Shop records from both creator accounts. No commission earnings or individual inquiry data.",
+  "metrics": {
+    "allTimeGmv": {
+      "value": {
+        "en": "$9.1M+",
+        "zh": "$9.1M+"
+      },
+      "label": {
+        "en": "All-time GMV",
+        "zh": "累计历史 GMV"
+      },
+      "note": {
+        "en": "Estimated through Aug 31, 2026",
+        "zh": "截至2026年8月31日的滚动估算"
+      },
+      "status": "estimated_rollforward",
+      "asOf": "2026-08-31"
+    },
+    "allTimeVideoViews": {
+      "value": {
+        "en": "416M+",
+        "zh": "416M+"
+      },
+      "label": {
+        "en": "All-time video views",
+        "zh": "累计视频播放量"
+      },
+      "note": {
+        "en": "Last reported June 8, 2026",
+        "zh": "上次报告日期：2026年6月8日"
+      },
+      "status": "historic_not_updated",
+      "asOf": "2026-06-08"
+    },
+    "janAugUnits": {
+      "value": {
+        "en": "About 159K",
+        "zh": "约 159K"
+      },
+      "label": {
+        "en": "Units sold · 2026",
+        "zh": "2026年售出件数"
+      },
+      "note": {
+        "en": "Jan 1–Aug 31 · both profiles",
+        "zh": "1月1日至8月31日 · 双账号合计"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026",
+        "zh": "2026年1月1日至8月31日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    },
+    "historicalProductViews": {
+      "value": {
+        "en": "105M+",
+        "zh": "105M+"
+      },
+      "label": {
+        "en": "Product views · 2026",
+        "zh": "2026年商品浏览量"
+      },
+      "note": {
+        "en": "Jan 1–Jun 8 · last reported",
+        "zh": "1月1日至6月8日 · 最近可确认数据"
+      },
+      "period": {
+        "en": "Jan 1–Jun 8, 2026",
+        "zh": "2026年1月1日至6月8日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-06-08",
+      "status": "historic_not_updated"
+    },
+    "janAugGmv": {
+      "value": {
+        "en": "About $3.94M",
+        "zh": "约 $3.94M"
+      },
+      "label": {
+        "en": "2026 attributed GMV",
+        "zh": "2026年归因 GMV"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026",
+        "zh": "2026年1月1日至8月31日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    }
+  },
+  "accounts": {
+    "drew.review": {
+      "gmv": {
+        "en": "About $1.41M",
+        "zh": "约 $1.41M"
+      },
+      "units": {
+        "en": "About 57.7K",
+        "zh": "约 57.7K"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026",
+        "zh": "2026年1月1日至8月31日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    },
+    "drew.review1": {
+      "gmv": {
+        "en": "About $2.53M",
+        "zh": "约 $2.53M"
+      },
+      "units": {
+        "en": "About 101.8K",
+        "zh": "约 101.8K"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026",
+        "zh": "2026年1月1日至8月31日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    }
+  },
+  "products": {
+    "astaxanthin": {
+      "title": "Astaxanthin 12mg — Micro Ingredients",
+      "gmv": {
+        "en": "About $400K",
+        "zh": "约 $400K"
+      },
+      "units": {
+        "en": "About 13.4K",
+        "zh": "约 13.4K"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026 (approx.)",
+        "zh": "2026年1月1日–8月31日（约数）"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    },
+    "nmn": {
+      "title": "NMN Complex 1,000mg — Micro Ingredients",
+      "gmv": {
+        "en": "$236,531",
+        "zh": "$236,531"
+      },
+      "units": {
+        "en": "7,409",
+        "zh": "7,409"
+      },
+      "period": {
+        "en": "Jan 1–Jun 8, 2026",
+        "zh": "2026年1月1日至6月8日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-06-08",
+      "status": "historic_not_updated"
+    },
+    "collagen": {
+      "title": "Collagen Bio-Peptides 20oz — NeoCell",
+      "gmv": {
+        "en": "About $257K",
+        "zh": "约 $257K"
+      },
+      "units": {
+        "en": "About 10.3K",
+        "zh": "约 10.3K"
+      },
+      "period": {
+        "en": "Jan 1–Aug 31, 2026 (approx.)",
+        "zh": "2026年1月1日–8月31日（约数）"
+      },
+      "start": "2026-01-01",
+      "end": "2026-08-31",
+      "status": "approximate_derived_update"
+    },
+    "magnesium": {
+      "title": "Magnesium Complex 8-in-1 — Toplux",
+      "gmv": {
+        "en": "$165,064",
+        "zh": "$165,064"
+      },
+      "units": {
+        "en": "12,846",
+        "zh": "12,846"
+      },
+      "period": {
+        "en": "Jan 1–Jun 8, 2026",
+        "zh": "2026年1月1日至6月8日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-06-08",
+      "status": "historic_not_updated"
+    },
+    "nac": {
+      "title": "NAC Capsules — Nutricost",
+      "gmv": {
+        "en": "$85,308",
+        "zh": "$85,308"
+      },
+      "units": {
+        "en": "7,393",
+        "zh": "7,393"
+      },
+      "period": {
+        "en": "Jan 1–Jun 8, 2026",
+        "zh": "2026年1月1日至6月8日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-06-08",
+      "status": "historic_not_updated"
+    },
+    "saffron": {
+      "title": "Saffron Extract — Nutricost",
+      "gmv": {
+        "en": "$79,862",
+        "zh": "$79,862"
+      },
+      "units": {
+        "en": "3,723",
+        "zh": "3,723"
+      },
+      "period": {
+        "en": "Jan 1–Jun 8, 2026",
+        "zh": "2026年1月1日至6月8日"
+      },
+      "start": "2026-01-01",
+      "end": "2026-06-08",
+      "status": "historic_not_updated"
+    }
+  },
+  "methodology": {
+    "allTimeBaseline": "$8M+",
+    "allTimeIncrement": "$1.1544M",
+    "allTimeBaselineAssumedAsOf": "2026-06-08",
+    "notes": [
+      "Approximate totals through Aug 31, 2026 combine the previously reported Jan 1-Jun 8 baseline with non-overlapping Jun 9-Aug 31 TikTok Shop records for both accounts. Figures are rounded; prior GMV/units are treated as continuous with current attributed GMV/items.",
+      "New screenshots display GMT-8. The earlier baseline timezone was not recorded; this extension assumes compatible date boundaries. The old combined and per-account rounded GMV displays differ by $1,000.",
+      "All-time video views and 2026 product views retain their June 8 historical reporting dates. Product impressions are not substituted for views. No lifetime units or product-view baseline is available."
+    ],
+    "productTotalsAreSubsets": true
+  }
+}

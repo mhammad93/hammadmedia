@@ -1,394 +1,75 @@
 #!/usr/bin/env node
-/** Build dist/index.html from template.html + content.json. Zero dependencies. */
-
-const fs = require("node:fs");
-const path = require("node:path");
-
-const ROOT = __dirname;
-const content = JSON.parse(fs.readFileSync(path.join(ROOT, "content.json"), "utf8"));
-let html = fs.readFileSync(path.join(ROOT, "template.html"), "utf8");
-
-const esc = (s) =>
-  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-// FAQ-only: escape, then allow **bold** emphasis
-const emph = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
-const plain = (s) => String(s).replace(/\*\*/g, "");
-
-// ── Composite fragments ──────────────────────────────────────
-// Mono TikTok logomark for handle links
-const tiktokIcon =
-  '<svg class="ti" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>';
-
-// TikTok Shop badge — trichrome note (official path) + stacked wordmark
-const shopBadge =
-  '<span class="shop-badge" aria-hidden="true">' +
-  '<svg viewBox="0 0 24 24" class="sb-note">' +
-  '<path fill="#25F4EE" transform="translate(-0.9,-0.45)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>' +
-  '<path fill="#FE2C55" transform="translate(0.9,0.45)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>' +
-  '<path fill="#161823" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>' +
-  '</svg>' +
-  '<span class="sb-text"><b>TikTok</b>Shop</span>' +
-  '</span>';
-
-
-const statsCards = content.stats
-  .map(
-    (s) => `      <div class="stat"><div class="num">${esc(s.value)}</div><div class="lbl">${esc(s.label)}</div></div>`,
-  )
-  .join("\n");
-
-const accountCards = content.accounts
-  .map((a) => {
-    const avatar = a.avatar
-      ? `<img class="avatar" src="${esc(a.avatar)}" alt="" width="216" height="216" loading="lazy">`
-      : "";
-    return `      <div class="card account-card">
-        <div class="acct-head">
-          ${avatar}
-          <div class="acct-id">
-            <h3><a class="handle" href="${esc(a.url)}" target="_blank" rel="noopener">${tiktokIcon}@${esc(a.handle)}<span class="sr-only"> (opens in new tab)</span></a></h3>
-            <div class="meta">${esc(a.niche)}${a.followers ? ` &middot; ${esc(a.followers)}` : ""}</div>
-          </div>
-        </div>
-        <div class="pod-metrics">
-          <div class="m"><span class="mv">${esc(a.gmv)}</span><span class="ml">GMV &mdash; 2026 so far</span></div>
-          <div class="m"><span class="mv">${esc(a.units)}</span><span class="ml">Units sold &mdash; 2026 so far</span></div>
-          <div class="m"><span class="mv">${esc(a.views)}</span><span class="ml">Product views &mdash; 2026 so far</span></div>
-        </div>
-      </div>`;
-  })
-  .join("\n");
-
-const money = (n) => "$" + n.toLocaleString("en-US");
-
-const receipts = content.receipts;
-const maxYtd = receipts ? Math.max(...receipts.items.map((i) => i.ytd)) : 1;
-const barPct = (ytd) => Math.max(4, Math.round((ytd / maxYtd) * 100));
-
-function buildPodCard(c, i) {
-  const cells = [];
-  if (c.bestMonth)
-    cells.push(`<div class="m"><span class="mv">${money(c.bestMonth)}</span><span class="ml">Best single month</span></div>`);
-  if (c.totalViews)
-    cells.push(`<div class="m"><span class="mv">${esc(c.totalViews)}</span><span class="ml">Views &mdash; all time</span></div>`);
-  if (c.videoUrl && c.videoViews)
-    cells.push(`<div class="m"><a class="mv mv-link" href="${esc(c.videoUrl)}" target="_blank" rel="noopener" aria-label="Top video for ${esc(c.title)} — ${esc(c.videoViews)} views on TikTok (opens in new tab)">${esc(c.videoViews)} <span aria-hidden="true">&#9654;</span></a><span class="ml">Top video</span></div>`);
-  const metrics = cells.length ? `\n        <div class="pod-metrics">${cells.join("")}</div>` : "";
-  return `      <div class="pod">
-        <span class="pod-rank">0${i + 1}</span>
-        <div class="product-shot">${shopBadge}<img src="${esc(c.image)}" alt="${esc(c.alt || `${c.title} product`)}" width="800" height="800" loading="eager" fetchpriority="low"></div>
-        <h3>${esc(c.title)}</h3>
-        <div class="pod-kicker">Total sales &mdash; 2026 so far</div>
-        <div class="pod-ytd">${money(c.ytd)}</div>
-        <div class="pod-ytd-lbl"><b>${c.units.toLocaleString("en-US")}</b> units sold</div>
-        <div class="bar"><span style="width:${barPct(c.ytd)}%"></span></div>${metrics}
-      </div>`;
-}
-
-const cardsArr = receipts ? receipts.items.map((c, i) => buildPodCard(c, i)) : [];
-
-const caseStudiesSection = receipts
-  ? `<section id="results" class="light light-alt">
-  <div class="wrap">
-    <h2 class="section-title">The receipts</h2>
-    <p class="section-sub">${esc(receipts.sub)}</p>
-    <div class="podium">
-${cardsArr.slice(0, 3).join("\n")}
-    </div>
-    <div class="shelf" role="region" aria-label="Products 4 to 6" tabindex="0">
-${cardsArr.slice(3).join("\n")}
-    </div>
-    <a class="mail-cta" href="#contact">Slot 07 is open &mdash; put your product on this wall &rarr;</a>
-  </div>
-</section>`
-  : "";
-
-
-const funnelStrip = content.funnel
-  ? `    <div class="funnel-card">
-      <div class="funnel-intro">
-        <h3>${esc(content.funnel.title)}</h3>
-        <p class="funnel-frame">${esc(content.funnel.frame)}</p>
-        <p class="funnel-prov">${esc(content.funnel.caption)}</p>
-      </div>
-${content.funnel.items
-  .map(
-    (m) => `      <div class="fm"><span class="fm-v">${esc(m.value)}</span><span class="fm-l">${esc(m.label)}</span></div>`,
-  )
-  .join("\n")}
-    </div>`
-  : "";
-
-const serviceSteps = content.services.steps
-  .map(
-    (s) => `      <div class="card"><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></div>`,
-  )
-  .join("\n");
-
-// Tier price: split on ' · ' into stacked spans — lead figure big, qualifier as kicker, bundle lines small
-const tierPrice = (price) => {
-  const parts = String(price).split(" · ");
-  const lead = parts.shift();
-  const m = lead.match(/^((?:From )?\$[\d,]+)\s+(.*)$/);
-  const leadHtml = m
-    ? `<span class="tp-figure">${esc(m[1])}</span> <span class="tp-qual">${esc(m[2])}</span>`
-    : `<span class="tp-figure">${esc(lead)}</span>`;
-  return leadHtml + parts.map((p) => `<span class="tp-line">${esc(p)}</span>`).join("");
-};
-
-// Per-tier CTAs: data-tier preselects the #f-tier engagement select (inline JS in template); plain anchor is the no-JS fallback
-const tierCtas = [
-  { label: "Start with 5 videos &rarr;", value: "Starter (5 videos)" },
-  { label: "Book this month's videos &rarr;", value: "Retainer + Commission" },
-  { label: "Ask if your category is still open &rarr;", value: "Exclusive (own the category)" },
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const content = require('./content.json');
+const performance = require('./performance.json');
+const ROOT=__dirname, OUT=process.env.HM_BUILD_OUTPUT_DIR ? path.resolve(process.env.HM_BUILD_OUTPUT_DIR) : path.join(ROOT,'dist');
+if (OUT === ROOT || ROOT.startsWith(OUT + path.sep)) throw new Error('Build output cannot contain the source directory.');
+const production = process.env.VERCEL_ENV === 'production' && process.env.PUBLIC_LAUNCH_APPROVED === 'true';
+const e = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'$'+n.toLocaleString('en-US');
+const brand = `<a class="brand" href="/" aria-label="Hammad Media home"><img class="brand-dark" src="/assets/redesign/logo-dark.svg" alt="Hammad Media" width="2400" height="482"><img class="brand-light" src="/assets/redesign/logo-light.svg" alt="Hammad Media" width="2400" height="482"></a>`;
+fs.rmSync(OUT,{recursive:true,force:true});fs.mkdirSync(OUT,{recursive:true});
+// Explicit public asset list prevents source evidence or unused legacy files reaching a deployment.
+const publicAssets=[
+  'assets/award-summit.webp','assets/og.jpg',
+  'assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/attribution.js','assets/redesign/thanks.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp',
+  'assets/fonts/manrope.woff2','assets/fonts/fraunces-roman.woff2','assets/fonts/fraunces-italic.woff2',
+  ...content.brands.map(b=>b.logo),...content.accounts.map(a=>a.avatar),...content.receipts.items.map(p=>p.image)
 ];
-
-const partnershipSection = content.partnership
-  ? `<section id="partner" class="light light-alt">
-  <div class="wrap">
-    <h2 class="section-title">${esc(content.partnership.heading)}</h2>
-    <p class="section-sub">${esc(content.partnership.sub)}</p>
-    <div class="cards tiers">
-${content.partnership.tiers
-  .map(
-    (t, i) => `      <div class="card tier">
-        <div class="meta">${esc(t.tag)}</div>
-        <h3>${esc(t.name)}</h3>
-        <div class="tier-price">${tierPrice(t.price)}</div>
-        <p>${esc(t.text)}</p>
-        ${tierCtas[i] ? `<a class="tier-cta" href="#contact" data-tier="${esc(tierCtas[i].value)}">${tierCtas[i].label}</a>` : ""}
-      </div>`,
-  )
-  .join("\n")}
-    </div>
-    <div class="note"><p>${esc(content.partnership.note)
-      .replace("four new products each month, no more", "<b>four new products each month, no more</b>")
-      .replace(" You could mail samples", "</p><p>You could mail samples")}</p></div>
-    <a class="mail-cta" href="#contact">Claim a slot &rarr;</a>
-  </div>
-</section>`
-  : "";
-
-const brandWall = (content.brands || []).length
-  ? `<div class="brandwall" role="group" aria-label="Brands whose products I have sold">
-${content.brands
-  .map(
-    (b) => `      <img src="${esc(b.logo)}" alt="${esc(b.name)} logo" width="${b.width}" height="28" loading="lazy">`,
-  )
-  .join("\n")}
-    </div>`
-  : "";
-
-const faqSection = content.faq
-  ? `<section id="faq" class="light">
-  <div class="wrap">
-    <h2 class="section-title">${esc(content.faq.heading)}</h2>
-    <p class="section-sub">${esc(content.faq.sub)}</p>
-    <div class="faq-list">
-${content.faq.items
-  .map((f) => {
-    const bullets = f.bullets
-      ? `\n        <ul>${f.bullets.map((x) => `<li>${emph(x)}</li>`).join("")}</ul>`
-      : "";
-    const tail = f.tail ? `\n        <p>${emph(f.tail)}</p>` : "";
-    return `      <details>
-        <summary>${esc(f.q)}</summary>
-        <p>${emph(f.a)}</p>${bullets}${tail}
-      </details>`;
-  })
-  .join("\n")}
-    </div>
-  </div>
-</section>`
-  : "";
-
-const contactBlock = content.contact.formSubmitEmail
-  ? `    <p class="form-hint">All fields are required unless marked optional.</p>
-    <form action="https://formsubmit.co/${esc(content.contact.formSubmitEmail)}" method="POST">
-      <input type="hidden" name="_subject" value="New brand inquiry — HammadMedia.com">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="https://hammadmedia.com/thanks.html">
-      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="form-row">
-        <div><label for="f-brand">Brand name</label><input id="f-brand" name="brand" required autocomplete="organization" placeholder="Your brand name" aria-describedby="f-brand-err"><p class="err" id="f-brand-err" hidden>Enter your brand name</p></div>
-        <div><label for="f-email">Work email</label><input id="f-email" type="email" name="email" required autocomplete="email" placeholder="you@brand.com" aria-describedby="f-email-err"><p class="err" id="f-email-err" hidden>Enter a work email like you@brand.com</p></div>
-      </div>
-      <div class="form-row">
-        <div><label for="f-category">Product category <span class="optional">(optional)</span></label>
-          <select id="f-category" name="category">
-            <option value="" disabled selected>Choose one&hellip;</option>
-            <option>Supplements</option>
-            <option>Wellness</option>
-            <option>Beauty &amp; personal care</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div><label for="f-commission">Commission you can offer</label>
-          <select id="f-commission" name="commission" required aria-describedby="f-commission-err">
-            <option value="" disabled selected>Choose one&hellip;</option>
-            <option>20&ndash;25%</option>
-            <option>25&ndash;30%</option>
-            <option>30% or higher</option>
-            <option>Below 20%</option>
-            <option>Not sure &mdash; recommend a rate</option>
-          </select>
-          <p class="err" id="f-commission-err" hidden>Choose a commission range</p>
-        </div>
-      </div>
-      <div class="form-row">
-        <div><label for="f-tier">How do you want to work together?</label>
-          <select id="f-tier" name="engagement" required aria-describedby="f-tier-err">
-            <option value="" disabled selected>Choose one&hellip;</option>
-            <option>Starter (5 videos)</option>
-            <option>Retainer + Commission</option>
-            <option>Exclusive (own the category)</option>
-            <option>Not sure yet &mdash; recommend one</option>
-          </select>
-          <p class="err" id="f-tier-err" hidden>Choose how you want to work together</p>
-        </div>
-        <div><label for="f-shop">TikTok Shop product link <span class="optional">(optional)</span></label><input id="f-shop" name="shop_link" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="https://shop.tiktok.com/&hellip;"></div>
-      </div>
-      <div><label for="f-msg">Tell me about your product</label><textarea id="f-msg" name="message" required placeholder="Your product, and anything you want me to know." aria-describedby="f-msg-err"></textarea><p class="err" id="f-msg-err" hidden>Tell me about your product</p></div>
-      <div class="form-ctas">
-        <button type="submit">Send inquiry &rarr;</button>
-        <a class="btn-secondary" href="https://wa.me/${String(content.contact.whatsapp).replace(/[^0-9]/g, "")}?text=Hi%20Hammad%20%E2%80%94%20I%20have%20a%20supplement%20brand%20on%20TikTok%20Shop%20and%20want%20to%20talk%20about%20a%20partnership" target="_blank" rel="noopener">Or message me on WhatsApp<span class="sr-only"> (opens in new tab)</span></a>
-      </div>
-      <p class="form-hint">I reply within 24 hours.</p>
-    </form>
-    <p class="alt-contact">Prefer email? <a href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">${esc(content.contact.email)}</a> &mdash; same 24-hour reply either way.</p>`
-  : `    <a class="mail-cta" href="mailto:${esc(content.contact.email)}?subject=Brand%20partnership%20inquiry%20%E2%80%94%20HammadMedia.com">Email me: ${esc(content.contact.email)}</a>`;
-
-// ── Marquee: generated from content.json so the numbers can never drift from their sources ──
-
-const statByLabel = (kw) => content.stats.find((s) => s.label.includes(kw));
-const topProductYtd = money(Math.max(...content.receipts.items.map((i) => i.ytd)));
-const productNames = content.receipts.items.map((i) => esc(i.title.split(" ")[0])).join(" &middot; ");
-const followersTotalK = Math.round(
-  content.accounts.reduce((sum, a) => sum + parseFloat(String(a.followers).replace(/[^\d.]/g, "")), 0),
-);
-const marquee = [
-  `<span><b>${esc(content.hero.gmvYtd)}</b> GMV in 2026</span>`,
-  `<span><b>${esc(statByLabel("PRODUCT VIEWS").value)}</b> product views</span>`,
-  `<span><b>${esc(statByLabel("UNITS SOLD").value)}</b> units sold</span>`,
-  `<span>${productNames}</span>`,
-  `<span><b>${esc(statByLabel("VIDEO VIEWS").value)}</b> video views &middot; <b>${topProductYtd}</b> from one product</span>`,
-  `<span><b>#1</b> Health &amp; Wellness Affiliate &mdash; TikTok Shop US, 2025 &middot; <b>${followersTotalK}K+</b> followers</span>`,
-  `<span>Video packages &middot; retainers &middot; exclusivity</span>`,
-].join("");
-
-// ── SEO: JSON-LD structured data (generated from content.json so it can never drift from visible copy) ──
-
-const jsonld = JSON.stringify({
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "ProfessionalService",
-      "@id": `${content.site.url}/#org`,
-      name: "Hammad Media",
-      url: content.site.url,
-      email: content.contact.email,
-      description: content.site.description,
-      logo: `${content.site.url}/assets/favicon-512.png`,
-      image: content.site.ogImage,
-      telephone: "+1-929-770-9434",
-      areaServed: "United States",
-      priceRange: "$5,000 - $50,000+",
-      award: "#1 Health & Wellness Affiliate — TikTok Shop US, 2025",
-      sameAs: content.accounts.map((a) => a.url),
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${content.site.url}/#website`,
-      name: "Hammad Media",
-      url: content.site.url,
-      publisher: { "@id": `${content.site.url}/#org` },
-    },
-    {
-      "@type": "FAQPage",
-      "@id": `${content.site.url}/#faqpage`,
-      mainEntity: content.faq.items.map((f) => ({
-        "@type": "Question",
-        name: f.q,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: plain([f.a, ...(f.bullets || []), f.tail].filter(Boolean).join(". ")).replace(/\.\s*\./g, "."),
-        },
-      })),
-    },
-  ],
-}).replace(/</g, "\\u003c");
-const jsonldTag = `<script type="application/ld+json">${jsonld}</script>`;
-
-// ── Token replacement ────────────────────────────────────────
-
-const tokens = {
-  jsonld: jsonldTag,
-  "site.title": esc(content.site.title),
-  "site.description": esc(content.site.description),
-  "site.brandName": esc(content.site.brandName),
-  "site.statsUpdated": esc(content.site.statsUpdated),
-  "hero.headline": esc(content.hero.headline),
-  "hero.subheadline": esc(content.hero.subheadline),
-  "services.heading": esc(content.services.heading),
-  "services.note": esc(content.services.note),
-  "contact.heading": esc(content.contact.heading),
-  "contact.subheading": esc(content.contact.subheading),
-  "contact.email": esc(content.contact.email),
-  year: String(new Date().getFullYear()),
-  statsCards,
-  accountCards,
-  funnelStrip,
-  caseStudiesSection,
-  serviceSteps,
-  partnershipSection,
-  contactBlock,
-  brandWall,
-  faqSection,
-  marquee,
-  "legal.disclaimer": esc(content.legal.disclaimer),
-  "legal.privacy": esc(content.legal.privacy),
-  "site.ogImage": esc(content.site.ogImage),
-  "site.url": esc(content.site.url),
-};
-
-for (const [key, value] of Object.entries(tokens)) {
-  html = html.split(`{{${key}}}`).join(value);
+for(const asset of new Set(publicAssets)){
+  if(!/^assets\/[a-zA-Z0-9_./-]+$/.test(asset)||asset.split('/').some(part=>part==='..'||part==='raw'))throw new Error('Invalid public asset path');
+  const destination=path.join(OUT,asset);fs.mkdirSync(path.dirname(destination),{recursive:true});fs.copyFileSync(path.join(ROOT,asset),destination);
 }
-
-const leftover = html.match(/\{\{[^}]+\}\}/g);
-if (leftover) {
-  console.error("Unresolved template tokens:", leftover);
-  process.exit(1);
+for (const f of ['favicon.ico']) if(fs.existsSync(path.join(ROOT,f))) fs.copyFileSync(path.join(ROOT,f),path.join(OUT,f));
+function render(locale){
+const zh=locale==='zh';
+const t=(en,cn)=>zh?cn:en;
+const metricText=value=>e(value[locale]);
+const home=zh?'/zh/':'/';
+const localeBrand=brand.replace('href="/"',`href="${home}"`);
+const title=t('Hammad Media | Creator-led TikTok Shop partnerships','Hammad Media | TikTok Shop 美国市场达人合作');
+const description=t('Paid creator-led TikTok Shop campaigns for health and wellness brands. Two creator profiles. Clear video packages. Documented attributed sales.','专注美国 TikTok Shop 健康与保健品领域。双账号创作，清晰的视频套餐，以历史归因销售表现为依据。');
+const nav=`<header class="site-header"><div class="header-wrap">${localeBrand}<nav class="main-nav" aria-label="${t('Main navigation','主导航')}"><a href="${home}#results">${t('Results','合作成果')}</a><a href="${home}#packages">${t('Packages','合作套餐')}</a><a href="${home}#process">${t('How it works','合作流程')}</a></nav><div class="nav-tools"><a href="${zh?'/':'/zh/'}" lang="${zh?'en':'zh-CN'}" data-language-switch>${t('简体中文','English')}</a><button class="theme-toggle" type="button" aria-label="${t('Switch to light theme','切换浅色模式')}">${t('Light','浅色')}</button><a class="btn header-cta" href="${home}#contact">${t('Start a partnership','开始合作')}</a></div></div></header>`;
+const intro=`<section class="hero" aria-labelledby="hero-title"><div class="hero-copy"><p class="eyebrow">${t('Creator commerce · Health & wellness','达人电商 · 健康与保健品')}</p><h1 id="hero-title">${t('The creator<br>behind your<br>next <em>campaign.</em>','让品牌的<br>下一次合作，<br><em>更有说服力。</em>')}</h1><p class="hero-intro">${t('Paid, creator-led TikTok Shop reviews for health and wellness brands.','专注健康与保健品的 TikTok Shop 付费达人测评。')}</p><div class="hero-actions"><a class="btn btn-primary" href="#packages" data-analytics="package_explore">${t('Find your package','选择合作套餐')}</a><a class="btn btn-outline" href="#results">${t('View results','查看合作成果')}</a></div><p class="fine">${t('Packages from $5,000 USD, paid upfront + TikTok Shop commission.','套餐 $5,000 美元起，预付费用另加 TikTok Shop 联盟佣金。')}</p></div><div class="hero-photo"><img src="/assets/redesign/astaxanthin-hero.webp" alt="${t('Micro Ingredients Astaxanthin pouch on an emerald studio pedestal','Micro Ingredients 虾青素产品包装，绿色摄影场景')}" width="1000" height="1250" fetchpriority="high"><div class="hero-case"><span>${t('A product from the portfolio','历史推广产品')}</span><strong>${metricText(performance.products.astaxanthin.gmv)}</strong><span>${t('Attributed GMV · Jan–Aug 2026','归因 GMV · 2026年1–8月')}</span></div><div class="hero-label">${t('One creator. Two profiles.','一位创作者 · 两个账号')}<a href="https://www.tiktok.com/@drew.review" target="_blank" rel="noopener">@drew.review</a><a href="https://www.tiktok.com/@drew.review1" target="_blank" rel="noopener">@drew.review1</a></div></div></section>`;
+const tiers=[{n:5,p:5000,tag:t('Start with a focused test','小规模合作'),desc:t('A focused first campaign to introduce your product through a series of creator-led reviews.','用一组达人原创测评，为您的产品开启首次合作。')},{n:10,p:9500,tag:t('Build consistency','持续展现产品'),desc:t('More room for different openings, product demonstrations, and reasons to consider your product.','为不同开场、产品展示和购买考量提供更多创作空间。')},{n:15,p:13500,tag:t('Deepen the campaign','深化内容合作'),desc:t('A broader body of content for a brand ready to invest in a sustained creator partnership.','适合希望持续投入达人合作、建立更丰富内容组合的品牌。')},{n:30,p:25000,tag:t('Commit to volume','扩大内容规模'),desc:t('A larger agreed content program for brands planning a substantial campaign.','适合计划开展更大规模、明确交付数量的内容合作。')}];
+const ribbon=`<section class="price-ribbon" aria-label="${t('Package pricing summary','套餐价格概览')}"><div class="wrap"><div class="price-grid"><h2>${t('Two profiles.<br>A <em>clear offer.</em>','双账号。<br><em>合作清晰明确。</em>')}</h2>${tiers.map(x=>`<a class="mini-price" href="#contact" data-tier="${x.n} videos"><span>${x.n} ${t('videos','条视频')}</span><strong>${money(x.p)}</strong></a>`).join('')}</div><p class="ribbon-note">${t('USD · Paid upfront + TikTok Shop commission. Total video count and account allocation confirmed in writing.','美元计价 · 预付费用另加 TikTok Shop 佣金。视频总数及账号分配以书面约定为准。')}</p></div></section>`;
+const stats=['allTimeGmv','allTimeVideoViews','janAugUnits','historicalProductViews'].map(key=>{const m=performance.metrics[key];return {v:metricText(m.value),l:metricText(m.label),n:metricText(m.note)};});
+const proof=`<section class="proof" aria-labelledby="proof-title"><div class="wrap"><div class="proof-top"><h2 id="proof-title">${t('The scale behind the work.','作品背后的历史表现。')}</h2><p class="fine">${t('Both accounts combined. Every number has a period.<br>Past performance is context, never a sales guarantee.','双账号合计，每项数据均标明统计区间。<br>历史表现仅供参考，不构成销售保证。')}</p></div><div class="metrics">${stats.map(s=>`<div class="metric"><strong>${s.v}</strong><span class="metric-label">${s.l}</span><span class="metric-note">${s.n}</span></div>`).join('')}</div><div class="ytd-strip"><div><span>${metricText(performance.metrics.janAugGmv.label)}</span><br><strong>${metricText(performance.metrics.janAugGmv.value)}</strong></div><div><span>${metricText(performance.metrics.janAugGmv.period)}</span><p>${t('Updated through August with non-overlapping records from both creator accounts.','以两个达人账号的非重叠期间数据，更新至8月底。')}</p></div><a class="text-link fine" href="#methodology">${t('How the numbers are reported','数据统计说明')}</a></div><details id="methodology"><summary>${t('Dates, sources & what these figures mean','统计日期、来源及指标说明')}</summary><p>${t(`GMV is gross merchandise value attributed to creator content, not Hammad Media revenue or commission. Jan–Aug GMV and units extend the previously reported Jan 1–Jun 8 totals with June 9–30, July and August TikTok Shop records from both profiles. Rounded screenshots make these totals approximate. All-time GMV carries the old ${e(performance.methodology.allTimeBaseline)} baseline forward by approximately ${e(performance.methodology.allTimeIncrement)}; it is an estimate, not a new lifetime dashboard export. Earlier GMV and units are treated as continuous with the current attributed GMV and items metrics.`,`GMV 指归因于达人内容的商品交易总额，并非 Hammad Media 的营收或佣金。1–8月 GMV 及售出件数由原1月1日至6月8日数据，加上双账号6月9–30日、7月及8月的 TikTok Shop 记录计算而来。截图数据经过取整，因此合计值为近似值。累计历史 GMV 在原 ${e(performance.methodology.allTimeBaseline)} 基础上增加约 ${e(performance.methodology.allTimeIncrement)}，为滚动估算，并非新的全历史报表。旧 GMV 及售出件数与新归因 GMV 及商品件数视为连续统计指标。`)}</p><p>${t('Video views remain the June 8 historical figure. Product views remain the Jan 1–Jun 8 figure; newer product impressions are a separately named metric and have not been added to it. No lifetime baseline for units or product views was available. New screenshots use GMT-8; the earlier baseline timezone was not recorded, so cumulative estimates assume compatible date boundaries.','视频播放量保留6月8日的历史数据。商品浏览量保留1月1日至6月8日数据；新截图使用“商品曝光量”指标，未将其直接加到浏览量中。现有资料不包含全历史售出件数或商品浏览量基数。新截图使用 GMT-8 时区，旧数据未记录时区，累计估算假设日期边界一致。')}</p></details><div class="brand-strip"><p>${t('Brands represented in the affiliate sales portfolio','历史联盟销售记录中包含的品牌')}</p><div class="brand-logos">${content.brands.map(b=>`<img src="/${e(b.logo)}" alt="${e(b.name)}" width="${b.width}" height="28" loading="lazy">`).join('')}</div></div></div></section>`;
+const cards=content.receipts.items.map((p,i)=>{const metrics=performance.products[p.performanceKey];if(!metrics || metrics.title!==p.title)throw new Error(`Unmatched product performance: ${p.performanceKey}`);const gmv=metricText(metrics.gmv);const units=metricText(metrics.units);const [name,brandName]=p.title.split(' — ');return `<article class="product-card"><div class="product-photo"><span class="product-no">0${i+1}</span><img src="/${e(p.image)}" alt="${e(name)} ${e(brandName)}" width="800" height="800" loading="lazy"></div><h3>${e(name)}</h3><span class="product-brand">${e(brandName)}</span><div class="product-numbers"><strong>${gmv}</strong><span>${units} ${t('units','件')}</span></div><p class="product-period">${t('Attributed GMV ·','归因 GMV ·')} ${metricText(metrics.period)}</p><a class="text-link" data-product="${e(p.performanceKey)}" href="${e(p.videoUrl)}" target="_blank" rel="noopener">${t('Watch a creator review','观看达人测评')}<span class="sr-only">${t(' on TikTok (opens in a new tab)','（在新标签页打开 TikTok）')}</span></a></article>`}).join('');
+const results=`<section id="results" class="results section-space"><div class="wrap"><div class="section-head"><div><p class="eyebrow">${t('The portfolio','产品案例')}</p><h2>${t('Real products.<br><em>Documented sales.</em>','真实产品。<br><em>有据可查的销售。</em>')}</h2></div><p>${t('A closer look at the products behind the numbers. Explore the work, then picture your product in the conversation.','了解数字背后的产品与内容，思考您的产品可以如何与观众建立联系。')}</p></div><div class="product-grid">${cards}</div><div class="results-note"><p>${t('Dates vary by product and are shown on each card. Product totals are subsets of account GMV, not additional sales. Brand names and images show affiliate sales history, not sponsorship or endorsement.','每张卡片均标注对应统计区间。单品金额已包含在账号 GMV 中，不应再次累加。品牌名称及图片用于展示历史联盟销售，不代表品牌赞助或背书。')}</p><a class="text-link" href="#contact">${t('Tell me about your product','介绍您的产品')}</a></div></div></section>`;
+const story=`<section class="section-space" id="creator"><div class="wrap story"><div class="story-image"><img src="/assets/award-summit.webp" width="1100" height="854" alt="${t('TikTok Shop Summit US 2025 Health Creators of the Year award photograph','TikTok Shop 美国2025年峰会 Health Creators of the Year 奖项实拍')}" loading="lazy"><div class="story-caption">${t('TikTok Shop Summit US 2025<br><strong>Health Creators of the Year</strong>','TikTok Shop 美国2025年峰会<br><strong>Health Creators of the Year</strong>')}</div></div><div class="story-copy"><p class="eyebrow">${t('Meet the creator','认识创作者')}</p><h2>${t('Two profiles.<br>One creative point of view.','两个账号。<br>一致的创作视角。')}</h2><p>${t('I’m the creator behind @drew.review and @drew.review1. I plan, film and post the reviews myself. My focus is health and wellness products that make sense for the audience I’ve built.','我是 @drew.review 和 @drew.review1 背后的创作者。我亲自策划、拍摄并发布测评，专注于适合现有受众的健康与保健产品。')}</p><p>${t('You bring the product knowledge. I bring a creator’s understanding of what viewers notice, question and want to see. Together, we agree on a clear scope—then I create content in my own voice.','您提供产品知识，我带来对观众关注点、疑问和内容偏好的理解。双方先明确合作范围，再由我以自己的表达方式完成创作。')}</p><div class="accounts">${content.accounts.map(a=>`<div class="account"><div class="account-header"><img src="/${e(a.avatar)}" alt="" width="216" height="216" loading="lazy"><a href="${e(a.url)}" target="_blank" rel="noopener">@${e(a.handle.toLowerCase())}</a></div><strong>${metricText(performance.accounts[a.handle].gmv)}</strong><span>${t('Attributed GMV · Jan–Aug 2026','归因 GMV · 2026年1–8月')}</span><span>${metricText(performance.accounts[a.handle].units)} ${t('units sold (approx.)','件售出（约数）')}</span></div>`).join('')}</div></div></div></section>`;
+const packages=`<section id="packages" class="packages section-space"><div class="wrap"><div class="section-head"><div><p class="eyebrow">${t('Ways to work together','合作方式')}</p><h2>${t('A clear scope.<br><em>A confident next step.</em>','范围清晰。<br><em>从容开启合作。</em>')}</h2></div><p>${t('Choose the content volume that fits your campaign. Every package combines a fixed creative fee with TikTok Shop commission.','选择适合推广计划的内容数量。每个套餐均包含固定创作费用，另加 TikTok Shop 联盟佣金。')}</p></div><div class="package-grid">${tiers.map(x=>`<article class="package"><span class="package-kicker">${x.tag}</span><h3>${x.n} ${t('videos','条视频')}</h3><div class="package-price">${money(x.p)}</div><p class="fine">${t('USD · upfront + commission','美元 · 预付费用另加佣金')}</p><p class="package-description">${x.desc}</p><a class="btn btn-green" href="#contact" data-tier="${x.n} videos">${t(`Discuss ${x.n} videos`,`咨询${x.n}条视频合作`)}</a></article>`).join('')}</div><p class="package-terms">${t('Video counts are total deliverables—not automatically that number on each account. The written offer confirms account allocation, posting schedule, exact commission and any usage rights. Standard packages are paid 100% upfront; any campaign-specific exception must be agreed in writing. Commission-only and gifted-only campaigns are not accepted. Content delivery is agreed; views and sales are not guaranteed.','套餐数量为视频总交付数，并非每个账号各交付相同数量。账号分配、发布时间、具体佣金及使用权均以书面报价为准。标准套餐须100%预付，特殊安排须另行书面确认。不接受纯佣金或仅赠送样品的合作。约定的是内容交付，不保证播放量或销售额。')}</p><div class="exclusive"><div><h3>${t('Category exclusivity, separately agreed.','品类独家合作，单独约定。')}</h3><p>${t('$50,000 USD per precisely defined product category, per 30-day period. Paid upfront. No videos included; content packages are separate. Category boundaries, availability and terms are confirmed in writing. Exclusivity covers new affiliate content in the agreed category; existing content remains live and TikTok may continue to distribute it.','$50,000 美元／每个明确界定的产品品类／每30天，预付。费用不含视频，内容套餐另计。品类边界、可合作档期及条款须书面确认。独家约定适用于该品类的新联盟内容；已有内容继续保留，TikTok 仍可能继续分发。')}</p></div><a class="text-link" href="#contact" data-tier="Exclusivity">${t('Discuss your category','咨询品类独家合作')}</a></div></div></section>`;
+const steps=[[t('Share the essentials.','提供关键信息。'),t('Send your product link, campaign goal, preferred package and commission. Include any timing or advertising needs so the first conversation is useful.','提供产品链接、推广目标、意向套餐及佣金；如有档期或广告投放需求，请一并说明。')],[t('Agree on the campaign.','明确合作方案。'),t('We confirm product fit, total videos, account allocation, schedule and commercial terms in writing. Send the sample from your US warehouse and complete the agreed payment step.','双方书面确认产品匹配度、视频总数、账号分配、时间安排及商业条款。您从美国仓库寄送样品，并按约完成付款。')],[t('Create. Publish. Review.','创作、发布、复盘。'),t('I create reviews in my own voice and publish to the agreed accounts. Your TikTok Shop reporting provides campaign attribution; outcomes vary by product, offer and audience response.','我以自己的表达方式创作测评，并在约定账号发布。通过 TikTok Shop 报表查看合作归因表现；实际结果受产品、优惠与受众反应等因素影响。')]];
+const process=`<section id="process" class="section-space"><div class="wrap"><div class="section-head"><div><p class="eyebrow">${t('From introduction to launch','从初次沟通到内容上线')}</p><h2>${t('Good work starts<br>with <em>clear expectations.</em>','出色的合作，始于<br><em>清晰的共识。</em>')}</h2></div><p>${t('A straightforward process for US brands and international teams selling through TikTok Shop US.','为美国品牌及面向 TikTok Shop 美国市场的国际团队提供清晰的合作流程。')}</p></div><div class="process-grid">${steps.map((s,i)=>`<article class="process-step"><span class="step-number">0${i+1}</span><h3>${s[0]}</h3><p>${s[1]}</p></article>`).join('')}</div></div></section>`;
+const questions=[
+[t('Are these paid partnerships?','这是付费合作吗？'),t('Yes. Standard video packages start at $5,000 USD, paid upfront, plus an agreed TikTok Shop affiliate commission. These packages purchase an agreed amount of content; they do not purchase a guaranteed sales result.','是的。标准视频套餐 $5,000 美元起，预付费用另加约定的 TikTok Shop 联盟佣金。套餐对应约定数量的内容交付，并不保证销售结果。')],
+[t('Is the package video count per account?','套餐视频数量是按每个账号计算吗？'),t('The stated count is the total number of deliverables. We confirm how those videos are allocated between @drew.review and @drew.review1 in the written offer. If you need a specific split, include it in your inquiry.','页面所列数量为总交付数。视频如何分配到 @drew.review 和 @drew.review1，以书面报价为准。如需特定比例，请在咨询中注明。')],
+[t('Can we send a brief or approve the videos?','可以提供品牌简报或审核视频吗？'),t('Send product facts, talking points and supporting materials. They help me understand the product, but creative control stays on our side. Standard campaigns do not include brand approval, revisions or re-filming. Any exception must be explicitly agreed in the campaign’s written terms.','欢迎提供产品事实、参考要点及相关资料，帮助我了解产品。但创作控制权保留在我方。标准合作不包含品牌审批、修改或重拍；任何例外须在该项目的书面条款中明确约定。')],
+[t('What if the campaign does not generate sales?','如果合作没有产生销量怎么办？'),t('No creator can promise how viewers will respond. Your package covers the agreed content delivery, while sales depend on the product, price, offer, availability and audience. Historical results help you assess fit; they are not a forecast or guarantee.','任何创作者都无法承诺观众的反应。套餐费用对应约定的内容交付；销售取决于产品、价格、优惠、库存及受众等因素。历史表现有助于判断匹配度，但不构成预测或保证。')],
+[t('Can we use the content in Spark Ads or GMV Max?','可以将内容用于 Spark Ads 或 GMV Max 吗？'),t('Tell me which content, accounts, markets and usage period you need. Paid amplification, authorization codes and any other content licensing must be agreed in writing for the specific campaign. They are not automatically included in the package price.','请说明所需内容、账号、市场及使用期限。付费投放、授权码及其他内容许可须针对具体项目书面约定，不自动包含在套餐价格内。')],
+[t('How soon can the first video go live?','首条视频什么时候可以上线？'),t('The posting schedule is agreed after we confirm product fit, the campaign scope, sample delivery, active commission and payment terms. Include your ideal launch window in the inquiry. A sample arrival alone does not promise a publication date.','确认产品匹配、合作范围、样品交付、佣金生效及付款条款后，双方约定发布时间。请在咨询中注明理想上线时间；仅收到样品并不代表已承诺发布日期。')],
+[t('What affiliate commission should we offer?','应提供多少联盟佣金？'),t('Share the exact TikTok Shop commission you can offer, along with your product price and shop link. Commission is considered together with product fit and the paid campaign scope; the final rate is written into the offer.','请提供可接受的具体 TikTok Shop 佣金比例、产品价格及店铺链接。佣金会结合产品匹配度和付费合作范围评估，最终比例写入报价。')],
+[t('Our team is in China. Can we work together?','团队在中国，可以合作吗？'),t('Yes. International brands and agencies serving TikTok Shop US can inquire. Hammad Media LLC provides the invoice; samples should ship from a US warehouse. Bank transfer or PayPal invoicing can be agreed. The written offer confirms USD pricing, logistics, account allocation and timing.','可以。服务于 TikTok Shop 美国市场的国际品牌和代理机构均可咨询。由 Hammad Media LLC 开具账单，样品应从美国仓库寄出。可协商银行转账或 PayPal 账单付款。美元价格、物流、账号分配及时间均以书面报价为准。')],
+[t('What does category exclusivity include?','品类独家合作包含什么？'),t('A separately priced 30-day reservation of one precisely defined product category, subject to availability and written terms. The fee is $50,000 USD upfront per category. It includes no videos. The agreement must define the category boundaries, competing products and the start and end dates. It restricts new affiliate content in that category during the agreed period. Existing content stays live; its continued distribution by TikTok is unaffected.','在可合作且书面约定的前提下，单独预订一个明确界定的产品品类，期限30天。每品类预付费用为 $50,000 美元，不含视频。协议需明确品类边界、竞品范围及起止日期。约定期间限制的是该品类的新联盟内容；已有内容继续保留，不影响 TikTok 持续分发。')]
+];
+const faq=`<section id="faq" class="faq section-space"><div class="wrap faq-layout"><div class="section-head"><p class="eyebrow">${t('Before you reach out','咨询前常见问题')}</p><h2>${t('Clarity makes<br><em>better partnerships.</em>','清晰沟通，成就<br><em>更好的合作。</em>')}</h2><p>${t('The details that matter before you commit a budget. Still weighing up the fit? Tell me what you’re planning.','在投入预算前，了解关键细节。如果仍在评估合作是否适合，欢迎介绍您的计划。')}</p><a class="text-link" href="#contact">${t('Discuss your campaign','沟通您的合作计划')}</a></div><div class="faq-list">${questions.map((q,i)=>`<details data-faq-key="${['paid_partnership','profile_allocation','creative_control','sales_expectations','advertising_rights','timing','commission','international_teams','exclusivity'][i]}"><summary>${q[0]}</summary><p>${q[1]}</p></details>`).join('')}</div></div></section>`;
+const field=(id,label,type='text',opts={})=>`<div class="field"><label for="f-${id}">${label}${opts.optional?` <small>${t('(optional)','（选填）')}</small>`:''}</label><input id="f-${id}" name="${id}" type="${type}" ${opts.optional?'':'required'} ${opts.auto?`autocomplete="${opts.auto}"`:''} maxlength="${opts.max||250}" ${opts.placeholder?`placeholder="${e(opts.placeholder)}"`:''}></div>`;
+const contact=`<section id="contact" class="section-space"><div class="wrap contact-layout"><div class="contact-copy"><p class="eyebrow">${t('Your next campaign','您的下一次合作')}</p><h2>${t('Let’s give your<br>product a<br><em>proper introduction.</em>','让您的产品，<br><em>被认真介绍。</em>')}</h2><p>${t('Tell me what you’re bringing to TikTok Shop US. I’ll review the fit and use your details to shape a clear next step.','告诉我您计划在 TikTok Shop 美国市场推广什么产品。我会评估匹配度，并根据您的信息明确下一步。')}</p><a class="text-link" href="mailto:contact@hammadmedia.com">contact@hammadmedia.com</a><ul class="contact-facts"><li>${t('Paid video packages from $5,000 USD','付费视频套餐 $5,000 美元起')}</li><li>${t('Upfront creative fee + TikTok Shop commission','预付创作费，另加 TikTok Shop 佣金')}</li><li>${t('US and international brand & agency inquiries','欢迎美国及国际品牌、代理机构咨询')}</li><li>${t('Creative control retained on our side','创作控制权保留在我方')}</li></ul></div><div><p class="form-intro">${t('A few essentials first. Optional campaign details can be added below.','请先填写必要信息，也可在下方补充项目详情。')}</p><div id="form-status" class="form-status" role="status" aria-live="polite">${t('Checking inquiry availability…','正在检查咨询功能…')}</div><form id="inquiry-form" action="/api/intake" method="post"><div class="honeypot" aria-hidden="true"><label for="f-website">Website</label><input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off"></div><div class="field-row">${field('brand',t('Brand or agency','品牌或机构'),'text',{auto:'organization',max:160})}${field('name',t('Your name','您的姓名'),'text',{optional:true,auto:'name',max:120})}</div>${field('email',t('Work email','工作邮箱'),'email',{auto:'email',max:254})}${field('product',t('Product name or TikTok Shop link','产品名称或 TikTok Shop 链接'),'text',{max:500})}<div class="field"><label for="f-engagement">${t('Preferred partnership','意向合作方式')}</label><select id="f-engagement" name="engagement" required><option value="">${t('Choose a package','请选择套餐')}</option>${tiers.map(x=>`<option value="${x.n} videos">${x.n} ${t('videos','条视频')} — ${money(x.p)} USD</option>`).join('')}<option value="Exclusivity">${t('Category exclusivity — $50,000 / 30 days','品类独家 — $50,000 / 30天')}</option><option value="Help me choose">${t('Help me choose / custom volume','协助选择／定制数量')}</option></select></div><div class="field" id="category-field" hidden><label for="f-exact-category">${t('Precisely defined category','具体品类范围')}</label><input id="f-exact-category" name="exact_category" type="text" maxlength="160" placeholder="${t('For example: collagen peptide powder','例如：胶原蛋白肽粉')}"></div><details class="form-more"><summary>${t('Add campaign details (optional)','补充合作详情（选填）')}</summary><div class="field-row">${field('commission',t('Affiliate commission','联盟佣金'),'text',{optional:true,placeholder:t('e.g. 25%','例如：25%'),max:120})}${field('timing',t('Ideal timing','理想时间'),'text',{optional:true,placeholder:t('Your launch window','期望上线时间'),max:160})}</div><div class="field"><label for="f-message">${t('What should I know?','还有哪些信息？')} <small>${t('(optional)','（选填）')}</small></label><textarea id="f-message" name="message" maxlength="4000" rows="4" placeholder="${t('Campaign goal, account split, ad usage, product details…','推广目标、账号分配、广告使用或产品详情……')}"></textarea></div></details><label class="checkbox"><input id="paid-ack" name="paid_partnership_ack" type="checkbox" required><span>${t('I’m inquiring about a paid partnership. I understand video packages start at $5,000 USD upfront, plus TikTok Shop commission.','我咨询的是付费合作，已知悉视频套餐 $5,000 美元起，预付费用另加 TikTok Shop 联盟佣金。')}</span></label><div id="turnstile-container"></div><button id="inquiry-submit" class="btn btn-primary form-submit" type="submit" disabled>${t('Send partnership inquiry','发送合作咨询')}</button><p class="fine">${t('Submitting an inquiry does not book a campaign or commit you to payment.','提交咨询不代表预订合作，也不产生付款义务。')}</p><p class="privacy-note">${t('Your details are used to review and respond to this inquiry, with CRM storage, email delivery and spam protection. No marketing subscription.','您的信息仅用于评估并回复咨询，涉及 CRM 存储、邮件通知及垃圾信息防护，不会自动订阅营销邮件。')} <a href="${home}privacy/" class="text-link">${t('Privacy details','隐私说明')}</a></p><noscript><p>${t('JavaScript is needed for this form. Please email','此表单需要 JavaScript，请发送邮件至')} <a href="mailto:contact@hammadmedia.com">contact@hammadmedia.com</a>.</p></noscript></form></div></div></section>`;
+const footer=`<footer class="site-footer"><div class="wrap"><div class="footer-main">${localeBrand}<div class="footer-links"><a href="${home}#packages">${t('Packages','合作套餐')}</a><a href="${home}#results">${t('Results','合作成果')}</a><a href="${home}#faq">${t('FAQ','常见问题')}</a><a href="${home}privacy/">${t('Privacy','隐私说明')}</a><a href="mailto:contact@hammadmedia.com">${t('Contact','联系')}</a>${production?`<button type="button" class="preferences-button" data-analytics-settings>${t('Analytics preferences','分析偏好设置')}</button>`:''}</div></div><div class="footer-bottom"><p>${t('Hammad Media LLC. Brand names and product images illustrate affiliate sales history and do not imply sponsorship or endorsement. All trademarks belong to their owners. Historical performance does not guarantee future results.','Hammad Media LLC。品牌名称及产品图片用于展示历史联盟销售，不表示赞助或背书。所有商标归各自所有者所有。历史表现不保证未来结果。')}</p><span>© 2026 Hammad Media LLC</span></div></div></footer>`;
+const mobile=`<div class="sticky-mobile"><div>${t('Paid creator partnerships','付费达人合作')}<strong>${t('From $5,000 + commission','$5,000 起，另加佣金')}</strong></div><a class="btn btn-primary" href="#contact">${t('Start a partnership','开始合作')}</a></div>`;
+const schema={'@context':'https://schema.org','@graph':[{'@type':'Organization',name:'Hammad Media LLC',url:'https://hammadmedia.com',logo:'https://hammadmedia.com/assets/redesign/logo-light.svg',email:'contact@hammadmedia.com',sameAs:['https://www.tiktok.com/@drew.review','https://www.tiktok.com/@drew.review1']},{'@type':'ProfessionalService',name:'Hammad Media',url:'https://hammadmedia.com',areaServed:'United States',priceRange:'$5,000 - $50,000+'}]};
+const analyticsChoices=`<section id="analytics-consent" class="analytics-consent" role="region" aria-label="${t('Analytics preferences','分析偏好设置')}" hidden><div><strong>${t('Optional analytics','可选的网站分析')}</strong><p>${t('Allow Google Analytics to measure visits and interactions? Your inquiry works with either choice.','是否允许 Google Analytics 统计访问与互动？无论选择哪一项，您都可以提交咨询。')} <a href="${home}privacy/">${t('Privacy details','隐私说明')}</a></p></div><div class="consent-actions"><button type="button" id="analytics-decline" class="btn btn-outline">${t('Decline analytics','拒绝分析')}</button><button type="button" id="analytics-accept" class="btn btn-primary">${t('Allow analytics','允许分析')}</button></div></section>`;
+function shell(body,pageTitle=title,page=''){const privacy=Boolean(page),suffix=page?page+'/':'';return `<!doctype html><html lang="${zh?'zh-CN':'en'}" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e(pageTitle)}</title><meta name="description" content="${e(description)}">${production&&page!=='thanks'?'':'<meta name="robots" content="noindex,nofollow">'}<link rel="canonical" href="https://hammadmedia.com${home}${suffix}"><link rel="alternate" hreflang="en" href="https://hammadmedia.com/${suffix}"><link rel="alternate" hreflang="zh-Hans" href="https://hammadmedia.com/zh/${suffix}"><link rel="alternate" hreflang="x-default" href="https://hammadmedia.com/${suffix}"><meta property="og:title" content="${e(pageTitle)}"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="website"><meta property="og:image" content="https://hammadmedia.com/assets/og.jpg"><meta name="theme-color" content="#0b130e"><link rel="icon" href="/favicon.ico"><link rel="preload" href="/assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/fraunces-roman.woff2" as="font" type="font/woff2" crossorigin><script>try{var theme=localStorage.getItem('hm-theme');if(theme==='light'||theme==='dark')document.documentElement.dataset.theme=theme}catch(e){}</script><link rel="stylesheet" href="/assets/redesign/site.css"><script type="application/ld+json">${JSON.stringify(schema).replace(/</g,'\\u003c')}</script><script src="/assets/redesign/attribution.js" defer></script>${production?`<script src="/assets/redesign/analytics.js" defer></script>`:''}</head><body data-preview="${!production}" class="${privacy?'secondary-page':'landing-page'}"><a class="skip" href="#main">${t('Skip to content','跳到正文')}</a>${production?'':`<div class="preview-banner">${t('Design preview for review · The live website is unchanged','设计审核预览 · 正式网站保持原状')}</div>`}${nav.replace(`href="${zh?'/':'/zh/'}" lang=`, `href="${zh?'/':'/zh/'}${suffix}" lang=`)}${body}${footer}${production?analyticsChoices:''}${privacy?'':mobile}<script src="/assets/redesign/site.js" defer></script><script src="/assets/redesign/engagement.js" defer></script>${page==='thanks'?'<script src="/assets/redesign/thanks.js" defer></script>':''}</body></html>`}
+const body=`<main id="main">${intro}${ribbon}${proof}${results}${story}${packages}${process}${faq}${contact}</main>`;
+const privacyBody=`<main id="main"><article class="wrap privacy-content"><p class="eyebrow">Hammad Media LLC</p><h1>${t('Privacy, plainly.','隐私说明。')}</h1><p>${t('We use the information you choose to share to assess and respond to partnership inquiries. We do not sell your details or add you to a marketing list through this form.','您提供的信息用于评估并回复合作咨询。我们不会出售您的信息，也不会通过此表单将您添加到营销名单。')}</p><h2>${t('What the form collects','表单收集的信息')}</h2><p>${t('Brand or agency, your name if supplied, email, product information, preferred partnership, and optional campaign details. Page source and campaign tags may be stored with the inquiry to understand where it came from. Please do not include financial account details, passwords, health records or other sensitive information.','包括品牌或机构、您选填的姓名、邮箱、产品信息、意向合作方式及可选项目详情。咨询记录可能包含页面来源及推广标签，以了解咨询来源。请勿提交金融账户资料、密码、健康记录或其他敏感信息。')}</p><h2>${t('How inquiry delivery works','咨询处理方式')}</h2><p>${t('When enabled, the inquiry service uses Vercel for hosting, Cloudflare Turnstile for abuse prevention, Supabase for temporary delivery records, Notion for the Hammad Media CRM, and Resend for email notifications to contact@hammadmedia.com. These providers process data to deliver and manage the inquiry. Delivery retries help avoid lost inquiries.','功能启用后，咨询服务使用 Vercel 托管、Cloudflare Turnstile 防滥用、Supabase 临时保存投递记录、Notion 管理 Hammad Media CRM，并通过 Resend 向 contact@hammadmedia.com 发送通知。这些服务商处理数据以完成咨询投递与管理，重试机制用于降低信息丢失风险。')}</p><h2>${t('Retention and contact','保留期限与联系')}</h2><p>${t('A pending inquiry is temporarily saved in this browser tab to support safe retries after a refresh. It is cleared after confirmed receipt or when you close the tab. A receipt reference without your inquiry details stays in this tab for up to 24 hours to display confirmation. Completed server delivery details are removed after a 30-day recovery period; an anonymous receipt identifier is retained to prevent duplicates. CRM and email records are retained while needed to manage the relationship and related business records. To request access, correction or deletion, email contact@hammadmedia.com.','待确认的咨询会临时保存在当前浏览器标签页中，以便刷新后安全重试；确认收到或关闭标签页后清除。不含咨询内容的回执编号可在此标签页保留最多24小时，用于显示确认。已完成的服务器投递详情在30天恢复期后清理，保留不含咨询内容的回执标识以防重复。CRM 及邮件记录在管理合作关系及相关业务记录所需期间保留。如需访问、更正或删除信息，请发送邮件至 contact@hammadmedia.com。')}</p><h2>${t('Website analytics','网站分析')}</h2><p>${t('With your permission, the live site uses Google Analytics to understand visits and interactions. It stays off until you allow it. Change your choice at any time using Analytics preferences in the footer. Your inquiry works whether you allow or decline analytics. Form names, email addresses and message text are not intentionally sent to Analytics. This design preview does not load the production Analytics tag. Browser or device settings may limit collection.','正式网站在获得您的允许后使用 Google Analytics 了解访问及互动情况，允许之前保持关闭。您可随时通过页脚的“分析偏好设置”更改选择。不论允许或拒绝分析，咨询表单都可使用。表单姓名、邮箱地址及消息正文不会被主动发送至 Analytics。本设计预览不加载正式 Analytics 标签。浏览器或设备设置可能限制数据收集。')}</p><p><a href="${home}">${t('Back to Hammad Media','返回 Hammad Media')}</a></p></article></main>`;
+const thanksBody=`<main id="main"><section class="wrap confirmation-content"><p class="eyebrow">${t('Your partnership inquiry','您的合作咨询')}</p><div id="confirmation-missing"><h1>${t('Let’s check<br>your <em>inquiry.</em>','查看您的<br><em>合作咨询。</em>')}</h1><p>${t('This page alone does not confirm an inquiry was received. There is no recent confirmed receipt in this browser tab. If you already submitted, check the reference you saved before sending again.','仅访问此页面不能证明咨询已被收到。当前标签页没有近期确认回执。如果您已经提交，请先查看已保存编号，再决定是否重新发送。')}</p><a class="btn btn-primary" href="${home}#contact">${t('Back to the inquiry form','返回咨询表单')}</a></div><div id="confirmation-received" hidden><div class="confirmation-check" aria-hidden="true">✓</div><h1>${t('Thank you.<br>Your inquiry<br>is <em>received.</em>','谢谢。<br>已收到您的<br><em>合作咨询。</em>')}</h1><p>${t('Your details are securely saved. I’ll review the product, campaign scope and fit before following up.','您的信息已安全保存。我会先评估产品、合作范围及匹配度，再与您联系。')}</p><div class="receipt-box"><span>${t('Your inquiry reference','您的咨询编号')}</span><strong id="confirmation-reference"></strong><p>${t('Keep this reference if you contact us about your inquiry.','如需联系查询，请保留此编号。')}</p></div><h2>${t('What happens next','下一步')}</h2><ol class="confirmation-steps"><li>${t('Your inquiry is queued for our CRM and contact inbox.','咨询将投递至我们的 CRM 及联系邮箱。')}</li><li>${t('I review the product and the paid partnership you have in mind.','我会评估产品及您计划的付费合作。')}</li><li>${t('If it is a fit, we clarify scope, profile allocation and timing by email.','如果匹配，我们将通过邮件明确合作范围、账号分配及时间。')}</li></ol><p class="fine">${t('Your inquiry is not a campaign booking or a payment commitment.','提交咨询不代表预订合作，也不产生付款义务。')}</p><a class="btn btn-primary" href="${home}#results">${t('Explore the portfolio','查看历史推广成果')}</a></div><p class="confirmation-contact">${t('Need to add something?','需要补充信息？')} <a class="text-link" href="mailto:contact@hammadmedia.com">contact@hammadmedia.com</a></p></section></main>`;
+return {index:shell(body),privacy:shell(privacyBody,t('Privacy | Hammad Media','隐私说明 | Hammad Media'),'privacy'),thanks:shell(thanksBody,t('Inquiry confirmation | Hammad Media','咨询确认 | Hammad Media'),'thanks')};
 }
-
-fs.mkdirSync(path.join(ROOT, "dist"), { recursive: true });
-fs.writeFileSync(path.join(ROOT, "dist", "index.html"), html);
-
-// Copy static assets (logo etc.) into dist — raw/ masters never ship
-const assetsSrc = path.join(ROOT, "assets");
-const rawDir = path.join(assetsSrc, "raw");
-fs.rmSync(path.join(ROOT, "dist", "assets"), { recursive: true, force: true });
-if (fs.existsSync(assetsSrc)) {
-  fs.cpSync(assetsSrc, path.join(ROOT, "dist", "assets"), {
-    recursive: true,
-    filter: (src) => src !== rawDir && !src.startsWith(rawDir + path.sep),
-  });
-}
-fs.copyFileSync(path.join(ROOT, "thanks.html"), path.join(ROOT, "dist", "thanks.html"));
-fs.copyFileSync(path.join(ROOT, "robots.txt"), path.join(ROOT, "dist", "robots.txt"));
-fs.copyFileSync(path.join(ROOT, "404.html"), path.join(ROOT, "dist", "404.html"));
-fs.copyFileSync(path.join(ROOT, "favicon.ico"), path.join(ROOT, "dist", "favicon.ico"));
-
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${content.site.url}/</loc>
-    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-`;
-fs.writeFileSync(path.join(ROOT, "dist", "sitemap.xml"), sitemap);
-console.log(`Built dist/index.html (${html.length} bytes) + sitemap + robots`);
+for(const locale of ['en','zh']){const p=locale==='zh'?path.join(OUT,'zh'):OUT;fs.mkdirSync(path.join(p,'privacy'),{recursive:true});const html=render(locale);fs.writeFileSync(path.join(p,'index.html'),html.index);fs.writeFileSync(path.join(p,'privacy/index.html'),html.privacy);fs.mkdirSync(path.join(p,'thanks'),{recursive:true});fs.writeFileSync(path.join(p,'thanks/index.html'),html.thanks);if(locale==='en')fs.writeFileSync(path.join(OUT,'thanks.html'),html.thanks);}
+fs.writeFileSync(path.join(OUT,'robots.txt'),production?'User-agent: *\nAllow: /\nSitemap: https://hammadmedia.com/sitemap.xml\n':'User-agent: *\nDisallow: /\n');
+fs.writeFileSync(path.join(OUT,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://hammadmedia.com/</loc></url><url><loc>https://hammadmedia.com/zh/</loc></url></urlset>');
+const fallback='<!doctype html><html lang="en"><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hammad Media</title><link rel="stylesheet" href="/assets/redesign/site.css"><main class="wrap privacy-content"><h1>Let’s get you to the right place.</h1><p>This page does not confirm an inquiry was received. Please use the partnership form or email contact@hammadmedia.com.</p><p><a class="btn btn-primary" href="/#contact">Contact Hammad Media</a></p></main></html>';
+fs.writeFileSync(path.join(OUT,'404.html'),fallback);
+console.log(`Built English and Simplified Chinese ${production?'production':'review preview'} pages.`);

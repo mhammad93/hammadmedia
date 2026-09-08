@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Render assets/og.jpg (1200x630) from content.json + the site's own fonts.
+"""Render assets/og.jpg (1200x630) from performance.json + the site's own fonts.
 
 Re-run after any stats update so the share image can never drift from the page:
     python tools/make_og.py
@@ -19,7 +19,7 @@ PAPER = (246, 244, 238)  # --paper
 CREAM_DIM = (179, 187, 177)
 GREEN = (61, 220, 132)   # --green
 
-content = json.load(open(os.path.join(ROOT, "content.json")))
+performance = json.load(open(os.path.join(ROOT, "performance.json")))
 
 
 def load_font(name, size, axes):
@@ -58,26 +58,22 @@ d = ImageDraw.Draw(im)
 
 M = 84  # margin
 
-# headline — Fraunces 600 like the hero h1
-h_roman = load_font("fraunces-roman", 88, [144, 600])
-h_italic = load_font("fraunces-italic", 88, [144, 600])
-d.text((M, 96), "I turn supplements", font=h_roman, fill=PAPER)
-x = d.textlength("into ", font=h_roman)
-d.text((M, 196), "into ", font=h_roman, fill=PAPER)
-d.text((M + x, 196), "bestsellers.", font=h_italic, fill=GREEN)
+# Share-card copy follows the selected homepage; metric values come from the public source.
+h_roman = load_font("fraunces-roman", 82, [144, 600])
+h_italic = load_font("fraunces-italic", 82, [144, 600])
+d.text((M, 84), "The creator behind", font=h_roman, fill=PAPER)
+d.text((M, 183), "your next campaign.", font=h_italic, fill=GREEN)
 
-# proof lines from content.json — never hand-typed
-stat = lambda kw: next(s["value"] for s in content["stats"] if kw in s["label"])
-line1 = (
-    f"{content['hero']['gmvYtd']} GMV in 2026   ·   "
-    f"{stat('PRODUCT VIEWS')} product views   ·   {stat('UNITS SOLD')} units sold"
-)
-line2 = "#1 Health & Wellness Affiliate — TikTok Shop US, 2025"
-
-m_semibold = load_font("manrope", 33, [600])
-m_medium = load_font("manrope", 29, [500])
-d.text((M, 368), line1, font=m_semibold, fill=PAPER)
-d.text((M, 424), line2, font=m_medium, fill=GREEN)
+m_semibold = load_font("manrope", 34, [600])
+m_medium = load_font("manrope", 26, [500])
+metric = performance["metrics"]["janAugGmv"]
+line1 = f"{metric['value']['en']} attributed GMV · {metric['period']['en']}"
+line2 = "Creator-led TikTok Shop partnerships · Health & wellness"
+line3 = "Both profiles · Rounded cumulative estimate · Past results vary"
+for y, text, font, color in [(350, line1, m_semibold, PAPER), (411, line2, m_medium, GREEN), (456, line3, m_medium, CREAM_DIM)]:
+    if d.textlength(text, font=font) > W - 2 * M:
+        raise ValueError("Share-card text exceeds its safe width")
+    d.text((M, y), text, font=font, fill=color)
 
 # footer rule + letterspaced wordmark
 d.line((M, 528, W - M, 528), fill=(61, 220, 132, 60), width=1)

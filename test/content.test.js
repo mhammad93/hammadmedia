@@ -1,64 +1,112 @@
-const { test } = require("node:test");
-const assert = require("node:assert");
-const fs = require("node:fs");
-const path = require("node:path");
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const content = require('../content.json');
+const performance = require('../performance.json');
+const ROOT = path.resolve(__dirname, '..');
 
-const content = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "..", "content.json"), "utf8"),
-);
+function bilingual(value) {
+  assert.deepEqual(Object.keys(value).sort(), ['en', 'zh']);
+  for (const text of Object.values(value)) assert.ok(typeof text === 'string' && text.trim());
+}
 
-test("site block has required fields", () => {
-  for (const key of ["title", "description", "brandName", "statsUpdated"]) {
-    assert.ok(content.site[key], `site.${key} missing`);
+test('public content contains only active portfolio metadata and stable performance references', () => {
+  assert.deepEqual(Object.keys(content).sort(), ['accounts', 'brands', 'receipts']);
+  assert.deepEqual(content.accounts.map(a => a.handle).sort(), ['drew.review', 'drew.review1']);
+  for (const account of content.accounts) {
+    assert.deepEqual(Object.keys(account).sort(), ['avatar', 'handle', 'url']);
+    assert.equal(account.url, `https://www.tiktok.com/@${account.handle}`);
+    assert.ok(performance.accounts[account.handle]);
+  }
+  const keys = content.receipts.items.map(p => p.performanceKey);
+  assert.equal(new Set(keys).size, keys.length);
+  assert.deepEqual(keys.slice().sort(), Object.keys(performance.products).sort());
+  for (const product of content.receipts.items) {
+    assert.deepEqual(Object.keys(product).sort(), ['image', 'performanceKey', 'title', 'videoUrl']);
+    assert.equal(product.title, performance.products[product.performanceKey].title);
+    assert.match(product.videoUrl, /^https:\/\/www\.tiktok\.com\/@drew\.review1?\/video\/\d+$/);
+  }
+  for (const asset of [...content.brands.map(b => b.logo), ...content.accounts.map(a => a.avatar), ...content.receipts.items.map(p => p.image)]) {
+    assert.match(asset, /^assets\/(brands|products)\/[\w.-]+$/);
+    assert.ok(fs.existsSync(path.join(ROOT, asset)), asset);
   }
 });
 
-test("hero has headline and subheadline", () => {
-  assert.ok(content.hero.headline.length > 10);
-  assert.ok(content.hero.subheadline.length > 10);
+test('all displayed metrics retain a bilingual period and a truthful estimate or historic status', () => {
+  assert.deepEqual(Object.keys(performance.metrics).sort(), ['allTimeGmv', 'allTimeVideoViews', 'historicalProductViews', 'janAugGmv', 'janAugUnits']);
+  for (const metric of Object.values(performance.metrics)) {
+    bilingual(metric.value); bilingual(metric.label);
+    if (metric.note) bilingual(metric.note);
+    if (metric.period) bilingual(metric.period);
+    assert.ok(['estimated_rollforward', 'approximate_derived_update', 'historic_not_updated'].includes(metric.status));
+    assert.match(metric.end || metric.asOf, /^2026-\d\d-\d\d$/);
+  }
+  assert.equal(performance.metrics.allTimeGmv.status, 'estimated_rollforward');
+  assert.match(performance.metrics.allTimeGmv.note.en, /Estimated/);
+  assert.equal(performance.metrics.allTimeVideoViews.asOf, '2026-06-08');
+  assert.equal(performance.metrics.historicalProductViews.end, '2026-06-08');
+  assert.equal(performance.metrics.janAugUnits.start, '2026-01-01');
+  assert.equal(performance.metrics.janAugUnits.end, '2026-08-31');
+  assert.match(performance.metrics.janAugUnits.value.en, /^About /);
+  assert.match(performance.metrics.janAugGmv.value.en, /^About /);
+  assert.equal(performance.methodology.productTotalsAreSubsets, true);
+  assert.match(performance.methodology.notes.join(' '), /timezone.*not recorded/);
+  assert.match(performance.methodology.notes.join(' '), /impressions are not substituted for views/);
+  assert.equal(performance.methodology.allTimeBaselineAssumedAsOf, '2026-06-08');
 });
 
-test("stats: at least 3, each with value and label", () => {
-  assert.ok(Array.isArray(content.stats) && content.stats.length >= 3);
-  for (const s of content.stats) {
-    assert.ok(typeof s.value === "string" && s.value.length > 0);
-    assert.ok(typeof s.label === "string" && s.label.length > 0);
+test('product rows keep incomplete extensions at June 8; two matched products advance to August', () => {
+  for (const [key, p] of Object.entries(performance.products)) {
+    bilingual(p.gmv); bilingual(p.units); bilingual(p.period);
+    const updated = ['astaxanthin', 'collagen'].includes(key);
+    assert.equal(p.end, updated ? '2026-08-31' : '2026-06-08');
+    assert.equal(p.status, updated ? 'approximate_derived_update' : 'historic_not_updated');
+    assert.equal(p.gmv.en.startsWith('About '), updated);
+    assert.equal(p.units.en.startsWith('About '), updated);
   }
 });
 
-test("accounts: non-empty, each with handle and tiktok url", () => {
-  assert.ok(Array.isArray(content.accounts) && content.accounts.length >= 1);
-  for (const a of content.accounts) {
-    assert.ok(a.handle.length > 0);
-    assert.ok(a.url.startsWith("https://www.tiktok.com/@"));
-    assert.ok(a.niche.length > 0);
+test('public metric values match the approved evidence draft when that private audit is available', t => {
+  // The Vercel project builds without private evidence. Local audit runs additionally verify provenance.
+  const file = path.join(ROOT, '../private/sales-evidence/public-performance-draft.json');
+  if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
+  const source = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(performance.metrics.allTimeGmv.value.en, source.all_time_gmv.display);
+  assert.equal(performance.metrics.allTimeVideoViews.value.en, source.historic_all_time_video_views.display);
+  assert.equal(performance.metrics.janAugGmv.value.en, source.hero_gmv.display);
+  assert.equal(performance.metrics.janAugUnits.value.en, source.items.display);
+  assert.equal(performance.metrics.historicalProductViews.value.en, source.historic_2026_product_views.display);
+  for (const a of source.accounts) {
+    const actual = performance.accounts[a.handle.slice(1)];
+    assert.equal(actual.gmv.en, a.gmv); assert.equal(actual.units.en, a.items);
+  }
+  for (const p of source.updated_products) {
+    const actual = Object.values(performance.products).find(v => v.title === p.title);
+    assert.equal(actual.gmv.en, p.gmv); assert.equal(actual.units.en, p.items);
+    assert.equal(actual.end, p.as_of);
+  }
+  for (const p of source.products_to_keep_at_prior_date) {
+    const actual = Object.values(performance.products).find(v => v.title === p.title);
+    assert.equal(actual.gmv.en, '$' + p.gmv_claim.toLocaleString('en-US'));
+    assert.equal(actual.units.en, p.units_claim.toLocaleString('en-US'));
+    assert.equal(actual.end, p.as_of);
   }
 });
 
-test("receipts: 6 items sorted by descending YTD with valid fields", () => {
-  const items = content.receipts.items;
-  assert.strictEqual(items.length, 6);
-  for (let i = 0; i < items.length; i++) {
-    const c = items[i];
-    assert.ok(c.title.length > 0);
-    assert.ok(Number.isInteger(c.ytd) && c.ytd > 0, `ytd invalid: ${c.title}`);
-    assert.ok(Number.isInteger(c.units) && c.units > 0, `units invalid: ${c.title}`);
-    assert.ok(c.image.startsWith("assets/products/"), `image path invalid: ${c.title}`);
-    if (c.videoUrl) assert.ok(c.videoUrl.startsWith("https://www.tiktok.com/"));
-    if (i > 0) assert.ok(items[i - 1].ytd >= c.ytd, `not sorted descending at index ${i}`);
-  }
-  // top 3 (podium) carry the dual-proof best-month line where known
-  assert.ok(items[0].bestMonth && items[1].bestMonth && items[2].bestMonth, "podium items need bestMonth");
-});
-
-test("services has 3 steps with title and text", () => {
-  assert.strictEqual(content.services.steps.length, 3);
-  for (const s of content.services.steps) {
-    assert.ok(s.title.length > 0 && s.text.length > 0);
-  }
-});
-
-test("contact has valid primary email and FormSubmit destination", () => {
-  assert.strictEqual(content.contact.email, "contact@hammadmedia.com");
-  assert.strictEqual(content.contact.formSubmitEmail, "contact@hammadmedia.com");
+test('public metric source contains no earnings, contact details, private evidence references, or unsupported lifetime metrics', () => {
+  const text = JSON.stringify(performance);
+  assert.doesNotMatch(text, /(?:private\/|sales-evidence|IMG_\d|\.heic|estimatedCommission|commission_amount|bank_account|access_token|service_role|@[^" ]+\.[a-z]{2,})/i);
+  assert.ok(!('allTimeUnits' in performance.metrics));
+  assert.ok(!('allTimeProductViews' in performance.metrics));
+  assert.ok(!('productImpressions' in performance.metrics));
+  const walk = value => {
+    if (Array.isArray(value)) return value.forEach(walk);
+    if (value && typeof value === 'object') for (const [key, item] of Object.entries(value)) {
+      assert.doesNotMatch(key, /commission|earnings|payout|email|phone|followers|approximate_value/i);
+      walk(item);
+    }
+  };
+  walk(performance);
 });
