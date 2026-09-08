@@ -3,6 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const {createHash} = require('node:crypto');
 const content = require('../content.json');
 const performance = require('../performance.json');
 const ROOT = path.resolve(__dirname, '..');
@@ -55,7 +56,7 @@ test('all displayed metrics retain a bilingual period and a truthful estimate or
   assert.equal(performance.metrics.janAugUnits.start, '2026-01-01');
   assert.equal(performance.metrics.janAugUnits.end, '2026-08-31');
   assert.match(performance.metrics.janAugUnits.value.en, /^About /);
-  assert.match(performance.metrics.janAugGmv.value.en, /^About /);
+  assert.match(performance.metrics.janAugGmv.value.en, /^\$\d+(?:\.\d+)?[KM]\+$/);
   assert.equal(performance.methodology.productTotalsAreSubsets, true);
   assert.match(performance.methodology.notes.join(' '), /timezone.*not recorded/);
   assert.equal(performance.methodology.allTimeBaselineAssumedAsOf, '2026-06-08');
@@ -64,9 +65,9 @@ test('all displayed metrics retain a bilingual period and a truthful estimate or
 test('product dates distinguish historical baselines, matched extensions and complete later-month windows', () => {
   const periods = {
     astaxanthin: ['2026-01-01', '2026-08-31', 'approximate_derived_update'],
-    nmn: ['2026-01-01', '2026-06-08', 'historic_not_updated'],
+    nmn: ['2026-01-01', '2026-08-31', 'documented_partial_subtotal_not_complete_period'],
     collagen: ['2026-01-01', '2026-08-31', 'approximate_derived_update'],
-    magnesium: ['2026-01-01', '2026-06-08', 'historic_not_updated'],
+    magnesium: ['2026-01-01', '2026-08-31', 'documented_partial_subtotal_not_complete_period'],
     glutathione: ['2026-04-01', '2026-08-31', 'approximate_sum_of_complete_account_month_displays'],
     testosterone: ['2026-05-01', '2026-08-31', 'approximate_sum_of_complete_account_month_displays']
   };
@@ -74,43 +75,131 @@ test('product dates distinguish historical baselines, matched extensions and com
   for (const [key, p] of Object.entries(performance.products)) {
     bilingual(p.gmv); bilingual(p.units); bilingual(p.period);
     assert.deepEqual([p.start, p.end, p.status], periods[key]);
-    const approximate = p.status !== 'historic_not_updated';
-    assert.equal(p.gmv.en.startsWith('About '), approximate);
+    const approximate = p.status !== 'documented_partial_subtotal_not_complete_period';
+    assert.match(p.gmv.en, /^\$\d+(?:\.\d+)?[KM]\+$/);
     assert.equal(p.units.en.startsWith('About '), approximate);
-    assert.equal(p.gmv.zh.startsWith('约 '), approximate);
+    assert.equal(p.gmv.zh, p.gmv.en);
     assert.equal(p.units.zh.startsWith('约 '), approximate);
   }
 });
 
-test('public metric values match the approved evidence draft when that private audit is available', t => {
+test('non-monetary values and scopes preserve the approved evidence draft after dollar-display flooring', t => {
   // The Vercel project builds without private evidence. Local audit runs additionally verify provenance.
   const file = path.join(ROOT, '../private/sales-evidence/public-performance-draft.json');
   if (!fs.existsSync(file)) return t.skip('Private evidence is intentionally outside the deployment project.');
   const source = JSON.parse(fs.readFileSync(file, 'utf8'));
   assert.ok(source.jan_aug_product_views, 'Owner-approved product-view update must have a separate dated audit; preserve its historic baseline.');
-  assert.equal(performance.metrics.allTimeGmv.value.en, source.all_time_gmv.display);
   assert.ok(source.all_time_video_views, 'The active lifetime estimate must use audited video exports, separately from the superseded mixed series.');
   assert.equal(performance.metrics.allTimeVideoViews.value.en, source.all_time_video_views.display);
-  assert.equal(performance.metrics.janAugGmv.value.en, source.hero_gmv.display);
   assert.equal(performance.metrics.janAugUnits.value.en, source.items.display);
   assert.equal(performance.metrics.historicalProductViews.value.en, source.jan_aug_product_views.display);
   assert.equal(performance.metrics.historicalProductViews.end, source.jan_aug_product_views.end);
   for (const a of source.accounts) {
     const actual = performance.accounts[a.handle.slice(1)];
-    assert.equal(actual.gmv.en, a.gmv); assert.equal(actual.units.en, a.items);
+    assert.equal(actual.units.en, a.items);
   }
   for (const p of source.updated_products) {
     const actual = Object.values(performance.products).find(v => v.title === p.title);
-    assert.equal(actual.gmv.en, p.gmv); assert.equal(actual.units.en, p.items);
+    assert.equal(actual.units.en, p.items);
     assert.equal(actual.end, p.as_of);
   }
   for (const p of source.products_to_keep_at_prior_date) {
     const actual = Object.values(performance.products).find(v => v.title === p.title);
     // The active portfolio intentionally replaces two historical examples.
-    if (!actual) continue;
-    assert.equal(actual.gmv.en, '$' + p.gmv_claim.toLocaleString('en-US'));
+    if (!actual || actual.status === 'documented_partial_subtotal_not_complete_period') continue;
     assert.equal(actual.units.en, p.units_claim.toLocaleString('en-US'));
     assert.equal(actual.end, p.as_of);
+  }
+});
+
+test('all public GMV displays use bilingual rounded figures with their dated estimate assumptions intact', () => {
+  const values = [performance.metrics.allTimeGmv.value, performance.metrics.janAugGmv.value,
+    ...Object.values(performance.accounts).map(a => a.gmv), ...Object.values(performance.products).map(p => p.gmv)];
+  assert.equal(values.length, 10);
+  for (const value of values) {
+    assert.match(value.en, /^\$\d+(?:\.\d+)?[KM]\+$/);
+    assert.equal(value.zh, value.en);
+  }
+  assert.match(performance.methodology.notes.join(' '), /not exact totals or certified raw-platform minimums/);
+  assert.match(performance.methodology.notes.join(' '), /Astaxanthin.*uncertainty can cross the displayed threshold/);
+  assert.match(performance.metrics.allTimeGmv.note.en, /Estimated/);
+});
+
+test('chosen dollar displays reconcile to independent arithmetic without certifying a rounded estimate as a minimum', t => {
+  const file = path.join(ROOT, '../private/sales-evidence/monetary-display-floors-2026-09-08.json');
+  if (!fs.existsSync(file)) return t.skip('Private monetary evidence is intentionally outside the deployment project.');
+  const audit = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const selected = {allTimeGmv:'$9.1M+',janAugGmv:'$3.9M+','drew.review':'$1.4M+','drew.review1':'$2.5M+',astaxanthin:'$400K+',nmn:'$240K+',collagen:'$250K+',magnesium:'$170K+',glutathione:'$140K+',testosterone:'$100K+'};
+  assert.equal(audit.fields.length, 10);
+  assert.equal(new Set(audit.fields.map(row => row.jsonPointer)).size, 10);
+  for (const source of audit.sourceFiles) {
+    const local = path.join(path.dirname(file), path.basename(source.path));
+    assert.equal(createHash('sha256').update(fs.readFileSync(local)).digest('hex'), source.sha256, source.path);
+  }
+  for (const row of audit.fields) {
+    const actualDisplay = row.path.reduce((value, key) => value[key], performance);
+    assert.deepEqual(actualDisplay, {en:selected[row.key],zh:selected[row.key]}, row.key);
+    const match = /^\$(\d+(?:\.\d+)?)([KM])\+$/.exec(row.display.en);
+    assert.equal(Number(match[1]) * (match[2] === 'M' ? 1e6 : 1e3), row.threshold, row.key);
+    assert.equal(row.inputs.reduce((sum, input) => sum + input.expandedValue, 0), row.pointEstimate, row.key);
+    assert.equal(row.inputs.reduce((sum, input) => sum + input.reserve, 0), row.roundingReserve, row.key);
+    assert.equal(row.pointEstimate - row.roundingReserve, row.conservativeEstimatedLowerBound, row.key);
+    assert.ok(row.threshold < row.conservativeEstimatedLowerBound, row.key);
+    assert.equal(row.boundKind, 'conditional_estimated_presentation_not_raw_platform_certification');
+    if (!['nmn','magnesium'].includes(row.key)) {
+      const owner = row.path.slice(0, -1).reduce((value, key) => value[key], performance);
+      assert.equal(owner.end || owner.asOf, row.end, row.key);
+      if (row.start) assert.equal(owner.start, row.start, row.key);
+      const selectedMatch = /^\$(\d+(?:\.\d+)?)([KM])\+$/.exec(actualDisplay.en);
+      const displayedThreshold = Number(selectedMatch[1]) * (selectedMatch[2] === 'M' ? 1e6 : 1e3);
+      assert.ok(displayedThreshold <= row.pointEstimate, row.key);
+      if (row.key === 'astaxanthin') {
+        assert.equal(displayedThreshold, 400000);
+        assert.ok(displayedThreshold > row.conservativeEstimatedLowerBound, 'The chosen rounded estimate must not be misrepresented as a certified conservative floor.');
+      } else assert.ok(displayedThreshold < row.conservativeEstimatedLowerBound, row.key);
+    }
+    const cells = row.inputs.map(input => [input.source, input.account || '', input.start || '', input.end || ''].join('|'));
+    assert.equal(new Set(cells).size, cells.length, `${row.key}: duplicate source cells`);
+    for (const input of row.inputs) {
+      const display = /^\$([\d,]+)(?:\.(\d+))?([KM])?\+?$/.exec(input.display);
+      assert.ok(display, input.display);
+      const unit = display[3] === 'M' ? 1e6 : display[3] === 'K' ? 1e3 : 1;
+      assert.equal(Number(display[1].replaceAll(',', '') + (display[2] ? '.' + display[2] : '')) * unit, input.expandedValue);
+      if (input.reserve === 0) {
+        assert.equal(row.key, 'allTimeGmv');
+        assert.equal(input.display, '$8M+');
+        assert.match(row.specialCaveat, /not.*audited lifetime minimum/);
+      } else assert.equal(input.reserve, unit / 10 ** (display[2]?.length || 0), `${row.key}: full last displayed unit reserved`);
+    }
+  }
+});
+
+test('partial NMN and Magnesium cards sum only documented nonoverlapping rows and preserve unknown coverage', t => {
+  const file = path.join(ROOT, '../private/sales-evidence/partial-product-subtotals-2026-09-08.json');
+  if (!fs.existsSync(file)) return t.skip('Private partial-product evidence is intentionally outside the deployment project.');
+  const audit = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.deepEqual(audit.fields.map(row => row.key).sort(), ['magnesium','nmn']);
+  const periods = [['2026-06-09','2026-06-30'],['2026-07-01','2026-07-31'],['2026-08-01','2026-08-31']];
+  for (const row of audit.fields) {
+    const actual = performance.products[row.key];
+    assert.equal(row.inputs.length, row.verifiedExtensionCells);
+    assert.equal(row.inputs.length + row.missingCoverage.length, 6);
+    const known = row.inputs.map(input => `${input.account}|${input.start}`);
+    const missing = row.missingCoverage.map(input => `${input.account}|${input.start}`);
+    const expected = ['@drew.review','@drew.review1'].flatMap(account => periods.map(([start]) => `${account}|${start}`));
+    assert.deepEqual([...known, ...missing].sort(), expected.sort(), 'No duplicated cell, zero-filled unknown, or overlapping full June.');
+    row.inputs.forEach(input => assert.ok(periods.some(([start,end]) => input.start === start && input.end === end)));
+    assert.equal(row.inputs.reduce((sum, input) => sum + input.attr_gmv_approximate_display_expansion, row.baselineGMV), row.pointEstimateDocumentedSubtotal);
+    assert.equal(row.inputs.reduce((sum, input) => sum + input.attr_items_display_expansion, row.baselineUnits), row.documentedUnitsSubtotal);
+    assert.equal(row.roundingReserve, 1 + row.inputs.length * 100);
+    assert.equal(row.pointEstimateDocumentedSubtotal - row.roundingReserve, row.conservativeEstimatedDocumentedSubtotal);
+    const expectedDisplay = row.key === 'nmn' ? '$240K+' : '$170K+';
+    assert.deepEqual(actual.gmv, {en:expectedDisplay,zh:expectedDisplay});
+    assert.ok(Number(expectedDisplay.slice(1,-2))*1000 < row.conservativeEstimatedDocumentedSubtotal);
+    assert.deepEqual(actual.units, {en:row.documentedUnitsSubtotal.toLocaleString('en-US'),zh:row.documentedUnitsSubtotal.toLocaleString('en-US')});
+    for (const field of ['start','end','status','period','gmvLabel','unitsLabel']) assert.deepEqual(actual[field], row[field]);
+    assert.match(actual.period.en, /partial coverage/);
+    assert.match(actual.status, /not_complete_period/);
   }
 });
 
@@ -228,7 +317,7 @@ test('new period-scoped product values match the reviewed private draft when ava
   const source = JSON.parse(fs.readFileSync(file, 'utf8'));
   for (const key of ['glutathione', 'testosterone']) {
     const actual = performance.products[key], approved = source.products[key];
-    for (const field of ['gmv', 'units', 'period', 'start', 'end', 'status']) assert.deepEqual(actual[field], approved[field], `${key}.${field}`);
+    for (const field of ['units', 'period', 'start', 'end', 'status']) assert.deepEqual(actual[field], approved[field], `${key}.${field}`);
     assert.equal(content.receipts.items.find(p => p.performanceKey === key).videoUrl, null);
   }
 });

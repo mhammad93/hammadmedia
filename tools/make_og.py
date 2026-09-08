@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-"""Render assets/og.jpg (1200x630) from performance.json + the site's own fonts.
+"""Render assets/og-partnership-gmv-20260908.jpg (1200x630) from performance.json + the site's own fonts.
 
 Re-run after any stats update so the share image can never drift from the page:
     python tools/make_og.py
-Requires: Pillow, fonttools, brotli (all in the Anaconda base env).
+Requires: Pillow, fonttools and brotli in the authorized bundled/brand runtime.
+This redraws an editable graphic from text and vector primitives; it does not edit a raster photo.
 """
 import json
 import os
@@ -67,7 +68,7 @@ d.text((M, 183), "your next campaign.", font=h_italic, fill=GREEN)
 m_semibold = load_font("manrope", 34, [600])
 m_medium = load_font("manrope", 26, [500])
 metric = performance["metrics"]["janAugGmv"]
-line1 = f"{metric['value']['en']} attributed GMV · {metric['period']['en']}"
+line1 = f"{metric['value']['en']} estimated attributed GMV · {metric['period']['en']}"
 line2 = "Creator-led TikTok Shop partnerships · Health & wellness"
 line3 = "Both profiles · Rounded cumulative estimate · Past results vary"
 for y, text, font, color in [(350, line1, m_semibold, PAPER), (411, line2, m_medium, GREEN), (456, line3, m_medium, CREAM_DIM)]:
@@ -83,6 +84,6 @@ track = 6
 wm_w = sum(d.textlength(c, font=m_caps) + track for c in wordmark) - track
 tracked(d, ((W - wm_w) / 2, 556), wordmark, m_caps, CREAM_DIM, track)
 
-out = os.path.join(ROOT, "assets", "og.jpg")
+out = os.path.join(ROOT, "assets", "og-partnership-gmv-20260908.jpg")
 im.save(out, "JPEG", quality=90)
 print(f"wrote {out} ({os.path.getsize(out)} bytes, {W}x{H})")

@@ -55,6 +55,35 @@ test('preview indexing and Analytics remain off unless both production gates are
   assert.match(read('production', 'robots.txt'), /Allow: \/\nSitemap:/);
 });
 
+test('production privacy describes the live site while preview-only Analytics wording stays in review builds', () => {
+  for (const [file, previewSentence] of [['privacy/index.html','This design preview does not load the production Analytics tag.'],['zh/privacy/index.html','本设计预览不加载正式 Analytics 标签。']]) {
+    for (const mode of ['preview','unapproved']) assert.ok(read(mode,file).includes(previewSentence));
+    const live = read('production',file);
+    assert.ok(!live.includes(previewSentence));
+    assert.match(live, /It stays off until you allow it|允许之前保持关闭/);
+    assert.match(live, /Your inquiry works whether you allow or decline analytics|不论允许或拒绝分析，咨询表单都可使用/);
+    assert.match(live, /src="\/assets\/redesign\/analytics\.js\?v=/);
+  }
+});
+
+test('all share references use the regenerated dated JPEG rather than the stale dollar presentation', () => {
+  const asset='assets/og-partnership-gmv-20260908.jpg';
+  const bytes=fs.readFileSync(path.join(ROOT,asset));
+  assert.deepEqual([...bytes.subarray(0,3)],[0xff,0xd8,0xff]);
+  const source=fs.readFileSync(path.join(ROOT,'tools/make_og.py'),'utf8');
+  assert.match(source, /metric\['value'\]\['en'\].*estimated attributed GMV/);
+  assert.ok(source.includes('og-partnership-gmv-20260908.jpg'));
+  for(const mode of ['preview','unapproved','production']){
+    for(const file of ['index.html','zh/index.html','privacy/index.html','zh/privacy/index.html','thanks/index.html','zh/thanks/index.html']){
+      const html=read(mode,file);
+      assert.ok(html.includes(`property="og:image" content="https://hammadmedia.com/${asset}"`));
+      assert.doesNotMatch(html,/assets\/og\.jpg/);
+    }
+    assert.deepEqual(fs.readFileSync(path.join(outputs[mode],asset)),bytes);
+    assert.ok(!fs.existsSync(path.join(outputs[mode],'assets/og.jpg')));
+  }
+});
+
 test('every generated page versions local CSS and scripts by the exact deployed bytes', () => {
   for (const mode of ['preview', 'unapproved', 'production']) {
     for (const file of files(outputs[mode]).filter(file => file.endsWith('.html'))) {
@@ -139,7 +168,43 @@ test('reordering source products and accounts cannot silently attach another row
     assert.ok(card.includes(esc(performance.products[p.performanceKey].gmv.en)));
     assert.ok(card.includes(esc(performance.products[p.performanceKey].period.en)));
   }
-  assert.ok(html.indexOf('About $2.53M') < html.indexOf('About $1.41M'));
+  assert.ok(html.indexOf(performance.accounts['drew.review1'].gmv.en) < html.indexOf(performance.accounts['drew.review'].gmv.en));
+});
+
+test('clean GMV thresholds appear across hero, totals and cards without altering exact offer prices', () => {
+  for (const file of ['index.html', 'zh/index.html']) {
+    const html = read('preview', file);
+    assert.doesNotMatch(html, /(?:About|约)\s*\$/);
+    const hero = html.match(/<div class="hero-case">([\s\S]*?)<\/div>/)[1];
+    assert.ok(hero.includes(performance.products.astaxanthin.gmv.en));
+    assert.match(hero, /Estimated|估算/);
+    const ytd = html.match(/<div class="ytd-strip">([\s\S]*?)<div class="brand-strip">/)[1];
+    assert.ok(ytd.includes(performance.metrics.janAugGmv.value.en));
+    assert.match(ytd, /Estimated|估算/);
+    for (const price of ['$5,000', '$9,500', '$13,500', '$25,000']) {
+      assert.ok(html.includes(`<strong>${price}</strong>`));
+      assert.ok(html.includes(`<div class="package-price">${price}</div>`));
+      assert.ok(!html.includes(price + '+'));
+    }
+    assert.match(html, /\$50,000 USD per precisely defined|\$50,000 美元／每个明确界定/);
+    const exclusivity = html.match(/<div class="exclusive">([\s\S]*?)<\/section>/)[1];
+    assert.ok(!exclusivity.includes('$50,000+'));
+  }
+});
+
+test('documented partial products use matching GMV and unit labels without implying complete January-August coverage', () => {
+  for (const [locale, file] of [['en','index.html'], ['zh','zh/index.html']]) {
+    const html = read('preview', file);
+    for (const key of ['nmn','magnesium']) {
+      const card = html.match(new RegExp(`<article class="product-card" data-product-key="${key}">([\\s\\S]*?)<\\/article>`))[1];
+      const metric = performance.products[key];
+      assert.ok(card.includes(metric.gmvLabel[locale]));
+      assert.ok(card.includes(metric.unitsLabel[locale]));
+      assert.ok(card.includes(metric.period[locale]));
+      assert.match(card, /partial coverage|部分时段数据/);
+      assert.doesNotMatch(card, /Jan 1–Aug 31|2026年1月1日至8月31日/);
+    }
+  }
 });
 
 test('a product review link cannot point to another creator or an unverified destination', () => {
@@ -229,7 +294,7 @@ test('localized routes, navigation fragments and referenced local assets resolve
 test('distribution contains only named public files and no raw evidence, source data, credentials or inquiry records', () => {
   const publicFiles = files(outputs.preview);
   const allowed = new Set(['assets/brand-v3/favicon-16.png','assets/brand-v3/favicon-180.png','assets/brand-v3/favicon-192.png','assets/brand-v3/favicon-32.png','assets/brand-v3/favicon-48.png','assets/brand-v3/favicon-512.png','assets/brand-v3/favicon-64.png','assets/brand-v3/favicon.ico','assets/brand-v3/favicon.svg','assets/brand-v3/signature-logo-dark.png','assets/brand-v3/signature-logo-dark.svg','assets/brand-v3/signature-logo-light.png','assets/brand-v3/signature-logo-light.svg','index.html','zh/index.html','privacy/index.html','zh/privacy/index.html','404.html','thanks.html','thanks/index.html','zh/thanks/index.html','robots.txt','sitemap.xml','favicon.ico',
-    'assets/brands/cata-kor.svg', 'assets/award-summit.webp','assets/og.jpg','assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/thanks.js','assets/redesign/attribution.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp','assets/redesign/hero-atelier-light.webp',
+    'assets/brands/cata-kor.svg', 'assets/award-summit.webp','assets/og-partnership-gmv-20260908.jpg','assets/redesign/site.css','assets/redesign/site.js','assets/redesign/analytics.js','assets/redesign/engagement.js','assets/redesign/thanks.js','assets/redesign/attribution.js','assets/redesign/logo-light.svg','assets/redesign/logo-dark.svg','assets/redesign/astaxanthin-hero.webp','assets/redesign/hero-atelier-light.webp',
     'assets/fonts/manrope.woff2','assets/fonts/fraunces-roman.woff2','assets/fonts/fraunces-italic.woff2',
     ...content.brands.map(b=>b.logo),...content.accounts.map(a=>a.avatar),...content.receipts.items.flatMap(p=>[p.image,p.imageDark].filter(Boolean))]);
   for (const file of publicFiles) {

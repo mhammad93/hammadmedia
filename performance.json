@@ -79,12 +79,12 @@
     },
     "janAugGmv": {
       "value": {
-        "en": "About $3.94M",
-        "zh": "约 $3.94M"
+        "en": "$3.9M+",
+        "zh": "$3.9M+"
       },
       "label": {
-        "en": "2026 attributed GMV",
-        "zh": "2026年归因 GMV"
+        "en": "2026 estimated attributed GMV",
+        "zh": "2026年估算归因 GMV"
       },
       "period": {
         "en": "Jan 1–Aug 31, 2026",
@@ -98,8 +98,8 @@
   "accounts": {
     "drew.review": {
       "gmv": {
-        "en": "About $1.41M",
-        "zh": "约 $1.41M"
+        "en": "$1.4M+",
+        "zh": "$1.4M+"
       },
       "units": {
         "en": "About 57.7K",
@@ -200,8 +200,8 @@
     },
     "drew.review1": {
       "gmv": {
-        "en": "About $2.53M",
-        "zh": "约 $2.53M"
+        "en": "$2.5M+",
+        "zh": "$2.5M+"
       },
       "units": {
         "en": "About 101.8K",
@@ -305,8 +305,8 @@
     "astaxanthin": {
       "title": "Astaxanthin 12mg — Micro Ingredients",
       "gmv": {
-        "en": "About $400K",
-        "zh": "约 $400K"
+        "en": "$400K+",
+        "zh": "$400K+"
       },
       "units": {
         "en": "About 13.4K",
@@ -323,26 +323,34 @@
     "nmn": {
       "title": "NMN Complex 1,000mg — Micro Ingredients",
       "gmv": {
-        "en": "$236,531",
-        "zh": "$236,531"
+        "en": "$240K+",
+        "zh": "$240K+"
       },
       "units": {
-        "en": "7,409",
-        "zh": "7,409"
+        "en": "7,864",
+        "zh": "7,864"
       },
       "period": {
-        "en": "Jan 1–Jun 8, 2026",
-        "zh": "2026年1月1日至6月8日"
+        "en": "Records through Aug 31, 2026 · partial coverage",
+        "zh": "已记录至2026年8月31日 · 部分时段数据"
       },
       "start": "2026-01-01",
-      "end": "2026-06-08",
-      "status": "historic_not_updated"
+      "end": "2026-08-31",
+      "status": "documented_partial_subtotal_not_complete_period",
+      "gmvLabel": {
+        "en": "Documented attributed GMV",
+        "zh": "已记录归因 GMV"
+      },
+      "unitsLabel": {
+        "en": "Documented units sold",
+        "zh": "已记录售出件数"
+      }
     },
     "collagen": {
       "title": "Collagen Bio-Peptides 20oz — NeoCell",
       "gmv": {
-        "en": "About $257K",
-        "zh": "约 $257K"
+        "en": "$250K+",
+        "zh": "$250K+"
       },
       "units": {
         "en": "About 10.3K",
@@ -359,26 +367,34 @@
     "magnesium": {
       "title": "Magnesium Complex 8-in-1 — Toplux",
       "gmv": {
-        "en": "$165,064",
-        "zh": "$165,064"
+        "en": "$170K+",
+        "zh": "$170K+"
       },
       "units": {
-        "en": "12,846",
-        "zh": "12,846"
+        "en": "13,956",
+        "zh": "13,956"
       },
       "period": {
-        "en": "Jan 1–Jun 8, 2026",
-        "zh": "2026年1月1日至6月8日"
+        "en": "Records through Aug 31, 2026 · partial coverage",
+        "zh": "已记录至2026年8月31日 · 部分时段数据"
       },
       "start": "2026-01-01",
-      "end": "2026-06-08",
-      "status": "historic_not_updated"
+      "end": "2026-08-31",
+      "status": "documented_partial_subtotal_not_complete_period",
+      "gmvLabel": {
+        "en": "Documented attributed GMV",
+        "zh": "已记录归因 GMV"
+      },
+      "unitsLabel": {
+        "en": "Documented units sold",
+        "zh": "已记录售出件数"
+      }
     },
     "glutathione": {
       "title": "Liposomal Glutathione — Cata-Kor",
       "gmv": {
-        "en": "About $142K",
-        "zh": "约 $142K"
+        "en": "$140K+",
+        "zh": "$140K+"
       },
       "units": {
         "en": "About 6.3K",
@@ -395,8 +411,8 @@
     "testosterone": {
       "title": "Testosterone+ Advanced 15-in-1 — Micro Ingredients",
       "gmv": {
-        "en": "About $104K",
-        "zh": "约 $104K"
+        "en": "$100K+",
+        "zh": "$100K+"
       },
       "units": {
         "en": "About 4.5K",
@@ -421,7 +437,9 @@
       "Product views through Aug 31 use the owner-approved presentation of new product impressions as views. About 147M combines the earlier rounded 105M+ display with about 42M from the non-overlapping Jun 9-Aug 31 records. This is an approximate business presentation, not a verified platform metric rename. The differently rounded account baseline displays sum to 105.8M.",
       "All-time video views add only 38,953,750 Video Views from Jun 9-Aug 31 TikTok Studio exports to the previously published 416M+ video-view baseline for both profiles through Jun 8. The rounded baseline makes About 455M an estimate; product impressions are excluded. No lifetime units or product-view baseline is available.",
       "Liposomal Glutathione combines complete April-August monthly records for both creator profiles; Testosterone+ combines complete May-August monthly records for both profiles. These product-only periods have no earlier baseline added. Rounded dashboard displays make their sums approximate. Product examples use the period printed on each card and remain subsets of overall attributed GMV.",
-      "Selected-period video views, profile views, likes, comments and shares are exact sums of the reported Jan 1-Aug 31, 2026 TikTok Studio export integers, including signed comment adjustments. Both profiles have all 243 daily rows. CSV timezone is not stated. Cross-account totals are events, not deduplicated people. Period likes remain separate from dated public-profile total likes and followers."
+      "Selected-period video views, profile views, likes, comments and shares are exact sums of the reported Jan 1-Aug 31, 2026 TikTok Studio export integers, including signed comment adjustments. Both profiles have all 243 daily rows. CSV timezone is not stated. Cross-account totals are events, not deduplicated people. Period likes remain separate from dated public-profile total likes and followers.",
+      "Dollar values ending in + are clean rounded presentations of source-based estimates, not exact totals or certified raw-platform minimums. In particular, the rounded Astaxanthin display uses the central source-display sum; its rounding uncertainty can cross the displayed threshold. Visible estimate labels and period qualifications remain. Existing lifetime GMV retains its separately disclosed historical-baseline assumption. Package prices are exact and unchanged.",
+      "NMN and Magnesium show documented partial subtotals from the historical Jan 1-Jun 8 baseline plus only the matched, non-overlapping records available through Aug 31. Their unit subtotals use the same included records. Missing account/month cells remain unknown, not zero, and these cards do not claim complete Jan-Aug results. Source definitions, prior timezone assumptions and potential reporting adjustments remain limitations."
     ],
     "productTotalsAreSubsets": true
   },

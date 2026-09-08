@@ -10,8 +10,8 @@ Both original profile portraits now sit in large framed, fully clickable cards b
 
 | Account | Social evidence | Sales evidence |
 | --- | --- | --- |
-| `drew.review` | 190.1K followers; 2.5M likes. Official profile observed in an authenticated browser September 7, 2026 at 23:40:19 EDT (`2026-09-08T03:40:19.868Z`). | About $1.41M attributed GMV; about 57.7K units, January 1–August 31, 2026. |
-| `drew.review1` | 164.1K followers; 2.6M likes. Official profile observed in an authenticated browser September 7, 2026 at 23:37:53 EDT (`2026-09-08T03:37:53.146Z`). | About $2.53M attributed GMV; about 101.8K units, January 1–August 31, 2026. |
+| `drew.review` | 190.1K followers; 2.5M likes. Official profile observed in an authenticated browser September 7, 2026 at 23:40:19 EDT (`2026-09-08T03:40:19.868Z`). | $1.4M+ estimated attributed GMV; about 57.7K units, January 1–August 31, 2026. |
+| `drew.review1` | 164.1K followers; 2.6M likes. Official profile observed in an authenticated browser September 7, 2026 at 23:37:53 EDT (`2026-09-08T03:37:53.146Z`). | $2.5M+ estimated attributed GMV; about 101.8K units, January 1–August 31, 2026. |
 
 `accounts[handle].social` contains the values, visible dated note, `asOf`, status, source classification, UTC timestamp and display timezone. Both accounts now have verified September 7 profile snapshots; abbreviated follower/like counts remain rounded displays. The earlier unauthenticated restriction on the second account no longer blocks this authenticated observation, and its old `refreshStatus` is removed. These snapshots are separate from the August sales cutoff. No combined video-view total is split between accounts.
 
