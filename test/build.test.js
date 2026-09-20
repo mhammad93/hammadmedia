@@ -441,7 +441,8 @@ test('production Analytics configuration strips query strings and fragments from
 
 // A small DOM substitute exercises the actual client state machine without contacting any service.
 function clientHarness({store = new Map(), post, locale = 'en', preview = false, enabled = true, query='?utm_source=tiktok&email=private@example.com'} = {}) {
-  const calls = [], analytics = [], scripts = [];
+  const calls = [], analytics = [], scripts = [], renders = [];
+  let resizeObserver, tokenWidth=330;
   class Element {
     constructor(value='') {this.value=value;this.checked=false;this.disabled=false;this.required=false;this.hidden=false;this.textContent='';this.dataset={};this.handlers={};this.children=[];this.classList={toggle(){}};}
     addEventListener(name,handler){(this.handlers[name] ||= []).push(handler);}
@@ -454,6 +455,7 @@ function clientHarness({store = new Map(), post, locale = 'en', preview = false,
   fields.engagement.value='5 videos';fields.message.value='Private campaign message';fields.commission.value='Private offered commission';fields.name.value='Private person name';fields.paid_partnership_ack.checked=true;
   const form = new Element();form.elements=fields;
   const button = new Element(), status = new Element(), category = new Element(), token = new Element();
+  token.getBoundingClientRect=()=>({width:tokenWidth});
   form.reportValidity=()=>Object.values(fields).every(f=>f.disabled||!f.required||Boolean(f.value));
   form.querySelectorAll=()=>[...Object.values(fields),button];
   const nodes={'inquiry-form':form,'category-field':category,'inquiry-submit':button,'form-status':status,'turnstile-container':token};
@@ -467,13 +469,14 @@ function clientHarness({store = new Map(), post, locale = 'en', preview = false,
     setTimeout:()=>1,clearTimeout(){},gtag:(...args)=>{analytics.push(args);args[2]?.event_callback?.();},
     fetch:async(url,options={})=>{if(url==='/api/intake-config')return {ok:true,json:async()=>({enabled,turnstileSiteKey:enabled?'public-site-key':null})};
       const body=JSON.parse(options.body);calls.push(body);if(post)return post(body,calls.length);return {status:202,json:async()=>({ok:true,status:'received',submission_id:body.submission_id})};},
-    turnstile:{render(container,options){challenge=options;return ++widget;},remove(){}},
+    ResizeObserver:class{constructor(callback){resizeObserver=callback;}observe(){}},
+    turnstile:{render(container,options){challenge=options;renders.push(options);return ++widget;},remove(){}},
   };
   context.window=context;
   vm.runInNewContext(fs.readFileSync(path.join(ROOT,'assets/redesign/attribution.js'),'utf8'),context);
   vm.runInNewContext(fs.readFileSync(path.join(ROOT,'assets/redesign/site.js'),'utf8'),context);
   const ready=(async()=>{for(let i=0;i<8;i++)await Promise.resolve();if(context.hmTurnstileReady){context.hmTurnstileReady();challenge.callback('ephemeral-token');}})();
-  return {store,calls,analytics,fields,status,button,category,form,tiers,context,ready,verify(){challenge.callback('fresh-ephemeral-token');},submit:()=>form.fire('submit')};
+  return {store,calls,analytics,fields,status,button,category,form,tiers,context,ready,renders,resize(width){tokenWidth=width;resizeObserver();},verify(){challenge.callback('fresh-ephemeral-token');},submit:()=>form.fire('submit')};
 }
 
 test('uncertain delivery survives refresh with the same reference and frozen attribution, and clears only after confirmed receipt', async () => {
@@ -659,4 +662,28 @@ test('brand hover has one accessible brand name, decorative original artwork and
   const css=read('preview','assets/redesign/site.css');
   assert.match(css,/@media\(hover:hover\) and \(pointer:fine\)/);
   assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{\.brand-logos/);
+});
+
+
+test('CAPTCHA follows available form width without changing inquiry fields or retry identity',async()=>{
+  const app=clientHarness({post:async(p,n)=>({status:n===1?503:202,json:async()=>n===1?{}:{ok:true,status:'received',submission_id:p.submission_id}})});
+  await app.ready;assert.equal(app.renders.at(-1).size,'normal');
+  await app.submit();const reference=app.calls[0].submission_id;
+  const draft=app.store.get('hm-pending-inquiry-v1'),count=app.renders.length;
+  app.resize(299);assert.equal(app.renders.at(-1).size,'compact');assert.equal(app.button.disabled,true);
+  assert.equal(app.renders.at(-1).cData,reference);assert.equal(app.store.get('hm-pending-inquiry-v1'),draft);
+  assert.equal(app.fields.email.value,'private@example.com');
+  app.resize(270);assert.equal(app.renders.length,count+1,'same size must not reset verification');
+  app.resize(300);assert.equal(app.renders.at(-1).size,'normal');
+  await app.submit();assert.equal(app.calls.length,1,'a stale token cannot be submitted');
+  app.verify();await app.submit();assert.equal(app.calls.length,2);assert.equal(app.calls[1].submission_id,reference);
+  const finished=app.renders.length;app.resize(260);assert.equal(app.renders.length,finished,'receipt stays final after a resize');
+  assert.equal(app.analytics.filter(e=>e[1]==='generate_lead').length,1);
+});
+
+test('resizing during delivery does not reset the in-flight challenge',async()=>{
+  let finish;const app=clientHarness({post:p=>new Promise(resolve=>{finish=()=>resolve({status:503,json:async()=>({})});})});await app.ready;
+  const sending=app.submit(),count=app.renders.length;app.resize(260);
+  assert.equal(app.renders.length,count);finish();await sending;
+  assert.equal(app.renders.at(-1).size,'compact');assert.equal(app.button.disabled,true);
 });

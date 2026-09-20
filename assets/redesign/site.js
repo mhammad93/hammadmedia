@@ -15,6 +15,29 @@ if(header){
   window.addEventListener('resize',measureHeader,{passive:true});
   if(typeof ResizeObserver==='function')new ResizeObserver(measureHeader).observe(header);
 }
+// A disclosure keeps the mobile header compact without hiding links from no-JS visitors.
+const menuButton=document.querySelector('.menu-toggle'), headerPanel=document.getElementById('header-panel');
+if(header&&menuButton&&headerPanel){
+  const mobileMenu=window.matchMedia('(max-width:650px)');
+  const closeMenu=(restoreFocus=false)=>{
+    const focusInside=headerPanel.contains(document.activeElement);
+    menuButton.setAttribute('aria-expanded','false');header.classList.remove('menu-open');
+    if(mobileMenu.matches&&(restoreFocus||focusInside))menuButton.focus({preventScroll:true});
+  };
+  header.classList.add('menu-ready');
+  menuButton.addEventListener('click',()=>{
+    const open=menuButton.getAttribute('aria-expanded')!=='true';
+    menuButton.setAttribute('aria-expanded',String(open));header.classList.toggle('menu-open',open);
+  });
+  headerPanel.addEventListener('click',event=>{if(event.target.closest('a'))closeMenu();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menuButton.getAttribute('aria-expanded')==='true'){closeMenu(true);event.preventDefault();}});
+  document.addEventListener('click',event=>{if(!header.contains(event.target))closeMenu();});
+  document.addEventListener('focusin',event=>{if(!header.contains(event.target))closeMenu();});
+  mobileMenu.addEventListener('change',()=>{
+    if(!mobileMenu.matches&&document.activeElement===menuButton)headerPanel.querySelector('a')?.focus({preventScroll:true});
+    closeMenu();
+  });
+}
 document.querySelector('[data-language-switch]')?.addEventListener('click',()=>track('language_select',{selected_language:zh?'en':'zh'}));
 document.querySelectorAll('a[href^="mailto:"],a[href^="https://wa.me/"]').forEach(a=>a.addEventListener('click',()=>track('contact_click',{contact_method:a.href.startsWith('mailto:')?'email':'whatsapp',cta_location:a.closest('.conversion-dock')?'sticky':a.closest('.site-footer')?'footer':'contact'})));
 document.querySelectorAll('[data-inquiry-cta]').forEach(a=>a.addEventListener('click',()=>track('inquiry_cta_click',{cta_location:a.closest('.site-header')?'header':'sticky'})));
@@ -53,6 +76,8 @@ pending=p;requestId=p.submission_id;attemptMade=true;draftStored=true;
 }catch{clearPending();}}
 restorePending();
 const tokenContainer=document.getElementById('turnstile-container');
+let widgetSize=null;
+const challengeSize=()=>tokenContainer.getBoundingClientRect().width<300?'compact':'normal';
 function statusText(text,error=false){status.textContent=text;status.classList.toggle('error',error);}
 function offerEmailDraft(){const a=document.createElement('a');a.href='mailto:contact@hammadmedia.com';a.textContent=t('Prepare an email instead','改为准备邮件');a.addEventListener('click',event=>{event.preventDefault();emailDraft(getPayload());});status.append(' ',a);}
 function emailFallback(reason){mode=attemptMade&&config?.enabled?'api':'email';statusText((pending?restoredMessage()+' ':'')+reason);offerEmailDraft();submit.disabled=false;submit.textContent=mode==='api'?t('Retry verification','重试验证'):t('Prepare inquiry by email','通过邮件准备咨询');}
@@ -61,7 +86,11 @@ select.addEventListener('change',syncCategory);syncCategory();
 document.querySelectorAll('[data-tier]').forEach(a=>a.addEventListener('click',()=>{select.value=a.dataset.tier;syncCategory();materialEdit();track('package_select',{partnership_package:a.dataset.tier});}));
 document.querySelectorAll('[data-analytics]').forEach(a=>a.addEventListener('click',()=>track(a.dataset.analytics)));
 let started=false;form.addEventListener('focusin',()=>{if(!started){started=true;track('partnership_form_start');}},{once:true});
-function renderChallenge(){if(!window.turnstile||!config?.enabled)return;if(widget!==null)window.turnstile.remove(widget);challengeToken='';submit.disabled=true;widget=window.turnstile.render(tokenContainer,{sitekey:config.turnstileSiteKey,action:'brand_inquiry',cData:requestId,theme:root.dataset.theme==='light'?'light':'dark',callback:token=>{challengeToken=token;if(!busy)submit.disabled=false;},'expired-callback':()=>{challengeToken='';submit.disabled=true;},'error-callback':()=>{challengeToken='';emailFallback(t('Spam verification is unavailable. You can send your inquiry by email.','垃圾信息验证暂时不可用，可通过邮件发送咨询。'));}});}
+function renderChallenge(){if(!window.turnstile||!config?.enabled||busy||mode==='received')return;const size=challengeSize();if(widget!==null)window.turnstile.remove(widget);widgetSize=size;challengeToken='';submit.disabled=true;widget=window.turnstile.render(tokenContainer,{size,sitekey:config.turnstileSiteKey,action:'brand_inquiry',cData:requestId,theme:root.dataset.theme==='light'?'light':'dark',callback:token=>{challengeToken=token;if(!busy)submit.disabled=false;},'expired-callback':()=>{challengeToken='';submit.disabled=true;},'error-callback':()=>{challengeToken='';emailFallback(t('Spam verification is unavailable. You can send your inquiry by email.','垃圾信息验证暂时不可用，可通过邮件发送咨询。'));}});}
+// Only recreate across the size boundary. Keep form values and the idempotency reference.
+if(tokenContainer&&typeof ResizeObserver==='function'){
+  new ResizeObserver(()=>{if(widget!==null&&mode==='api'&&!busy&&challengeSize()!==widgetSize)renderChallenge();}).observe(tokenContainer);
+}
 function materialEdit(){if(attemptMade){clearPending();requestId=crypto.randomUUID();attemptMade=false;if(mode==='api')renderChallenge();}}
 form.addEventListener('input',materialEdit);form.addEventListener('change',materialEdit);
 function getPayload(){if(pending)return {...pending,turnstile_token:challengeToken};const fd=new FormData(form);const p={submission_id:requestId,brand:String(fd.get('brand')||'').trim(),name:String(fd.get('name')||'').trim(),email:String(fd.get('email')||'').trim(),product:String(fd.get('product')||'').trim(),engagement:String(fd.get('engagement')||''),message:String(fd.get('message')||'').trim(),commission:String(fd.get('commission')||'').trim(),timing:String(fd.get('timing')||'').trim(),exact_category:String(fd.get('exact_category')||'').trim(),paid_partnership_ack:fd.get('paid_partnership_ack')==='on',website:String(fd.get('website')||''),locale:zh?'zh':'en',turnstile_token:challengeToken};p.attribution=window.hmAttribution?.current()||{page_path:zh?'/zh/':'/'};return p;}
