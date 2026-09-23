@@ -347,7 +347,7 @@ test('distribution contains only named public files and no raw evidence, source 
       const body = read('preview', file);
       assert.doesNotMatch(body, /\/Users\/|sales-evidence|IMG_\d|SUPABASE_SERVICE_ROLE|RESEND_API_KEY|NOTION_TOKEN|TURNSTILE_SECRET|estimated commissions|commission earnings|commission statement/i);
       const emails = [...body.matchAll(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g)].map(m=>m[0]);
-      assert.ok(emails.every(email=>email==='contact@hammadmedia.com'), `Unexpected contact information in ${file}`);
+      assert.ok(emails.every(email=>email==='contact@hammadmedia.com'||email==='Contact@HammadMedia.com'), `Unexpected contact information in ${file}`);
     }
   }
 });
