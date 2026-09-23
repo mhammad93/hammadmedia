@@ -73,26 +73,28 @@ function clickHarness({preview = false, locale = 'en', analytics = true} = {}) {
   const contact = anchor('https://wa.me/19297709434?text=private-should-not-enter-analytics', 'contact');
   const inquiry = anchor('#contact', 'sticky');
   const header = anchor('#contact', 'header');
+  const headerEmail = anchor('mailto:contact@hammadmedia.com', 'header');
+  const headerWhatsapp = anchor('https://wa.me/19297709434?text=private-should-not-enter-analytics', 'header');
   const context = {
     document: {documentElement: {lang:locale}, body:{dataset:{preview:String(preview)}},
       querySelector: () => null, getElementById: () => null,
-      querySelectorAll: selector => selector.includes('a[href^="mailto:') ? [sticky, contact] : selector === '[data-inquiry-cta]' ? [inquiry, header] : []},
+      querySelectorAll: selector => selector.includes('a[href^="mailto:') ? [sticky, contact, headerEmail, headerWhatsapp] : selector === '[data-inquiry-cta]' ? [inquiry, header] : []},
     location: new URL('https://hammadmedia.com/?email=private@example.com&text=private'),
   };
   context.window = context;
   if (analytics) context.gtag = (...args) => events.push(args);
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/redesign/site.js'), 'utf8'), context);
-  return {events, sticky, contact, inquiry, header};
+  return {events, sticky, contact, inquiry, header, headerEmail, headerWhatsapp};
 }
 
 test('WhatsApp and inquiry clicks use separate fixed events and never count an anonymous click as a lead', () => {
   for (const locale of ['en', 'zh-CN']) {
     const app = clickHarness({locale});
     assert.equal(typeof app.inquiry.handlers.click, 'function', 'inquiry action has its own click listener');
-    app.sticky.handlers.click(); app.contact.handlers.click(); app.inquiry.handlers.click(); app.header.handlers.click();
-    assert.deepEqual(app.events.map(e => e[1]), ['contact_click', 'contact_click', 'inquiry_cta_click', 'inquiry_cta_click']);
-    assert.deepEqual(app.events.map(e => e[2].cta_location), ['sticky', 'contact', 'sticky', 'header']);
-    assert.deepEqual(app.events.slice(0,2).map(e => e[2].contact_method), ['whatsapp', 'whatsapp']);
+    app.sticky.handlers.click(); app.contact.handlers.click(); app.inquiry.handlers.click(); app.header.handlers.click(); app.headerEmail.handlers.click(); app.headerWhatsapp.handlers.click();
+    assert.deepEqual(app.events.map(e => e[1]), ['contact_click', 'contact_click', 'inquiry_cta_click', 'inquiry_cta_click', 'contact_click', 'contact_click']);
+    assert.deepEqual(app.events.map(e => e[2].cta_location), ['sticky', 'contact', 'sticky', 'header', 'header', 'header']);
+    assert.deepEqual(app.events.filter(e=>e[1]==='contact_click').map(e => e[2].contact_method), ['whatsapp', 'whatsapp', 'email', 'whatsapp']);
     app.events.forEach(e => {
       assert.equal(e[2].site_language, locale === 'en' ? 'en' : 'zh');
       assert.equal(e[2].page_location, 'https://hammadmedia.com/');
@@ -105,7 +107,7 @@ test('preview and blocked Analytics keep the contact actions independent of trac
   for (const settings of [{preview:true}, {analytics:false}]) {
     const app = clickHarness(settings);
     assert.equal(typeof app.inquiry.handlers.click, 'function', 'inquiry navigation is wired without requiring Analytics');
-    app.sticky.handlers.click(); app.contact.handlers.click(); app.inquiry.handlers.click();
+    app.sticky.handlers.click(); app.contact.handlers.click(); app.inquiry.handlers.click(); app.headerEmail.handlers.click(); app.headerWhatsapp.handlers.click();
     assert.equal(app.events.length, 0);
   }
 });
