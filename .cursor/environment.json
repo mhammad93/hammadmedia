@@ -1,0 +1,17 @@
+{
+  "name": "Hammad Media static site",
+  "install": "node build.js",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "node build.js && python3 -m http.server 3000 --directory dist",
+      "description": "Rebuilds the static site and serves dist/ at http://localhost:3000"
+    }
+  ],
+  "ports": [
+    {
+      "name": "dev-server",
+      "port": 3000
+    }
+  ]
+}
