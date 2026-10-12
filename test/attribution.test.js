@@ -83,3 +83,35 @@ test('registry values stay field-specific and ambiguous repeated query values ar
   const app=page('https://hammadmedia.com/?utm_source=tiktok&utm_source=jane.doe&utm_medium=tiktok&utm_campaign=paid_partnerships&utm_content=drew_review1_bio');
   assert.deepEqual(app.current(),{page_path:'/',utm_campaign:'paid_partnerships',utm_content:'drew_review1_bio'});
 });
+
+test('registered public placements survive navigation and agree with Analytics campaign fields', () => {
+  const {campaignFields} = require('../assets/redesign/analytics');
+  const placements = [
+    ['tiktok','organic_social','drew_review_bio'], ['tiktok','organic_social','drew_review1_bio'],
+    ['brand_kit','referral','en_overview'], ['brand_kit','referral','zh_overview'],
+    ['agency_outreach','email','agency_overview'], ['instagram','organic_social','instagram_bio'],
+    ['linkedin','organic_social','linkedin_profile'], ['email_signature','email','email_signature'],
+    ['qr_code','referral','printed_qr'],
+  ];
+  for (const [source,medium,content] of placements) {
+    const query = new URLSearchParams({utm_source:source,utm_medium:medium,utm_campaign:'paid_partnerships',utm_content:content});
+    const store = new Map();
+    const expected = {page_path:'/',utm_source:source,utm_medium:medium,utm_campaign:'paid_partnerships',utm_content:content};
+    assert.deepEqual(page('https://hammadmedia.com/?'+query,{store}).current(),expected);
+    assert.deepEqual(page('https://hammadmedia.com/zh/privacy/',{store}).current(),expected);
+    assert.deepEqual(campaignFields('?'+query),{campaign_source:source,campaign_medium:medium,campaign_name:'paid_partnerships',campaign_content:content});
+    const result = validate({submission_id:'fce4ae44-a499-4c0e-a149-4ceda4a2992f',brand:'Example',email:'brand@example.com',product:'Product',engagement:'5 videos',locale:'en',paid_partnership_ack:true,attribution:expected});
+    assert.deepEqual(result.payload.attribution,{...expected,utm_term:'',referrer:''});
+  }
+});
+
+test('expanded registry still rejects private brands, mixed-case channels, arbitrary IDs and wrong-field labels', () => {
+  for (const value of ['Instagram','LinkedIn','private_brand','client_123','receipt_123','private@example.com']) {
+    const query = new URLSearchParams(Object.fromEntries(['utm_source','utm_medium','utm_campaign','utm_content','utm_id'].map(key=>[key,value])));
+    const app=page('https://hammadmedia.com/?'+query);
+    assert.deepEqual(app.current(),{page_path:'/'},value);
+    assert.equal(JSON.stringify([...app.store.values()]).includes(value),false);
+  }
+  assert.deepEqual(page('https://hammadmedia.com/?utm_source=instagram_bio&utm_medium=linkedin&utm_campaign=qr_code&utm_content=instagram').current(),{page_path:'/'});
+  assert.deepEqual(page('https://hammadmedia.com/?utm_source=instagram&utm_source=linkedin&utm_content=printed_qr&utm_content=email_signature').current(),{page_path:'/'});
+});

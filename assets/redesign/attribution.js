@@ -17,7 +17,7 @@
   const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
   // Same reviewed registry as analytics.js; syntax alone cannot exclude PII.
   // See docs/controlled-campaign-links.md before extending these public labels.
-  const allowed = {utm_source:['tiktok','brand_kit','agency_outreach'],utm_medium:['organic_social','referral','email'],utm_campaign:['paid_partnerships'],utm_content:['drew_review_bio','drew_review1_bio','en_overview','zh_overview','agency_overview']};
+  const allowed = {utm_source:['tiktok','brand_kit','agency_outreach','instagram','linkedin','email_signature','qr_code'],utm_medium:['organic_social','referral','email'],utm_campaign:['paid_partnerships'],utm_content:['drew_review_bio','drew_review1_bio','en_overview','zh_overview','agency_overview','instagram_bio','linkedin_profile','email_signature','printed_qr']};
   const landingPaths = new Set(['/', '/zh/', '/privacy/', '/zh/privacy/', '/thanks/', '/zh/thanks/', '/thanks.html', '/zh/thanks.html', '/404.html']);
   const label = (key,value) => typeof value === 'string' && allowed[key].includes(value) ? value : '';
   const path = value => landingPaths.has(value) ? value : (typeof value === 'string' && /^\/zh(?:\/|$)/.test(value) ? '/zh/' : '/');

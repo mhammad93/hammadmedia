@@ -18,3 +18,17 @@ assert.deepEqual(campaignFields('?utm_source=tiktok&utm_source=jane.doe&utm_medi
 test('contact data and arbitrary queries never become Analytics campaign fields',()=>{
 assert.deepEqual(campaignFields('?email=private@example.com&name=Private&utm_source=person%40example.com&utm_campaign=https%3A%2F%2Fexample.com%2Fprivate&utm_term=personal+health+question&gclid=opaque'),{});
 });
+
+test('new generic public placements are accepted without accepting arbitrary campaign names or identifiers',()=>{
+  for(const [source,medium,content] of [
+    ['instagram','organic_social','instagram_bio'], ['linkedin','organic_social','linkedin_profile'],
+    ['email_signature','email','email_signature'], ['qr_code','referral','printed_qr'],
+  ]){
+    const query=new URLSearchParams({utm_source:source,utm_medium:medium,utm_campaign:'paid_partnerships',utm_content:content,utm_id:'private-receipt',utm_term:'private-product',email:'private@example.com'});
+    assert.deepEqual(campaignFields(query.toString()),{campaign_source:source,campaign_medium:medium,campaign_name:'paid_partnerships',campaign_content:content});
+  }
+  for(const value of ['Instagram','LinkedIn','private_brand','client_123','campaign_2026','instagram_bio']){
+    assert.deepEqual(campaignFields(new URLSearchParams({utm_source:value,utm_campaign:value,utm_id:value}).toString()),{});
+  }
+  assert.deepEqual(campaignFields('?utm_source=instagram&utm_source=linkedin&utm_medium=instagram&utm_campaign=printed_qr&utm_content=qr_code'),{});
+});

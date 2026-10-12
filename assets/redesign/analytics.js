@@ -20,7 +20,7 @@
     const query=new URLSearchParams(search), fields={};
     // Exact public labels, not a permissive syntax check. Extend only through
     // the reviewed controlled-campaign-links.md convention and matching tests.
-    const allowed={utm_source:['tiktok','brand_kit','agency_outreach'],utm_medium:['organic_social','referral','email'],utm_campaign:['paid_partnerships'],utm_content:['drew_review_bio','drew_review1_bio','en_overview','zh_overview','agency_overview']};
+    const allowed={utm_source:['tiktok','brand_kit','agency_outreach','instagram','linkedin','email_signature','qr_code'],utm_medium:['organic_social','referral','email'],utm_campaign:['paid_partnerships'],utm_content:['drew_review_bio','drew_review1_bio','en_overview','zh_overview','agency_overview','instagram_bio','linkedin_profile','email_signature','printed_qr']};
     const mapping={utm_source:'campaign_source',utm_medium:'campaign_medium',utm_campaign:'campaign_name',utm_content:'campaign_content'};
     for(const [key,target] of Object.entries(mapping)){
       const values=query.getAll(key);
@@ -32,6 +32,11 @@
   if(!scope.document||scope.document.body.dataset.preview!=='false'||!['hammadmedia.com','www.hammadmedia.com'].includes(scope.location.hostname)||scope.hmAnalyticsConsent)return;
   const document=scope.document, measurement='G-NEX74824JL', disableKey='ga-disable-'+measurement;
   const storageKey='hm-analytics-consent-v1', lifetime=180*86400000;
+  // A fixed, tab-scoped marker never contains an email, reference or visitor text.
+  const qaKey='hm-analytics-qa-v1';
+  let testTraffic=new URLSearchParams(scope.location.search).getAll('hm_qa').some(value=>value==='1');
+  try{testTraffic=testTraffic||scope.sessionStorage.getItem(qaKey)==='1';}catch{}
+  if(testTraffic){try{scope.sessionStorage.setItem(qaKey,'1');}catch{}}
   const banner=document.getElementById('analytics-consent');
   const accept=document.getElementById('analytics-accept'), decline=document.getElementById('analytics-decline');
   let choice=null, active=false, initialized=false, unloading=false, tracker=null, expiryTimer=null;
@@ -76,13 +81,13 @@
       try{document.cookie=name+'=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path='+path+(domain?'; Domain='+domain:'')+'; SameSite=Lax; Secure';}catch{}
     }
   }
-  function stop(){
+  function stop(reload=true){
     const wasActive=active;
     active=false;scope[disableKey]=true;delete scope.gtag;
     if(expiryTimer!==null)scope.clearTimeout(expiryTimer);
     if(Array.isArray(scope.dataLayer))scope.dataLayer.length=0;
     tracker?.remove();clearCookies();
-    if(wasActive&&!unloading){unloading=true;scope.location.reload();}
+    if(reload&&wasActive&&!unloading){unloading=true;scope.location.reload();}
   }
   function scheduleExpiry(){
     if(expiryTimer!==null)scope.clearTimeout(expiryTimer);
@@ -93,7 +98,7 @@
   }
   function origin(value){try{const url=new URL(value);return url.protocol==='https:'?url.origin:'';}catch{return '';}}
   function start(){
-    if(active||initialized||unloading||choice?.choice!=='accepted')return;
+    if(testTraffic||active||initialized||unloading||choice?.choice!=='accepted')return;
     initialized=true;active=true;scope[disableKey]=false;scope.dataLayer=[];
     scope.gtag=function(...args){
       if(!active||unloading)return;
@@ -133,7 +138,11 @@
     hide();stop();
   });
   document.querySelectorAll('[data-analytics-settings]').forEach(button=>button.addEventListener('click',event=>{event.preventDefault();show();}));
-  scope.hmAnalyticsConsent=Object.freeze({current:()=>choice?.choice||null,openSettings:show});
+  scope.hmAnalyticsConsent=Object.freeze({current:()=>choice?.choice||null,openSettings:show,isTestTraffic:()=>testTraffic,excludeTestTraffic:()=>{
+    testTraffic=true;try{scope.sessionStorage.setItem(qaKey,'1');}catch{}
+    // Disabling GA must not interrupt an accepted POST or its receipt redirect.
+    stop(false);
+  }});
   scope.addEventListener('storage',event=>{
     if(event.key!==storageKey&&event.key!==null)return;
     const saved=read();

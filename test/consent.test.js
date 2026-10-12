@@ -12,6 +12,7 @@ const saved = (choice, timestamp = now - 1000) => JSON.stringify({ version: 1, c
 function browser(options = {}) {
   const listeners = new Map(), scripts = [], cookies = [], timers = new Map();
   let clock = now, reloads = 0, timerId = 0;
+  const session = options.session || new Map();
   const store = new Map(options.raw === undefined ? [] : [[key, options.raw]]);
   function element() {
     const events = new Map();
@@ -40,8 +41,12 @@ function browser(options = {}) {
     document,
     location: {
       origin: 'https://www.hammadmedia.com', hostname: options.hostname || 'www.hammadmedia.com', pathname: '/zh/privacy/',
-      search: '?utm_source=tiktok&utm_campaign=paid_partnerships&email=private@example.com&utm_term=sensitive&gclid=opaque',
+      search: options.search ?? '?utm_source=tiktok&utm_campaign=paid_partnerships&email=private@example.com&utm_term=sensitive&gclid=opaque',
       reload() { reloads++; },
+    },
+    sessionStorage: {
+      getItem(k) { if (options.sessionBlocked) throw new Error('blocked'); return session.get(k) ?? null; },
+      setItem(k, value) { if (options.sessionBlocked) throw new Error('blocked'); session.set(k, value); },
     },
     localStorage: {
       getItem(k) { if (options.readBlocked) throw new Error('blocked'); return store.get(k) ?? null; },
@@ -59,7 +64,7 @@ function browser(options = {}) {
   });
   const run = () => vm.runInContext(source, context);
   run();
-  return { scope, banner, accept, decline, settings, scripts, cookies, store, run,
+  return { scope, banner, accept, decline, settings, scripts, cookies, store, session, run,
     get reloads() { return reloads; },
     events: () => Array.from(scope.dataLayer || [], args => Array.from(args)),
     storage(raw) { if (raw === null) store.delete(key); else store.set(key, raw); listeners.get('storage')?.({ key, newValue: raw }); },
@@ -183,4 +188,47 @@ test('production-marked Vercel aliases and local hosts cannot pollute the produc
   for(const hostname of ['localhost','127.0.0.1','hammadmedia-a92ju1wpx-mohammed-hammads-projects.vercel.app']){
     const b=browser({hostname,raw:saved('accepted')});assert.equal(b.scripts.length,0);assert.equal(b.scope.gtag,undefined);assert.deepEqual(b.events(),[]);
   }
+});
+
+
+test('exact QA URL suppresses saved consent and persists only a fixed tab marker', () => {
+  const session = new Map();
+  const first = browser({ raw: saved('accepted'), search: '?hm_qa=1&email=private@example.com', session });
+  assert.equal(first.scripts.length, 0);
+  assert.equal(first.scope.gtag, undefined);
+  assert.equal(first.scope['ga-disable-G-NEX74824JL'], true);
+  assert.deepEqual([...session], [['hm-analytics-qa-v1', '1']]);
+  first.accept.click();
+  assert.deepEqual(first.events(), []);
+  const next = browser({ raw: saved('accepted'), search: '', session });
+  assert.equal(next.scripts.length, 0);
+  assert.equal(next.scope.hmAnalyticsConsent.isTestTraffic(), true);
+  for (const search of ['?hm_qa=true','?hm_qa=01','?hm_qa=1extra','?another=hm_qa%3D1']) {
+    assert.equal(browser({ raw: saved('accepted'), search }).scripts.length, 1, search);
+  }
+});
+
+test('explicit QA fails closed with blocked session storage', () => {
+  const b = browser({ raw: saved('accepted'), search: '?hm_qa=1', sessionBlocked: true });
+  b.accept.click();
+  assert.equal(b.scripts.length, 0);
+  assert.deepEqual(b.events(), []);
+});
+
+test('switching a running page to QA disables deferred callbacks without reloading or withdrawing consent', () => {
+  const b = browser({ raw: saved('accepted') });
+  const oldTag = b.scope.gtag;
+  let callbacks = 0;
+  oldTag('event', 'queued', { event_callback() { callbacks++; } });
+  const callback = b.events().find(event => event[1] === 'queued')[2].event_callback;
+  b.scope.hmAnalyticsConsent.excludeTestTraffic();
+  oldTag('event', 'late'); callback(); b.accept.click();
+  assert.equal(b.reloads, 0);
+  assert.equal(b.scope['ga-disable-G-NEX74824JL'], true);
+  assert.equal(b.scripts[0].removed, true);
+  assert.equal(b.scope.gtag, undefined);
+  assert.deepEqual(b.events(), []);
+  assert.equal(callbacks, 0);
+  assert.equal(JSON.parse(b.store.get(key)).choice, 'accepted');
+  assert.ok(b.cookies.length > 0);
 });
