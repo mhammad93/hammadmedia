@@ -178,3 +178,14 @@ where singleton returning enabled,last_watchdog_completed_at;
 - No new user input is required to implement and test this existing-provider route. Naming a second operator or independent destination remains an explicit follow-up, not an inferred authorization.
 
 Operational notices contain no inquiry payload and are retained for review; this addition does not create an automatic retention/pruning policy for incident evidence. Existing 30-day completed-inquiry payload pruning is unchanged.
+
+
+## Timeout and delayed-notice handling | October 12, 2026
+
+The Vercel background intake worker and independent watchdog use database RPC requests with a 15-second timeout inside a shared 50-second invocation budget. In the watchdog, only read-only `hm_intake_ops_health` and `hm_intake_health` requests retry once on transport failures, HTTP 408/429 or 5xx. Claim, prepare, finish and completion mutations are not automatically replayed after an uncertain response. Email requests retain the eight-second timeout, frozen envelope and original idempotency key; the three-notice work limit is unchanged.
+
+Before freezing a new automatic notice, the watchdog reads current worker and queue health. An opening delayed more than two minutes is titled “earlier interruption, now recovered” only when a recorded completed worker is less than five minutes old and manual/overdue counts are zero. Missing, future or stale worker timestamps cannot produce that title. Other delayed notices are labeled as delayed. Original snapshot counts remain distinct from current observations. Emails include recorded and prepared times in America/New_York, and recovery copy explains that inbox delivery order may differ. Already frozen envelopes remain byte-identical during retries.
+
+This improves transient-slowdown tolerance and historical-alert clarity; it does not suppress real incidents or guarantee inbox ordering. No inquiry, CRM record, schedule, threshold or credential is changed by this release.
+
+Public submission/receipt requests retain their existing four-second timeout. The worker has its own per-invocation 50-second storage budget and does not automatically replay mutations.

@@ -14,28 +14,40 @@ async function secretMatches(given, expected) {
   for (let i = 0; i < left.length; i++) difference |= left[i] ^ right[i];
   return difference === 0;
 }
-function envelope(item, sender, project) {
+function envelope(item, sender, project, observation) {
   const s = item.snapshot;
   if (!UUID.test(item.id) || !UUID.test(item.incident_id) || !['opened', 'updated', 'reminder', 'recovered', 'test'].includes(item.kind) ||
       !s || !Number.isInteger(s.conditions) || s.conditions < 0 || s.conditions > 7 ||
       !['pending', 'manual', 'overdue'].every(key => Number.isSafeInteger(s[key]) && s[key] >= 0) ||
       !(s.worker_age_seconds === null || (Number.isSafeInteger(s.worker_age_seconds) && s.worker_age_seconds >= 0)) ||
       !Number.isFinite(Date.parse(item.created_at))) throw new Error('invalid_operation');
+  const preparedAt = observation?.at ?? Date.now();
+  const delayed = preparedAt - Date.parse(item.created_at) > 120000;
+  const workerAt = Date.parse(observation?.operations?.last_worker_completed_at);
+  const recoveredBeforeSend = item.kind === 'opened' && delayed && observation?.operations?.enabled === true &&
+    Number.isFinite(workerAt) && workerAt <= preparedAt && preparedAt - workerAt <= 300000 &&
+    observation?.queue?.manual === 0 && observation?.queue?.overdue === 0;
+  const eastern = value => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York',
+    dateStyle: 'medium', timeStyle: 'long' }).format(new Date(value));
   const conditions = [];
+  if (recoveredBeforeSend) conditions.push('This is a delayed report of an earlier interruption. The worker and queue conditions were healthy when this notice was prepared.');
+  else if (delayed && item.kind !== 'test') conditions.push('This notice was delayed. The conditions below describe the recorded snapshot, not necessarily the current state.');
   if (item.kind === 'test') conditions.push('This is a controlled test of the intake operations alert route. No production failure is asserted. Counts below are a synthetic fixture.');
   else {
-    if (s.conditions & 1) conditions.push('Manual review is required.');
-    if (s.conditions & 2) conditions.push('An unresolved inquiry is older than 15 minutes.');
-    if (s.conditions & 4) conditions.push('No completed worker cycle was recorded within the heartbeat threshold.');
-    if (!s.conditions) conditions.push('The monitored queue and worker conditions have recovered.');
+    if (s.conditions & 1) conditions.push('The recorded snapshot required manual review.');
+    if (s.conditions & 2) conditions.push('The recorded snapshot included an unresolved inquiry older than 15 minutes.');
+    if (s.conditions & 4) conditions.push('At the recorded snapshot, no completed worker cycle was recorded within the heartbeat threshold.');
+    if (!s.conditions) conditions.push('The monitored queue and worker conditions have recovered at this snapshot. An earlier attention email refers to the preceding interruption; inbox delivery order may differ.');
   }
   return {
-    from: sender, to: [RECIPIENT], subject: `Hammad Media intake: ${item.kind === 'test' ? 'alert delivery test' : item.kind === 'recovered' ? 'recovered' : 'attention needed'}`,
+    from: sender, to: [RECIPIENT], subject: `Hammad Media intake: ${item.kind === 'test' ? 'alert delivery test' : item.kind === 'recovered' ? 'recovered' : recoveredBeforeSend ? 'earlier interruption, now recovered' : delayed ? 'delayed attention notice' : 'attention needed'}`,
     text: [
       'Mohammed,', '', ...conditions, '',
-      `Pending: ${s.pending}`, `Manual review: ${s.manual}`, `Overdue: ${s.overdue}`,
+      'Original snapshot counts:', `Pending: ${s.pending}`, `Manual review: ${s.manual}`, `Overdue: ${s.overdue}`,
       'Counts can overlap; they are not separate inquiry totals.',
       `Last completed worker age: ${s.worker_age_seconds === null ? 'not recorded' : `${s.worker_age_seconds} seconds`}`,
+      '', `Recorded at (Eastern): ${eastern(item.created_at)}`, `Notice prepared at (Eastern): ${eastern(preparedAt)}`,
+      ...(recoveredBeforeSend ? [`Current pending: ${observation.queue.pending}`, 'Current manual review: 0', 'Current overdue: 0', `Latest completed worker (Eastern): ${eastern(workerAt)}`] : []),
       '', `Incident: ${item.incident_id}`, `Notice: ${item.kind}`, `Snapshot (UTC): ${new Date(item.created_at).toISOString()}`,
       `Private console: https://supabase.com/dashboard/project/${project}/editor`, '',
       'Use the private intake operations runbook to inspect this incident. This notice does not authorize a new inquiry send, a CRM edit or an automatic resend.',
@@ -50,7 +62,7 @@ function validEnvelope(payload) {
     typeof payload.text === 'string' && payload.text.length > 0 && payload.text.length <= 8000;
 }
 
-export function createWatchdog({ env, fetcher = fetch }) {
+export function createWatchdog({ env, fetcher = fetch, now = Date.now }) {
   return async request => {
     if (request.method !== 'POST') return response(405, { ok: false, error: 'method_not_allowed' });
     const secret = env.HM_INTAKE_WATCHDOG_SECRET || '';
@@ -61,13 +73,27 @@ export function createWatchdog({ env, fetcher = fetch }) {
     const project = /^https:\/\/([a-z0-9-]+)\.supabase\.co$/.exec(url)?.[1];
     if (!project || !/^sb_secret_[A-Za-z0-9_-]{20,}$/.test(key) || !SENDER.test(env.RESEND_FROM_EMAIL || '') ||
         !/^re_[A-Za-z0-9_-]+$/.test(env.RESEND_OPS_API_KEY || '')) return response(503, { ok: false, error: 'watchdog_unavailable' });
+    // A single invocation remains below its lease and platform wall-clock limits.
+    const invocation = AbortSignal.timeout(50000);
     async function rpc(name, body = {}) {
-      const result = await fetcher(`${url}/rest/v1/rpc/${name}`, {
-        method: 'POST', redirect: 'error', signal: AbortSignal.timeout(4000),
-        headers: { apikey: key, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-      });
-      if (!result.ok) throw new Error('operations_storage_unavailable');
-      return result.json();
+      const readOnly = ['hm_intake_ops_health', 'hm_intake_health'].includes(name);
+      for (let attempt = 0; ; attempt++) {
+        let result;
+        try {
+          invocation.throwIfAborted();
+          result = await fetcher(`${url}/rest/v1/rpc/${name}`, {
+            method: 'POST', redirect: 'error', signal: AbortSignal.any([invocation, AbortSignal.timeout(15000)]),
+            headers: { apikey: key, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+          });
+        } catch {
+          if (!readOnly || attempt > 0 || invocation.aborted) throw new Error('operations_storage_unavailable');
+          continue;
+        }
+        if (result.ok) return await result.json();
+        if (!readOnly || attempt > 0 || invocation.aborted ||
+            !(result.status === 408 || result.status === 429 || result.status >= 500)) throw new Error('operations_storage_unavailable');
+        await result.body?.cancel();
+      }
     }
     let processed = 0, needsAttention = false;
     try {
@@ -79,14 +105,22 @@ export function createWatchdog({ env, fetcher = fetch }) {
         if (!claimed.enabled) return response(200, { ok: true, enabled: false, processed });
         if (claimed.item === null) break;
         const item = claimed.item;
+        let observation;
+        if (!item.email_payload && item.kind !== 'test') {
+          const [operations, queue] = await Promise.all([rpc('hm_intake_ops_health'), rpc('hm_intake_health')]);
+          if (operations?.enabled !== true || !['pending', 'manual', 'overdue'].every(key => Number.isSafeInteger(queue?.[key]) && queue[key] >= 0)) {
+            throw new Error('invalid_operations_health');
+          }
+          observation = { at: now(), operations, queue };
+        }
         const prepared = await rpc('hm_intake_ops_prepare', {
-          p_id: item.id, p_lease: lease, p_payload: item.email_payload || envelope(item, env.RESEND_FROM_EMAIL, project)
+          p_id: item.id, p_lease: lease, p_payload: item.email_payload || envelope(item, env.RESEND_FROM_EMAIL, project, observation || { at: now() })
         });
         if (!UUID.test(item.id) || !validEnvelope(prepared?.email_payload)) throw new Error('invalid_operations_envelope');
         let state = 'retry', providerId = null, errorCode = 'send_unconfirmed';
         try {
           const sent = await fetcher('https://api.resend.com/emails', {
-            method: 'POST', redirect: 'error', signal: AbortSignal.timeout(8000),
+            method: 'POST', redirect: 'error', signal: AbortSignal.any([invocation, AbortSignal.timeout(8000)]),
             headers: { Authorization: `Bearer ${env.RESEND_OPS_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `hm-ops-${item.id}` },
             body: JSON.stringify(prepared.email_payload)
           });
