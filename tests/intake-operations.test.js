@@ -70,21 +70,53 @@ async function watchdog(options = {}) {
   assert.equal(existsSync(path), true, 'the independent watchdog implementation exists');
   const { createWatchdog } = await import(pathToFileURL(path));
   const calls = []; let count = 0;
+  const now = options.now ?? Date.parse('2026-09-08T12:00:30Z');
+  const item = { ...(options.notice || notice()), ...(options.frozen ? { email_payload: options.frozen } : {}) };
+  const failures = Object.fromEntries(Object.entries(options.rpcFailures || {}).map(([name, values]) => [name, [...values]]));
   const fetcher = async (url, request) => {
     const body = JSON.parse(request.body); calls.push({ url, headers: request.headers, body });
+    if (options.bodyDelay && url.endsWith(options.bodyDelay.rpc)) {
+      const call = calls.at(-1);
+      return new Response(new ReadableStream({
+        start(controller) {
+          const aborted = () => { clearTimeout(timer); call.bodyAborted = true; controller.error(request.signal.reason); };
+          const timer = setTimeout(() => {
+            request.signal.removeEventListener('abort', aborted);
+            controller.enqueue(new TextEncoder().encode(JSON.stringify({ enabled: true, notification_pending: 0, notification_manual: 0 })));
+            controller.close();
+          }, options.bodyDelay.ms);
+          if (request.signal.aborted) aborted();
+          else request.signal.addEventListener('abort', aborted, { once: true });
+        }
+      }));
+    }
+    if (options.transportDelay && url.endsWith(options.transportDelay.rpc)) {
+      await new Promise((resolve, reject) => {
+        const aborted = () => { clearTimeout(timer); reject(request.signal.reason); };
+        const timer = setTimeout(() => { request.signal.removeEventListener('abort', aborted); resolve(); }, options.transportDelay.ms);
+        if (request.signal.aborted) aborted();
+        else request.signal.addEventListener('abort', aborted, { once: true });
+      });
+    }
     if (options.failRpc && url.endsWith(options.failRpc)) throw new Error('PRIVATE_RAW_PROVIDER_FAILURE');
+    const rpcName = url.split('/').at(-1);
+    const failure = failures[rpcName]?.shift();
+    if (failure === 'network') throw new TypeError('PRIVATE_RAW_PROVIDER_FAILURE');
+    if (failure) return new Response(JSON.stringify({ message: 'PRIVATE_RAW_PROVIDER_FAILURE' }), { status: failure });
+    if (options.invalidJsonRpc === rpcName) return new Response('PRIVATE_NOT_JSON');
     if (url === 'https://api.resend.com/emails') {
       if (options.sendThrows) throw new Error('PRIVATE_PROVIDER_DETAIL');
       return new Response(JSON.stringify(options.sendBody || { id: 'provider-notice-1' }), { status: options.sendStatus || 200 });
     }
     let value;
-    if (url.endsWith('/hm_intake_ops_claim')) value = count++ < (options.items ?? 1) ? { enabled: true, item: options.notice || notice() } : { enabled: options.sqlEnabled !== false, item: null };
-    else if (url.endsWith('/hm_intake_ops_prepare')) value = { ...(options.notice || notice()), email_payload: options.frozen || body.p_payload };
-    else if (url.endsWith('/hm_intake_ops_health')) value = options.notificationHealth ?? { enabled: true, notification_pending: 0, notification_manual: 0 };
+    if (url.endsWith('/hm_intake_ops_claim')) value = count++ < (options.items ?? 1) ? { enabled: true, item } : { enabled: options.sqlEnabled !== false, item: null };
+    else if (url.endsWith('/hm_intake_ops_prepare')) value = { ...item, email_payload: options.frozen || body.p_payload };
+    else if (url.endsWith('/hm_intake_ops_health')) value = options.notificationHealth ?? { enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: new Date(now - 600_000).toISOString() };
+    else if (url.endsWith('/hm_intake_health')) value = options.queueHealth ?? { pending: 0, manual: 0, overdue: 0 };
     else value = options.malformedRpc && url.endsWith(options.malformedRpc) ? {} : true;
     return new Response(JSON.stringify(value));
   };
-  const handler = createWatchdog({ env: { ...env, ...options.env }, fetcher });
+  const handler = createWatchdog({ env: { ...env, ...options.env }, fetcher, now: () => now });
   const response = await handler(new Request('https://synthetic.supabase.co/functions/v1/intake-watchdog', { method: options.method || 'POST', headers: { 'x-hm-watchdog-secret': options.auth ?? env.HM_INTAKE_WATCHDOG_SECRET } }));
   return { calls, status: response.status, body: await response.json() };
 }
@@ -139,15 +171,147 @@ test('alert sends only fixed counts after a durable frozen envelope, then record
   assert.match(send.body.text, /Pending: 0/);
   assert.match(send.body.text, /https:\/\/supabase.com\/dashboard\/project\/synthetic\/editor/);
   assert.equal(send.headers['Idempotency-Key'], 'hm-ops-44444444-4444-4444-8444-444444444444');
-  assert.equal(result.calls[1].url.endsWith('/hm_intake_ops_prepare'), true);
+  const prepareIndex = result.calls.findIndex(x => x.url.endsWith('/hm_intake_ops_prepare'));
+  assert.ok(prepareIndex > result.calls.findIndex(x => x.url.endsWith('/hm_intake_ops_health')));
+  assert.ok(prepareIndex > result.calls.findIndex(x => x.url.endsWith('/hm_intake_health')));
   const outcome = result.calls.find(x => x.url.endsWith('/hm_intake_ops_finish')).body;
   assert.equal(outcome.p_state, 'accepted');
   assert.equal(outcome.p_provider_id, 'provider-notice-1');
 });
 test('retry uses persisted envelope unchanged even after sender/template changes', async () => {
   const frozen = { from: 'intake@hammadmedia.com', to: ['contact@hammadmedia.com'], subject: 'Previously frozen notice', text: 'Original count snapshot' };
-  const result = await watchdog({ frozen });
+  const result = await watchdog({ frozen, now: Date.parse('2026-09-08T12:15:00Z'), failRpc: '/hm_intake_health', notificationHealth: {
+    enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:14:30Z'
+  } });
   assert.deepEqual(result.calls.find(x => x.url === 'https://api.resend.com/emails').body, frozen);
+  assert.equal(result.calls.filter(x => x.url.endsWith('/hm_intake_health')).length, 0);
+});
+test('transient health reads retry once and never disclose provider details', async () => {
+  for (const rpcName of ['hm_intake_ops_health', 'hm_intake_health']) {
+    for (const failure of ['network', 408, 429, 500, 503]) {
+      const result = await watchdog({ rpcFailures: { [rpcName]: [failure] } });
+      assert.equal(result.status, 200, `${rpcName}: ${failure}`);
+      assert.equal(result.calls.filter(x => x.url.endsWith(`/${rpcName}`)).length, rpcName === 'hm_intake_ops_health' ? 3 : 2);
+      assert.equal(result.calls.filter(x => x.url === 'https://api.resend.com/emails').length, 1);
+      assert.doesNotMatch(JSON.stringify(result.body), /PRIVATE/);
+    }
+    const exhausted = await watchdog({ rpcFailures: { [rpcName]: ['network', 503, 503] } });
+    assert.equal(exhausted.status, 503);
+    assert.equal(exhausted.calls.filter(x => x.url.endsWith(`/${rpcName}`)).length, 2);
+    assert.equal(exhausted.calls.some(x => x.url.endsWith('/hm_intake_ops_prepare')), false);
+    assert.equal(exhausted.calls.some(x => x.url === 'https://api.resend.com/emails'), false);
+    const rejected = await watchdog({ rpcFailures: { [rpcName]: [400] } });
+    assert.equal(rejected.status, 503);
+    assert.equal(rejected.calls.filter(x => x.url.endsWith(`/${rpcName}`)).length, 1);
+  }
+});
+test('lease-bearing mutations are never blindly replayed after uncertain storage results', async () => {
+  for (const rpcName of ['hm_intake_ops_claim', 'hm_intake_ops_prepare', 'hm_intake_ops_finish', 'hm_intake_ops_watchdog_completed']) {
+    for (const failure of ['network', 408, 429, 503]) {
+      const result = await watchdog({ rpcFailures: { [rpcName]: [failure] } });
+      assert.equal(result.status, 503, `${rpcName}: ${failure}`);
+      assert.equal(result.calls.filter(x => x.url.endsWith(`/${rpcName}`)).length, 1);
+      if (['hm_intake_ops_claim', 'hm_intake_ops_prepare'].includes(rpcName)) {
+        assert.equal(result.calls.some(x => x.url === 'https://api.resend.com/emails'), false);
+      }
+    }
+  }
+});
+test('a database response slower than the former four-second timeout can complete safely', async () => {
+  const result = await watchdog({ items: 0, transportDelay: { rpc: '/hm_intake_ops_claim', ms: 4500 } });
+  assert.equal(result.status, 200);
+  assert.equal(result.calls.filter(x => x.url.endsWith('/hm_intake_ops_claim')).length, 1);
+  assert.equal(result.calls.at(-1).url.endsWith('/hm_intake_ops_watchdog_completed'), true);
+});
+test('the whole-invocation deadline stops transport without fabricating a completed cycle', async t => {
+  const timeout = AbortSignal.timeout.bind(AbortSignal);
+  t.mock.method(AbortSignal, 'timeout', ms => timeout(ms === 50000 ? 20 : ms === 15000 ? 100 : ms));
+  try {
+    const result = await watchdog({ items: 0, transportDelay: { rpc: '/hm_intake_ops_health', ms: 250 } });
+    assert.equal(result.status, 503);
+    assert.equal(result.calls.filter(x => x.url.endsWith('/hm_intake_ops_health')).length, 1, 'invocation expiry cannot initiate another read retry');
+    assert.equal(result.calls.some(x => x.url.endsWith('/hm_intake_ops_watchdog_completed')), false);
+    assert.equal(result.calls.some(x => x.url === 'https://api.resend.com/emails'), false);
+  } finally { t.mock.restoreAll(); }
+});
+test('the invocation deadline also cancels a stalled database response body', async t => {
+  const timeout = AbortSignal.timeout.bind(AbortSignal);
+  t.mock.method(AbortSignal, 'timeout', ms => timeout(ms === 50000 ? 20 : ms === 15000 ? 100 : ms));
+  try {
+    const result = await watchdog({ items: 0, bodyDelay: { rpc: '/hm_intake_ops_health', ms: 250 } });
+    assert.equal(result.status, 503);
+    const reads = result.calls.filter(x => x.url.endsWith('/hm_intake_ops_health'));
+    assert.equal(reads.length, 1);
+    assert.equal(reads[0].bodyAborted, true);
+    assert.equal(result.calls.some(x => x.url.endsWith('/hm_intake_ops_watchdog_completed')), false);
+  } finally { t.mock.restoreAll(); }
+});
+test('delayed opening notice explains a recovered interruption using fresh health and Eastern timestamps', async () => {
+  const now = Date.parse('2026-09-08T12:15:00Z');
+  const result = await watchdog({ now, notificationHealth: {
+    enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:14:30Z'
+  } });
+  assert.equal(result.status, 200);
+  const sent = result.calls.find(x => x.url === 'https://api.resend.com/emails').body;
+  assert.equal(sent.subject, 'Hammad Media intake: earlier interruption, now recovered');
+  assert.match(sent.text, /historical|earlier interruption|earlier warning/i);
+  assert.match(sent.text, /Recorded.*8:00|8:00.*Recorded/i);
+  assert.match(sent.text, /prepared.*8:15|8:15.*prepared/i);
+  assert.match(sent.text, /EDT|Eastern|America\/New_York/);
+  assert.match(sent.text, /current|fresh|at preparation/i);
+  assert.match(sent.text, /recovered|conditions were healthy/i);
+});
+test('a delayed warning still requests attention when current worker or queue conditions are unhealthy', async () => {
+  const now = Date.parse('2026-09-08T12:15:00Z');
+  for (const options of [
+    { notificationHealth: { enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:09:59Z' } },
+    { notificationHealth: { enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: null } },
+    { notificationHealth: { enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:15:01Z' } },
+    { queueHealth: { pending: 1, manual: 1, overdue: 0 } },
+    { queueHealth: { pending: 1, manual: 0, overdue: 1 } }
+  ]) {
+    const result = await watchdog({ now, notificationHealth: { enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:14:30Z' }, ...options });
+    const sent = result.calls.find(x => x.url === 'https://api.resend.com/emails').body;
+    assert.equal(sent.subject, 'Hammad Media intake: delayed attention notice');
+    assert.doesNotMatch(sent.text, /earlier interruption, now recovered/i);
+    assert.match(sent.text, /current|fresh|at preparation/i);
+  }
+});
+test('malformed or invalid fresh health fails closed before preparing an automatic notice', async () => {
+  for (const options of [
+    { invalidJsonRpc: 'hm_intake_ops_health' }, { invalidJsonRpc: 'hm_intake_health' },
+    { queueHealth: true }, { queueHealth: { pending: 0, manual: -1, overdue: 0 } },
+    { queueHealth: { pending: 0, manual: 0, overdue: '0' } },
+    { notificationHealth: { enabled: false, notification_pending: 0, notification_manual: 0 } }
+  ]) {
+    const result = await watchdog(options);
+    assert.equal(result.status, 503);
+    assert.equal(result.calls.some(x => x.url.endsWith('/hm_intake_ops_prepare')), false);
+    assert.equal(result.calls.some(x => x.url === 'https://api.resend.com/emails'), false);
+    assert.doesNotMatch(JSON.stringify(result.body), /PRIVATE/);
+    if (options.invalidJsonRpc) assert.equal(result.calls.filter(x => x.url.endsWith(`/${options.invalidJsonRpc}`)).length, 1);
+  }
+});
+test('recovered classification respects delay and heartbeat thresholds without treating pending alone as overdue', async () => {
+  const now = Date.parse('2026-09-08T12:15:00Z');
+  const base = { now, queueHealth: { pending: 1, manual: 0, overdue: 0 }, notificationHealth: {
+    enabled: true, notification_pending: 0, notification_manual: 0, last_worker_completed_at: '2026-09-08T12:10:00Z'
+  } };
+  const delayed = await watchdog(base);
+  assert.equal(delayed.calls.find(x => x.url === 'https://api.resend.com/emails').body.subject, 'Hammad Media intake: earlier interruption, now recovered');
+  const justCreated = await watchdog({ ...base, notice: { ...notice(), created_at: '2026-09-08T12:13:00Z' } });
+  assert.equal(justCreated.calls.find(x => x.url === 'https://api.resend.com/emails').body.subject, 'Hammad Media intake: attention needed');
+});
+test('recovery notice explains inbox ordering and anchors recovery to its recorded snapshot', async () => {
+  const result = await watchdog({ notice: { ...notice(), kind: 'recovered', snapshot: {
+    conditions: 0, pending: 0, manual: 0, overdue: 0, worker_age_seconds: 30
+  } } });
+  assert.equal(result.status, 200);
+  const sent = result.calls.find(x => x.url === 'https://api.resend.com/emails').body;
+  assert.equal(sent.subject, 'Hammad Media intake: recovered');
+  assert.match(sent.text, /recovered at this snapshot/);
+  assert.match(sent.text, /earlier attention email.*preceding interruption/i);
+  assert.match(sent.text, /inbox delivery order may differ/i);
 });
 test('uncertain, rejected and malformed sends remain distinct from accepted alerts', async () => {
   for (const [options, expected] of [[{ sendThrows: true }, 'retry'], [{ sendStatus: 429 }, 'retry'], [{ sendStatus: 400, sendBody: { message: 'PRIVATE_RECIPIENT' } }, 'manual'], [{ sendBody: {} }, 'retry']]) {
