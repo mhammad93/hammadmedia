@@ -26,6 +26,7 @@ function browser(options = {}) {
   const banner = element(), accept = element(), decline = element(), settings = [element(), element()];
   const elements = { 'analytics-consent': banner, 'analytics-accept': accept, 'analytics-decline': decline };
   const document = {
+    documentElement: { lang: options.lang || 'en' },
     body: { dataset: { preview: options.preview ? 'true' : 'false' } },
     title: 'Hammad Media — Privacy', referrer: 'https://partner.example/path?email=private@example.com#secret',
     getElementById(id) { return elements[id] || null; },
@@ -70,6 +71,25 @@ function browser(options = {}) {
     storage(raw) { if (raw === null) store.delete(key); else store.set(key, raw); listeners.get('storage')?.({ key, newValue: raw }); },
     expire() { clock = now + 181 * 86400000; for (const [id, { callback }] of Array.from(timers)) { timers.delete(id); callback(); } },
   };
+}
+
+for (const [lang, expected] of [['en', 'en'], ['zh-CN', 'zh']]) {
+  for (const accepted of [false, true]) {
+    test(`${lang} page language is included after ${accepted ? 'saved' : 'new'} consent`, () => {
+      const b = browser({ lang, ...(accepted ? { raw: saved('accepted') } : {}) });
+      if (!accepted) {
+        assert.deepEqual(b.events(), []);
+        assert.equal(b.scripts.length, 0);
+        b.accept.click();
+      }
+      const events = b.events();
+      const config = events.find(event => event[0] === 'config');
+      const pages = events.filter(event => event[0] === 'event' && event[1] === 'page_view');
+      assert.equal(config[2].site_language, expected);
+      assert.equal(pages.length, 1);
+      assert.equal(pages[0][2].site_language, expected);
+    });
+  }
 }
 
 test('no choice makes no Google request or event and offers the consent controls', () => {
