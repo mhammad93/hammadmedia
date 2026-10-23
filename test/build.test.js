@@ -426,7 +426,7 @@ test('production Analytics configuration strips query strings and fragments from
   const html = read('production');
   const inline = read('production', 'assets/redesign/analytics.js');
   const consentTimestamp=Date.now()-1000;
-  const context = {window:{},document:{body:{dataset:{preview:'false'}},title:'Hammad Media',referrer:'https://referrer.example/path?email=private@example.com#secret',getElementById:()=>null,querySelectorAll:()=>[],createElement:()=>({}),head:{appendChild(){}}}, location:new URL('https://hammadmedia.com/zh/?email=private@example.com#secret'),URL,URLSearchParams,Date,localStorage:{getItem:()=>JSON.stringify({version:1,choice:'accepted',timestamp:consentTimestamp}),setItem(){}},addEventListener(){},setTimeout:()=>1,clearTimeout(){}};
+  const context = {window:{},document:{documentElement:{lang:'zh-CN'},body:{dataset:{preview:'false'}},title:'Hammad Media',referrer:'https://referrer.example/path?email=private@example.com#secret',getElementById:()=>null,querySelectorAll:()=>[],createElement:()=>({}),head:{appendChild(){}}}, location:new URL('https://hammadmedia.com/zh/?email=private@example.com#secret'),URL,URLSearchParams,Date,localStorage:{getItem:()=>JSON.stringify({version:1,choice:'accepted',timestamp:consentTimestamp}),setItem(){}},addEventListener(){},setTimeout:()=>1,clearTimeout(){}};
   // Browser global names and window properties share the same global object.
   context.window=context;
   vm.runInNewContext(inline, context);
@@ -437,6 +437,7 @@ test('production Analytics configuration strips query strings and fragments from
   assert.equal(config.send_page_view,false);
   assert.equal(config.page_location,'https://hammadmedia.com/zh/');
   assert.equal(config.page_referrer,'https://referrer.example');
+  assert.equal(config.site_language,'zh');
 });
 
 // A small DOM substitute exercises the actual client state machine without contacting any service.
